@@ -30,6 +30,8 @@ import {
   RefreshCw,
   Sliders,
   ShieldAlert,
+  Menu,
+  X,
 } from 'lucide-react';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -71,6 +73,7 @@ export const AdminLayout: React.FC = () => {
   const [reauthModalOpen, setReauthModalOpen] = useState(false);
   const [reauthPassword, setReauthPassword] = useState('');
   const [reauthError, setReauthError] = useState<string | null>(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Sync timeout duration when demoMode changes
   useEffect(() => {
@@ -146,20 +149,29 @@ export const AdminLayout: React.FC = () => {
       className="min-h-screen md:h-screen bg-[#FFFBF3] text-[#7A6A55] flex flex-col font-sans md:overflow-hidden"
     >
       {/* 1. TOP HEADER */}
-      <header className="bg-[#FFFFFF] border-b border-[#EADFC8] px-4 sm:px-6 py-3 flex items-center justify-between shrink-0 sticky top-0 z-40 shadow-xs">
-        {/* Left: Brand & Admin Console Badge */}
-        <div className="flex items-center gap-3">
-          <Link to="/admin" className="font-serif text-xl font-bold text-[#5A4630] tracking-wider">
+      <header className="bg-[#FFFFFF] border-b border-[#EADFC8] px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shrink-0 sticky top-0 z-40 shadow-xs">
+        {/* Left: Brand & Mobile Sidebar Toggle & Admin Console Badge */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+            className="md:hidden p-1.5 rounded-lg text-[#5A4630] hover:bg-[#F8EFD9] focus:outline-none focus:ring-1 focus:ring-[#C9A24B] cursor-pointer"
+            aria-label="Toggle admin modules navigation"
+          >
+            {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+
+          <Link to="/admin" className="font-serif text-lg sm:text-xl font-bold text-[#5A4630] tracking-wider shrink-0">
             {BRAND_NAME}
           </Link>
-          <span className="text-[11px] font-sans font-semibold text-[#5A4630] px-2.5 py-0.5 bg-[#F1E3BD] border border-[#EADFC8] rounded-full flex items-center gap-1.5">
+          <span className="text-[10px] sm:text-[11px] font-sans font-semibold text-[#5A4630] px-2 py-0.5 bg-[#F1E3BD] border border-[#EADFC8] rounded-full flex items-center gap-1.5 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27] animate-pulse"></span>
-            Admin Console
+            <span className="hidden xs:inline">Admin</span> Console
           </span>
         </div>
 
         {/* Right: Role Switcher, Session Countdown, Demo Toggle, User Menu */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-end">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-end">
           {/* Demo Mode Toggle (60s session timeout test) */}
           <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 bg-[#FFFBF3] border border-[#EADFC8] rounded-lg text-xs">
             <Sliders className="w-3.5 h-3.5 text-[#C9A24B]" />
@@ -177,7 +189,7 @@ export const AdminLayout: React.FC = () => {
           {/* Session Countdown Indicator */}
           <div
             title={`Session auto-expires after ${demoMode ? '60s' : '15m'} idle`}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-mono font-medium ${
+            className={`flex items-center gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg border text-xs font-mono font-medium ${
               secondsRemaining <= 15
                 ? 'bg-[#FDF0EE] border-[#F1B5AC] text-[#9E3624] animate-pulse'
                 : 'bg-[#FFFBF3] border-[#EADFC8] text-[#5A4630]'
@@ -188,21 +200,21 @@ export const AdminLayout: React.FC = () => {
           </div>
 
           {/* Role Switcher */}
-          <div className="flex items-center gap-1.5 text-xs">
+          <div className="flex items-center gap-1 text-xs">
             <span className="text-[#7A6A55] font-medium hidden sm:inline">Role:</span>
             <select
               value={activeRole}
               onChange={handleRoleChange}
               aria-label="Switch administrative role"
-              className="bg-[#FFFBF3] border border-[#EADFC8] text-[#5A4630] text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
+              className="bg-[#FFFBF3] border border-[#EADFC8] text-[#5A4630] text-[11px] sm:text-xs font-bold rounded-lg px-2 sm:px-2.5 py-1 sm:py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C9A24B]"
             >
               <option value="Super Admin">Super Admin</option>
               <option value="Pricing">Pricing Officer</option>
-              <option value="Catalogue">Catalogue Manager</option>
-              <option value="Warehouse">Warehouse Custodian</option>
+              <option value="Catalogue">Catalogue Mgr</option>
+              <option value="Warehouse">Warehouse</option>
               <option value="Support">Support Desk</option>
-              <option value="Finance">Finance Officer</option>
-              <option value="Auditor">Auditor (Read-Only)</option>
+              <option value="Finance">Finance</option>
+              <option value="Auditor">Auditor (RO)</option>
             </select>
           </div>
 
@@ -225,7 +237,7 @@ export const AdminLayout: React.FC = () => {
           <Link
             to="/"
             target="_blank"
-            className="hidden md:flex items-center gap-1 text-xs text-[#5A4630] hover:text-[#C9A24B] px-2.5 py-1.5 rounded-lg border border-[#EADFC8] bg-[#FFFBF3]"
+            className="hidden sm:flex items-center gap-1 text-xs text-[#5A4630] hover:text-[#C9A24B] px-2.5 py-1.5 rounded-lg border border-[#EADFC8] bg-[#FFFBF3]"
             title="Open Consumer Storefront in new tab"
           >
             <span>Store</span>
@@ -257,9 +269,21 @@ export const AdminLayout: React.FC = () => {
       )}
 
       {/* 2. BODY CONTAINER */}
-      <div className="flex-1 flex flex-col md:flex-row min-h-0 md:overflow-hidden">
-        {/* Sidebar Navigation (surface-alt #F8EFD9) */}
-        <aside className="w-full md:w-64 bg-[#F8EFD9] border-r border-[#EADFC8] flex flex-col shrink-0 md:h-full md:overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row min-h-0 md:overflow-hidden relative">
+        {/* Mobile Backdrop Overlay */}
+        {mobileSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 z-40 md:hidden backdrop-blur-2xs transition-opacity"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar Navigation */}
+        <aside
+          className={`fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-[#F8EFD9] border-r border-[#EADFC8] flex flex-col shrink-0 md:static md:w-64 md:h-full md:overflow-hidden shadow-2xl md:shadow-none transition-transform duration-200 ${
+            mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
+        >
           {/* Operations Header */}
           <div className="p-4 border-b border-[#EADFC8]/80 shrink-0">
             <div className="text-[10px] font-bold text-[#7A6A55] uppercase tracking-wider mb-1">
@@ -302,6 +326,7 @@ export const AdminLayout: React.FC = () => {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => setMobileSidebarOpen(false)}
                   className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                     isCurrent
                       ? 'bg-[#FFFFFF] text-[#5A4630] font-bold shadow-xs border border-[#EADFC8]'

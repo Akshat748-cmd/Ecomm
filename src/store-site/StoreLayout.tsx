@@ -248,7 +248,7 @@ export const StoreLayout: React.FC = () => {
               </button>
 
               {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-[#FFFDF9] border border-[#EADFC8] rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-[#FFFDF9] border border-[#EADFC8] rounded-xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-4 py-2 border-b border-[#EADFC8]/60">
                     <div className="text-xs font-bold text-[#5A4630]">Vikramaditya Singhania</div>
                     <div className="text-[11px] text-[#7A6A55]">Customer Account</div>
@@ -313,7 +313,8 @@ export const StoreLayout: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#FFFFFF] border-t border-[#EADFC8] px-4 py-4 space-y-4 animate-in fade-in duration-150">
+          <div className="md:hidden bg-[#FFFFFF] border-t border-[#EADFC8] px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto animate-in fade-in duration-150">
+            {/* Search Input */}
             <form onSubmit={handleSearchSubmit} className="relative">
               <input
                 type="text"
@@ -326,24 +327,97 @@ export const StoreLayout: React.FC = () => {
               <Search className="w-4 h-4 text-[#7A6A55] absolute left-2.5 top-3" />
             </form>
 
-            <div className="grid grid-cols-2 gap-2 text-xs font-medium">
-              {navCategories.map((cat) => (
+            {/* Primary Categories */}
+            <div>
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[#7A6A55] mb-2">
+                Precious Collections
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-medium">
+                {navCategories.map((cat) => (
+                  <Link
+                    key={cat.path}
+                    to={cat.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="p-2.5 rounded-lg bg-[#FFFBF3] border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630] active:scale-98 transition-all flex items-center justify-between"
+                  >
+                    <span>{cat.name}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-[#C9A24B]" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Storefront Sections */}
+            <div className="pt-2 border-t border-[#EADFC8]/60">
+              <div className="text-[10px] uppercase font-bold tracking-wider text-[#7A6A55] mb-2">
+                Explore & Verify
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-medium">
                 <Link
-                  key={cat.path}
-                  to={cat.path}
+                  to="/occasions"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2.5 rounded-lg bg-[#FFFBF3] border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630]"
+                  className="p-2.5 rounded-lg bg-white border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630] transition-colors"
                 >
-                  {cat.name}
+                  Festivals & Occasions
                 </Link>
-              ))}
+                <Link
+                  to="/gifting-enquiry"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630] transition-colors"
+                >
+                  Corporate Gifting
+                </Link>
+                <Link
+                  to="/verify/B24-999-5481"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630] transition-colors"
+                >
+                  Assay Verification
+                </Link>
+                <Link
+                  to="/vault"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2.5 rounded-lg bg-white border border-[#EADFC8] hover:bg-[#F8EFD9] text-[#5A4630] transition-colors"
+                >
+                  Digital Gold Vault
+                </Link>
+              </div>
+            </div>
+
+            {/* Customer Account & Admin Entry Point */}
+            <div className="pt-2 border-t border-[#EADFC8]/60 space-y-2">
+              <Link
+                to="/account"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-2.5 rounded-lg bg-[#FAF7F2] border border-[#EADFC8] text-xs font-semibold text-[#5A4630]"
+              >
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#C9A24B]" />
+                  <span>My Profile & Order History</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#C9A24B]" />
+              </Link>
+              <Link
+                to="/admin"
+                target="_blank"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8EFD9] border border-[#C9A24B]/50 text-xs font-bold text-[#5A4630]"
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#C9A24B]" />
+                  <span>Admin Operations Console</span>
+                </div>
+                <span className="text-[10px] bg-[#C9A24B] text-white px-2 py-0.5 rounded font-bold">
+                  OPS →
+                </span>
+              </Link>
             </div>
           </div>
         )}
       </header>
 
       {/* Main Outlet */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 py-5 sm:py-8">
         <Outlet />
       </main>
 

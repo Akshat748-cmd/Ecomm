@@ -81,11 +81,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className = '
       </Link>
 
       {/* Product Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+      <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between space-y-3">
         <div>
           <div className="flex items-center gap-1.5 text-[11px] text-[#7A6A55] font-medium mb-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#C9A24B]" />
-            <span>{getSpecLabel()}</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-[#C9A24B] shrink-0" />
+            <span className="truncate">{getSpecLabel()}</span>
           </div>
 
           <Link to={`/p/${product.slug}`}>
@@ -96,13 +96,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className = '
         </div>
 
         {/* Price & Action Row */}
-        <div className="pt-2 border-t border-[#EADFC8]/60 flex items-end justify-between gap-2">
-          <div>
+        <div className="pt-2 border-t border-[#EADFC8]/60 flex flex-wrap items-end justify-between gap-1.5 sm:gap-2">
+          <div className="min-w-0">
             <div className="text-[10px] text-[#7A6A55]">
               {product.type === 'rateLinked' ? 'Live Rate Price' : 'Certified Price'}
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-serif text-lg font-bold text-[#5A4630] tabular-nums">
+            <div className="flex items-baseline gap-1.5 flex-wrap">
+              <span className="font-serif text-base sm:text-lg font-bold text-[#5A4630] tabular-nums">
                 {formatINR(priceCalc.total)}
               </span>
               {product.mrp > priceCalc.total && (
@@ -115,7 +115,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className = '
 
           <Link
             to={`/p/${product.slug}`}
-            className="text-xs font-medium px-3 py-1.5 rounded-md bg-[#FFFBF3] hover:bg-[#F8EFD9] text-[#5A4630] border border-[#EADFC8] hover:border-[#C9A24B] transition-colors"
+            className="text-xs font-medium px-2.5 sm:px-3 py-1.5 rounded-md bg-[#FFFBF3] hover:bg-[#F8EFD9] text-[#5A4630] border border-[#EADFC8] hover:border-[#C9A24B] transition-colors shrink-0"
           >
             View Piece
           </Link>

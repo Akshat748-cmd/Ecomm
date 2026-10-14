@@ -202,9 +202,9 @@ export const HomePage: React.FC = () => {
   return (
     <div className="space-y-16">
       {/* 1. HERO SECTION */}
-      <section className="relative rounded-2xl border border-[#E8DDC6] bg-[#F7F1E5] p-8 sm:p-12 lg:p-16 overflow-hidden shadow-[0_8px_32px_rgba(90,70,48,0.06)] min-h-[480px] lg:min-h-[520px] flex items-center">
+      <section className="relative rounded-2xl border border-[#E8DDC6] bg-[#F7F1E5] p-6 sm:p-12 lg:p-16 overflow-hidden shadow-[0_8px_32px_rgba(90,70,48,0.06)] min-h-[440px] sm:min-h-[480px] lg:min-h-[520px] flex items-center">
         {/* Artwork Image cleanly occupying the Right Side with soft fade to the left */}
-        <div className="absolute top-0 right-0 bottom-0 w-full sm:w-[70%] md:w-[60%] lg:w-[56%] pointer-events-none select-none overflow-hidden">
+        <div className="absolute top-0 right-0 bottom-0 w-full sm:w-[70%] md:w-[60%] lg:w-[56%] pointer-events-none select-none overflow-hidden opacity-35 sm:opacity-100">
           <img
             src="/hero-bg.jpg"
             alt="Lotus 24K Gold Coin, Emerald and Sacred Rudraksha"
@@ -217,35 +217,35 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* Left Side Content */}
-        <div className="relative z-10 max-w-xl lg:max-w-2xl space-y-6 sm:space-y-7">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-[#E6D9C3] text-xs font-semibold text-[#4A3B2C] shadow-xs">
-            <ShieldCheck className="w-4 h-4 text-[#BA8332]" />
-            <span>BIS Hallmarked • LBMA Refinery Standard • 100% Insured</span>
+        <div className="relative z-10 max-w-xl lg:max-w-2xl space-y-5 sm:space-y-7">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#E6D9C3] text-[11px] sm:text-xs font-semibold text-[#4A3B2C] shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BA8332] shrink-0" />
+            <span className="truncate">BIS Hallmarked • LBMA Standard • 100% Insured</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-[#3E2F20] leading-[1.14] tracking-tight">
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#3E2F20] leading-[1.18] tracking-tight">
             Timeless Purity in Precious<br className="hidden sm:inline" />
             Metals & Sacred Artefacts
           </h1>
 
-          <p className="text-sm sm:text-base text-[#665543] leading-relaxed max-w-xl font-normal">
+          <p className="text-xs sm:text-base text-[#665543] leading-relaxed max-w-xl font-normal">
             India’s premium destination for physical gold & silver bullion, natural certified gemstones, and authentic consecrated Rudraksha. Guaranteed transparent live rates and 10-minute price quote protection.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4 pt-1">
-            <Link to="/c/gold">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1 w-full sm:w-auto">
+            <Link to="/c/gold" className="w-full sm:w-auto">
               <button
                 type="button"
-                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-[#BA8332] hover:bg-[#A37025] text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all inline-flex items-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-[#BA8332] hover:bg-[#A37025] text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Explore 24K Bullion & Jewellery</span>
                 <span className="text-lg leading-none">→</span>
               </button>
             </Link>
-            <Link to="/verify/B24-999-5481">
+            <Link to="/verify/B24-999-5481" className="w-full sm:w-auto">
               <button
                 type="button"
-                className="px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-white/95 hover:bg-white text-[#3E2F20] border border-[#D5C2A5] font-medium text-sm sm:text-base shadow-xs hover:shadow-sm transition-all cursor-pointer"
+                className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-white/95 hover:bg-white text-[#3E2F20] border border-[#D5C2A5] font-medium text-sm sm:text-base shadow-xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center"
               >
                 Verify Assay Certificate
               </button>

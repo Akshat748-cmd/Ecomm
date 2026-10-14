@@ -46,7 +46,7 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#5A4630]/25 backdrop-blur-xs animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-[#5A4630]/25 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         className="fixed inset-0"
         onClick={onClose}
@@ -59,13 +59,13 @@ export const Modal: React.FC<ModalProps> = ({
       >
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#EADFC8] bg-[#FFFBF3]">
-            <h3 className="text-lg font-serif font-semibold text-[#5A4630]">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#EADFC8] bg-[#FFFBF3]">
+            <h3 className="text-base sm:text-lg font-serif font-semibold text-[#5A4630] truncate pr-2">
               {title}
             </h3>
             <button
               onClick={onClose}
-              className="p-1 rounded-md text-[#7A6A55] hover:text-[#5A4630] hover:bg-[#F8EFD9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
+              className="p-1 rounded-md text-[#7A6A55] hover:text-[#5A4630] hover:bg-[#F8EFD9] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C9A24B] shrink-0"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -74,13 +74,13 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Content */}
-        <div className="p-6 text-sm text-[#7A6A55] max-h-[75vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 text-sm text-[#7A6A55] max-h-[78vh] overflow-y-auto">
           {children}
         </div>
 
         {/* Footer */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-3.5 bg-[#FFFBF3] border-t border-[#EADFC8]">
+          <div className="flex items-center justify-end flex-wrap gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-3.5 bg-[#FFFBF3] border-t border-[#EADFC8]">
             {footer}
           </div>
         )}

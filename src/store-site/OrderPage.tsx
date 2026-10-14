@@ -179,8 +179,8 @@ export const OrderPage: React.FC = () => {
             Ordered Articles ({order.items.length})
           </h2>
 
-          <div className="border border-[#EADFC8] rounded-xl overflow-hidden">
-            <table className="w-full text-left text-xs border-collapse">
+          <div className="border border-[#EADFC8] rounded-xl overflow-x-auto">
+            <table className="w-full min-w-[540px] text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-[#FFFBF3] border-b border-[#EADFC8] text-[#5A4630] font-semibold">
                   <th className="py-3 px-4">SKU / Item</th>
@@ -311,8 +311,8 @@ export const OrderPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="border border-[#EADFC8] rounded-lg overflow-hidden">
-              <table className="w-full text-left text-xs">
+            <div className="border border-[#EADFC8] rounded-lg overflow-x-auto">
+              <table className="w-full min-w-[340px] text-left text-xs">
                 <tr className="bg-[#F8EFD9] text-[#5A4630] font-semibold">
                   <th className="p-2.5">Description</th>
                   <th className="p-2.5">HSN Code</th>

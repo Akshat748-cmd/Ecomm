@@ -286,30 +286,30 @@ export const ProductPage: React.FC = () => {
 
           {/* 3 Thumbnails (Visible in Photo Mode) */}
           {galleryTab === 'photos' && (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {galleryViews.map((view, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setActiveImageIdx(idx)}
-                  className={`p-2 rounded-xl border text-left transition-all flex items-center gap-2.5 overflow-hidden cursor-pointer ${
+                  className={`p-1.5 sm:p-2 rounded-xl border text-left transition-all flex flex-col sm:flex-row items-center sm:items-start gap-1.5 sm:gap-2.5 overflow-hidden cursor-pointer ${
                     activeImageIdx === idx
                       ? 'bg-[#F8EFD9] border-[#C9A24B] shadow-xs ring-1 ring-[#C9A24B]'
                       : 'bg-white border-[#EADFC8] hover:bg-[#FFFBF3]'
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-[#EADFC8] bg-[#FAF6EE]">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden shrink-0 border border-[#EADFC8] bg-[#FAF6EE]">
                     <img
                       src={product.imageUrl || `/products/${product.id}.jpg`}
                       alt={view.title}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[10px] font-bold text-[#C9A24B] uppercase tracking-wider">
+                  <div className="min-w-0 flex-1 text-center sm:text-left">
+                    <div className="text-[9px] sm:text-[10px] font-bold text-[#C9A24B] uppercase tracking-wider">
                       View {idx + 1}
                     </div>
-                    <div className="text-xs font-serif font-bold text-[#5A4630] truncate">
+                    <div className="text-[11px] sm:text-xs font-serif font-bold text-[#5A4630] truncate">
                       {view.title}
                     </div>
                   </div>
