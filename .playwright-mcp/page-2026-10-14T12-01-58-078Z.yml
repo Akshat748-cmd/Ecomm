@@ -1,0 +1,354 @@
+- generic [ref=e3]:
+  - complementary "Live Market Rates" [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: "Live Rates:"
+        - generic [ref=e10]:
+          - text: "Gold 24K:"
+          - strong [ref=e11]: ₹13,000/g
+        - generic [ref=e12]:
+          - text: "Silver 999:"
+          - strong [ref=e13]: ₹190/g
+        - generic [ref=e14]: (per gram, 24K / 999 basis • Updated 05:31:57 pm)
+      - generic [ref=e15]:
+        - link "/debug" [ref=e16] [cursor=pointer]:
+          - /url: /debug
+        - generic [ref=e27]: "|"
+        - link "Admin Console →" [ref=e28] [cursor=pointer]:
+          - /url: /admin
+  - banner [ref=e29]:
+    - generic [ref=e30]:
+      - link "AURUM & CO Precious Commerce Platform" [ref=e31] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e32]: AURUM & CO
+        - generic [ref=e33]: Precious Commerce Platform
+      - navigation "Primary Navigation" [ref=e34]:
+        - link "Gold" [ref=e35] [cursor=pointer]:
+          - /url: /c/gold
+        - link "Silver" [ref=e36] [cursor=pointer]:
+          - /url: /c/silver
+        - link "Gemstones" [ref=e37] [cursor=pointer]:
+          - /url: /c/gemstones
+        - link "Coloured Stones" [ref=e38] [cursor=pointer]:
+          - /url: /c/coloured-stones
+        - link "Rudraksha" [ref=e39] [cursor=pointer]:
+          - /url: /c/rudraksha
+        - link "Gifting" [ref=e40] [cursor=pointer]:
+          - /url: /c/gifting
+      - textbox "Search store products" [ref=e42]:
+        - /placeholder: Search gold, gems, coins...
+      - generic [ref=e43]:
+        - link "Wishlist with 2 saved items" [ref=e44] [cursor=pointer]:
+          - /url: /wishlist
+          - generic [ref=e47]: "2"
+        - link "Cart with 0 items" [ref=e48] [cursor=pointer]:
+          - /url: /cart
+        - link "Customer Account" [ref=e52] [cursor=pointer]:
+          - /url: /account
+    - generic [ref=e57]:
+      - link "Authenticity Certified" [ref=e58] [cursor=pointer]:
+        - /url: /authenticity
+      - link "Insured Fulfilment" [ref=e63] [cursor=pointer]:
+        - /url: /shipping
+      - link "Service and Support" [ref=e70] [cursor=pointer]:
+        - /url: /support
+  - main [ref=e74]:
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - img "Precious Bullion, Gemstones and Rudraksha Treasury"
+        - generic [ref=e77]:
+          - generic [ref=e78]: BIS Hallmarked • LBMA Refinery Standard • 100% Insured
+          - heading "Timeless Purity in Precious Metals & Sacred Artefacts" [level=1] [ref=e83]
+          - paragraph [ref=e84]: India’s premium destination for physical gold & silver bullion, natural certified gemstones, and authentic consecrated Rudraksha. Guaranteed transparent live rates and 10-minute price quote protection.
+          - generic [ref=e85]:
+            - link [ref=e86] [cursor=pointer]:
+              - /url: /c/gold
+              - button "Explore 24K Bullion & Jewellery" [ref=e87]
+            - link [ref=e92] [cursor=pointer]:
+              - /url: /verify/B24-999-5481
+              - button "Verify Assay Certificate" [ref=e93]
+      - generic [ref=e95]:
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]: Dhanteras & Diwali 2026 Auspicious Gold Campaign
+            - generic [ref=e104]: Proposed
+          - paragraph [ref=e105]: Pre-book authentic 24K bullion and sacred silver coins with guaranteed spot price lock and priority festive dispatch.
+        - link [ref=e106] [cursor=pointer]:
+          - /url: /c/gold
+          - button "View Campaign" [ref=e107]
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e111]: Proposed
+          - generic [ref=e112]:
+            - strong [ref=e113]: "Recommended for you:"
+            - text: Investors who viewed 10g 24K Bullion Coins also shortlisted 50g Investment Cast Bars.
+        - link "View Recommendations" [ref=e114] [cursor=pointer]:
+          - /url: /c/gold
+      - region "Live Bullion Rates" [ref=e118]:
+        - generic [ref=e119]:
+          - generic [ref=e120]:
+            - heading "Live Precious Metal Rates" [level=2] [ref=e121]
+            - paragraph [ref=e125]: Real-time spot prices dynamically linked to international assay benchmarks.
+          - generic [ref=e126]: Live Ingestion
+        - generic [ref=e129]:
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: Gold 24K (999.9 Purity)
+              - generic [ref=e133]: Investment Grade
+            - generic [ref=e134]: ₹13,000 / gram
+            - generic [ref=e135]:
+              - generic [ref=e136]: "Basis: 1g fine net weight"
+              - generic [ref=e137]: "Updated: 05:31:57 pm"
+          - generic [ref=e138]:
+            - generic [ref=e139]:
+              - generic [ref=e140]: Gold 22K (916 Hallmark)
+              - generic [ref=e141]: Jewellery Grade
+            - generic [ref=e142]: ₹11,917 / gram
+            - generic [ref=e143]:
+              - generic [ref=e144]: "Basis: 24K × 0.9167"
+              - generic [ref=e145]: "Updated: 05:31:57 pm"
+          - generic [ref=e146]:
+            - generic [ref=e147]:
+              - generic [ref=e148]: Silver 999 Fine
+              - generic [ref=e149]: Auspicious Bullion
+            - generic [ref=e150]: ₹190 / gram
+            - generic [ref=e151]:
+              - generic [ref=e152]: "Basis: 1g pure silver"
+              - generic [ref=e153]: "Updated: 05:31:57 pm"
+      - region "Curated Categories" [ref=e154]:
+        - generic [ref=e155]:
+          - generic [ref=e156]: Authentic Collections
+          - heading "Browse by Precious Category" [level=2] [ref=e157]
+          - paragraph [ref=e158]: Every category strictly complies with BIS hallmarking, gemological laboratory certification, and Vedic provenance standards.
+        - generic [ref=e159]:
+          - link "24K & 22K Gold Bullion 999.9 Minted Coins, Cast Bars & Heritage Chains View Collection" [ref=e160] [cursor=pointer]:
+            - /url: /c/gold
+            - generic [ref=e168]:
+              - heading "24K & 22K Gold Bullion" [level=3] [ref=e169]
+              - paragraph [ref=e170]: 999.9 Minted Coins, Cast Bars & Heritage Chains
+            - generic [ref=e171]: View Collection
+          - link "999 Fine Silver Auspicious Lakshmi Coins, 250g Bars & Sacred Idols View Collection" [ref=e175] [cursor=pointer]:
+            - /url: /c/silver
+            - generic [ref=e183]:
+              - heading "999 Fine Silver" [level=3] [ref=e184]
+              - paragraph [ref=e185]: Auspicious Lakshmi Coins, 250g Bars & Sacred Idols
+            - generic [ref=e186]: View Collection
+          - link "Certified Gemstones Burmese Rubies, Colombian Emeralds & Basra Pearls View Collection" [ref=e190] [cursor=pointer]:
+            - /url: /c/gemstones
+            - generic [ref=e196]:
+              - heading "Certified Gemstones" [level=3] [ref=e197]
+              - paragraph [ref=e198]: Burmese Rubies, Colombian Emeralds & Basra Pearls
+            - generic [ref=e199]: View Collection
+          - link "Coloured Sapphires Ceylon Cornflower Blue & Golden Yellow Pukhraj View Collection" [ref=e203] [cursor=pointer]:
+            - /url: /c/coloured-stones
+            - generic [ref=e209]:
+              - heading "Coloured Sapphires" [level=3] [ref=e210]
+              - paragraph [ref=e211]: Ceylon Cornflower Blue & Golden Yellow Pukhraj
+            - generic [ref=e212]: View Collection
+          - link "Sacred Rudraksha Consecrated 5 Mukhi Malas & Rare 7 Mukhi Beads View Collection" [ref=e216] [cursor=pointer]:
+            - /url: /c/rudraksha
+            - generic [ref=e221]:
+              - heading "Sacred Rudraksha" [level=3] [ref=e222]
+              - paragraph [ref=e223]: Consecrated 5 Mukhi Malas & Rare 7 Mukhi Beads
+            - generic [ref=e224]: View Collection
+          - link "Curated Treasury Gifting Imperial Silver Puja Sets & Gold Coin Keepsakes View Collection" [ref=e228] [cursor=pointer]:
+            - /url: /c/gifting
+            - generic [ref=e235]:
+              - heading "Curated Treasury Gifting" [level=3] [ref=e236]
+              - paragraph [ref=e237]: Imperial Silver Puja Sets & Gold Coin Keepsakes
+            - generic [ref=e238]: View Collection
+      - region "Featured Precious Items" [ref=e242]:
+        - generic [ref=e243]:
+          - generic [ref=e244]:
+            - generic [ref=e245]: Signature Creations
+            - heading "Featured Precious Pieces" [level=2] [ref=e246]
+            - paragraph [ref=e247]: Real-time prices computed live from spot bullion rates and gemstone certifications.
+          - link [ref=e248] [cursor=pointer]:
+            - /url: /c/gold
+            - button "View All Catalogue" [ref=e249]
+        - generic [ref=e254]:
+          - generic [ref=e255]:
+            - generic:
+              - generic:
+                - generic: In Stock
+                - generic: Live Rate
+              - button "Remove from wishlist" [ref=e256]
+            - link "AU 999.9 AURUM & CO" [ref=e259] [cursor=pointer]:
+              - /url: /p/24k-gold-coin-10g
+              - generic [ref=e260]:
+                - generic [ref=e267]: AU 999.9
+                - generic [ref=e268]: AURUM & CO
+            - generic [ref=e269]:
+              - generic [ref=e270]:
+                - generic [ref=e271]: 10g • 999.9 Pure Gold
+                - link [ref=e276] [cursor=pointer]:
+                  - /url: /p/24k-gold-coin-10g
+                  - heading "24K (999.9) Pure Gold Investment Coin 10g" [level=3] [ref=e277]
+              - generic [ref=e278]:
+                - generic [ref=e279]:
+                  - generic [ref=e280]: Live Rate Price
+                  - generic [ref=e281]:
+                    - generic [ref=e282]: ₹1,39,963
+                    - generic [ref=e283]: ₹1,48,000
+                - link "View Piece" [ref=e284] [cursor=pointer]:
+                  - /url: /p/24k-gold-coin-10g
+          - generic [ref=e285]:
+            - generic:
+              - generic:
+                - generic: In Stock
+                - generic: Live Rate
+              - button "Add to wishlist" [ref=e286]
+            - link "AG 999 AURUM & CO" [ref=e289] [cursor=pointer]:
+              - /url: /p/999-pure-silver-cast-bar-250g
+              - generic [ref=e290]:
+                - generic [ref=e297]: AG 999
+                - generic [ref=e298]: AURUM & CO
+            - generic [ref=e299]:
+              - generic [ref=e300]:
+                - generic [ref=e301]: 250g • 999 Fine Silver
+                - link [ref=e306] [cursor=pointer]:
+                  - /url: /p/999-pure-silver-cast-bar-250g
+                  - heading "999 Fine Silver Cast Investment Bar 250g" [level=3] [ref=e307]
+              - generic [ref=e308]:
+                - generic [ref=e309]:
+                  - generic [ref=e310]: Live Rate Price
+                  - generic [ref=e311]:
+                    - generic [ref=e312]: ₹52,042
+                    - generic [ref=e313]: ₹58,000
+                - link "View Piece" [ref=e314] [cursor=pointer]:
+                  - /url: /p/999-pure-silver-cast-bar-250g
+          - generic [ref=e315]:
+            - generic:
+              - generic: Only 2 left
+              - button "Remove from wishlist" [ref=e316]
+            - link "NATURAL GEM AURUM & CO" [ref=e319] [cursor=pointer]:
+              - /url: /p/unheated-burmese-pigeon-blood-ruby-3-15ct
+              - generic [ref=e320]:
+                - generic [ref=e325]: NATURAL GEM
+                - generic [ref=e326]: AURUM & CO
+            - generic [ref=e327]:
+              - generic [ref=e328]:
+                - generic [ref=e329]: 3.15 ct • Mogok, Burma (Myanmar)
+                - link [ref=e334] [cursor=pointer]:
+                  - /url: /p/unheated-burmese-pigeon-blood-ruby-3-15ct
+                  - heading "Natural Unheated Burmese Pigeon Blood Ruby 3.15 ct" [level=3] [ref=e335]
+              - generic [ref=e336]:
+                - generic [ref=e337]:
+                  - generic [ref=e338]: Certified Price
+                  - generic [ref=e339]:
+                    - generic [ref=e340]: ₹3,96,550
+                    - generic [ref=e341]: ₹4,20,000
+                - link "View Piece" [ref=e342] [cursor=pointer]:
+                  - /url: /p/unheated-burmese-pigeon-blood-ruby-3-15ct
+          - generic [ref=e343]:
+            - generic:
+              - generic: In Stock
+              - button "Add to wishlist" [ref=e344]
+            - link "CONSECRATED AURUM & CO" [ref=e347] [cursor=pointer]:
+              - /url: /p/authentic-nepal-5-mukhi-rudraksha-mala-108-beads
+              - generic [ref=e348]:
+                - generic [ref=e352]: CONSECRATED
+                - generic [ref=e353]: AURUM & CO
+            - generic [ref=e354]:
+              - generic [ref=e355]:
+                - generic [ref=e356]: 5 Mukhi • Eastern Nepal Foothills
+                - link [ref=e361] [cursor=pointer]:
+                  - /url: /p/authentic-nepal-5-mukhi-rudraksha-mala-108-beads
+                  - heading "Authentic Nepal 5 Mukhi Rudraksha Japa Mala (108+1 Beads)" [level=3] [ref=e362]
+              - generic [ref=e363]:
+                - generic [ref=e364]:
+                  - generic [ref=e365]: Certified Price
+                  - generic [ref=e366]:
+                    - generic [ref=e367]: ₹6,695
+                    - generic [ref=e368]: ₹8,500
+                - link "View Piece" [ref=e369] [cursor=pointer]:
+                  - /url: /p/authentic-nepal-5-mukhi-rudraksha-mala-108-beads
+      - generic [ref=e371]:
+        - generic [ref=e377]:
+          - heading "10-Minute Quote Lock" [level=3] [ref=e378]
+          - paragraph [ref=e379]: Protect your gold and silver price from market fluctuations while completing payment. Stock is reserved exclusively for you.
+        - generic [ref=e385]:
+          - heading "100% Laboratory Assay" [level=3] [ref=e386]
+          - paragraph [ref=e387]: Every gold coin carries BIS hallmarking and refinery assay cards. Gemstones are independently certified by GIA and IGI.
+        - generic [ref=e395]:
+          - heading "Armoured Insured Transit" [level=3] [ref=e396]
+          - paragraph [ref=e397]: Dispatched via specialized precious couriers (Sequel & BVC) with OTP delivery verification and 100% transit insurance cover.
+  - contentinfo [ref=e398]:
+    - generic [ref=e399]:
+      - generic [ref=e400]:
+        - generic [ref=e401]:
+          - heading "AURUM & CO" [level=3] [ref=e402]
+          - paragraph [ref=e403]: Modern Indian luxury jewellery, LBMA-equivalent certified bullion coins and bars, natural certified gemstones, and sacred Himalayan Rudraksha.
+          - generic [ref=e404]:
+            - generic [ref=e405]:
+              - strong [ref=e406]: "Client Notes:"
+              - text: "Lifetime buyback: check policies. COD: not applicable."
+            - generic [ref=e407]: "Language: English for now, multilingual later. Rate lock: 10 mins."
+        - generic [ref=e408]:
+          - heading "Customer Care" [level=4] [ref=e409]
+          - list [ref=e410]:
+            - listitem [ref=e411]:
+              - link "Contact Us" [ref=e412] [cursor=pointer]:
+                - /url: /contact
+            - listitem [ref=e413]:
+              - link "Customer Support" [ref=e414] [cursor=pointer]:
+                - /url: /support
+            - listitem [ref=e415]:
+              - link "Grievance Nodal Officer" [ref=e416] [cursor=pointer]:
+                - /url: /grievance
+            - listitem [ref=e417]:
+              - link "Frequently Asked Questions" [ref=e418] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e419]:
+              - link "Auspicious Occasions Guide" [ref=e420] [cursor=pointer]:
+                - /url: /occasions
+            - listitem [ref=e421]:
+              - link "Corporate Gifting Enquiry" [ref=e422] [cursor=pointer]:
+                - /url: /gifting-enquiry
+        - generic [ref=e423]:
+          - heading "Policies & Trust" [level=4] [ref=e424]
+          - list [ref=e425]:
+            - listitem [ref=e426]:
+              - link "Authenticity & BIS Hallmark" [ref=e427] [cursor=pointer]:
+                - /url: /authenticity
+            - listitem [ref=e428]:
+              - link "Shipping & 100% Transit Insurance" [ref=e429] [cursor=pointer]:
+                - /url: /shipping
+            - listitem [ref=e430]:
+              - link "Returns, Refunds & Buyback" [ref=e431] [cursor=pointer]:
+                - /url: /returns
+            - listitem [ref=e432]:
+              - link "Terms of Service" [ref=e433] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e434]:
+              - link "Privacy & Data Protection" [ref=e435] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e436]:
+              - link "Consumer Disclosures (Legal Metrology)" [ref=e437] [cursor=pointer]:
+                - /url: /consumer-disclosures
+        - generic [ref=e438]:
+          - heading "Precious Market Updates" [level=4] [ref=e439]
+          - paragraph [ref=e440]: Receive live bullion alerts, weekly gold trend reports, and private festive collections.
+          - generic [ref=e441]:
+            - generic [ref=e442]:
+              - generic [ref=e443]: Email address
+              - textbox "Email address" [ref=e444]:
+                - /placeholder: Enter your email address
+            - generic [ref=e445] [cursor=pointer]:
+              - checkbox "I agree to receive communications as per the Privacy Policy." [ref=e446]
+              - generic [ref=e447]:
+                - text: I agree to receive communications as per the
+                - link "Privacy Policy" [ref=e448]:
+                  - /url: /privacy
+                - text: .
+            - button "Subscribe to Market Insights" [disabled] [ref=e449]
+      - generic [ref=e450]:
+        - generic [ref=e451]: © 2026 AURUM & CO. All rights reserved.
+        - generic [ref=e452]:
+          - generic [ref=e453]: Prototype — demo data only
+          - link "Digital Gold Vault" [ref=e454] [cursor=pointer]:
+            - /url: /vault
+          - link "Knowledge Hub" [ref=e455] [cursor=pointer]:
+            - /url: /knowledge
+          - link "Blog" [ref=e456] [cursor=pointer]:
+            - /url: /blog

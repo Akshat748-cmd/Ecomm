@@ -1,0 +1,670 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "AURUM & CO" [ref=e6] [cursor=pointer]:
+        - /url: /admin
+      - generic [ref=e7]: Admin Console
+    - generic [ref=e9]:
+      - generic [ref=e12] [cursor=pointer]:
+        - checkbox "Demo Mode (60s Timeout)" [ref=e13]
+        - generic [ref=e14]: Demo Mode (60s Timeout)
+      - generic "Session auto-expires after 15m idle" [ref=e15]: 15:00
+      - generic [ref=e20]:
+        - generic [ref=e21]: "Role:"
+        - combobox "Switch administrative role" [ref=e22]:
+          - option "Super Admin" [selected]
+          - option "Pricing Officer"
+          - option "Catalogue Manager"
+          - option "Warehouse Custodian"
+          - option "Support Desk"
+          - option "Finance Officer"
+          - option "Auditor (Read-Only)"
+      - generic [ref=e23]:
+        - generic [ref=e24]: VS
+        - generic [ref=e25]:
+          - generic [ref=e26]: Vikram Sharma
+          - generic [ref=e27]: Principal Officer
+      - link "Store" [ref=e28] [cursor=pointer]:
+        - /url: /
+      - button "Sign out of Admin Console" [ref=e34]
+  - generic [ref=e38]:
+    - complementary [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: Modules & Clearance
+        - generic [ref=e42]:
+          - generic [ref=e43]: Super Admin
+          - generic [ref=e44]: All Modules
+      - navigation [ref=e45]:
+        - link "Dashboard" [ref=e46] [cursor=pointer]:
+          - /url: /admin
+        - link "Rates and Pricing" [ref=e54] [cursor=pointer]:
+          - /url: /admin/rates
+        - link "Catalogue" [ref=e60] [cursor=pointer]:
+          - /url: /admin/catalogue
+        - link "Inventory & Quotes" [ref=e67] [cursor=pointer]:
+          - /url: /admin/inventory
+        - link "Orders & Payments" [ref=e80] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Customers & Support" [ref=e86] [cursor=pointer]:
+          - /url: /admin/customers
+        - link "Compliance & Legal" [ref=e94] [cursor=pointer]:
+          - /url: /admin/compliance
+        - link "Reports & Analytics" [ref=e100] [cursor=pointer]:
+          - /url: /admin/reports
+        - link "Roles & Permissions" [ref=e105] [cursor=pointer]:
+          - /url: /admin/roles
+        - link "Audit Log" [ref=e111] [cursor=pointer]:
+          - /url: /admin/audit
+        - link "Platform & Integrations" [ref=e117] [cursor=pointer]:
+          - /url: /admin/platform
+        - link "Settings" [ref=e123] [cursor=pointer]:
+          - /url: /admin/settings
+      - button "Re-Authenticate Maker-Checker" [ref=e130]:
+        - generic [ref=e131]: Re-Authenticate
+        - generic [ref=e136]: Maker-Checker
+    - main [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - heading "Product Catalogue & Assay Records" [level=1] [ref=e142]
+              - generic [ref=e143]: Phase 8 Complete
+            - paragraph [ref=e144]: Master SKU catalogue, dynamic category attributes, laboratory certificates, and institutional supplier records.
+          - generic [ref=e145]:
+            - button "Add New Product" [ref=e146] [cursor=pointer]
+            - button "Record Inward PO" [ref=e150] [cursor=pointer]
+            - link [ref=e157] [cursor=pointer]:
+              - /url: /c/gold
+              - button "Open Storefront" [ref=e158]
+        - generic [ref=e165]:
+          - button "Products & Merchandising 16" [ref=e166]:
+            - generic [ref=e171]: Products & Merchandising
+            - generic [ref=e172]: "16"
+          - button "Suppliers & Purchase Records 9" [ref=e173]:
+            - generic [ref=e178]: Suppliers & Purchase Records
+            - generic [ref=e179]: "9"
+        - generic [ref=e180]:
+          - generic [ref=e182]:
+            - 'textbox "Search by Title, SKU, Lot #, Cert #..." [ref=e187]'
+            - generic [ref=e188]:
+              - generic [ref=e189]: "Category:"
+              - combobox "Filter products by category" [ref=e193]:
+                - option "All Categories" [selected]
+                - option "Gold Bullion & Coins"
+                - option "Silver Bars & Idols"
+                - option "Precious Gemstones"
+                - option "Coloured Stones"
+                - option "Sacred Rudraksha"
+                - option "Luxury Gift Sets"
+              - generic [ref=e194]: "Status:"
+              - combobox "Filter products by status" [ref=e196]:
+                - option "All Statuses" [selected]
+                - option "Active"
+                - option "Draft"
+                - option "Delisted"
+          - generic [ref=e197]:
+            - table [ref=e199]:
+              - rowgroup [ref=e200]:
+                - row [ref=e201]:
+                  - columnheader "Product Title & SKU" [ref=e202]
+                  - columnheader "Category & Model" [ref=e203]
+                  - columnheader "Specs / Purity" [ref=e204]
+                  - columnheader "Live Price" [ref=e205]
+                  - columnheader "Available Stock" [ref=e206]
+                  - columnheader "Assay / Cert" [ref=e207]
+                  - columnheader "Status" [ref=e208]
+                  - columnheader "Actions" [ref=e209]
+              - rowgroup [ref=e210]:
+                - row [ref=e211]:
+                  - 'cell "24K (999.9) Pure Gold Investment Coin 10g AU-BULL-COIN-10G • Lot: LOT-AU24-2026-8812" [ref=e212]':
+                    - generic [ref=e213]: 24K (999.9) Pure Gold Investment Coin 10g
+                    - generic [ref=e214]: "AU-BULL-COIN-10G • Lot: LOT-AU24-2026-8812"
+                  - cell "gold ⚡ Rate-Linked" [ref=e215]:
+                    - generic [ref=e216]: gold
+                    - generic [ref=e217]: ⚡ Rate-Linked
+                  - cell [ref=e218]:
+                    - generic [ref=e219]:
+                      - generic [ref=e220]:
+                        - strong [ref=e221]: "Net:"
+                        - text: 10g
+                      - generic [ref=e222]:
+                        - strong [ref=e223]: "Purity:"
+                        - text: 1000 Fine
+                      - generic [ref=e224]:
+                        - strong [ref=e225]: "Making:"
+                        - text: 4.0%
+                  - cell "₹1,39,963 incl. 3% GST" [ref=e226]:
+                    - generic [ref=e227]: ₹1,39,963
+                    - generic [ref=e228]: incl. 3% GST
+                  - cell "16 units (18 on-hand, 2 res)" [ref=e229]:
+                    - generic [ref=e230]: 16 units
+                    - generic [ref=e231]: (18 on-hand, 2 res)
+                  - cell "B24-999-5481 BIS Hallmark & NABL Refinery Assay Verified" [ref=e232]:
+                    - generic [ref=e233]: B24-999-5481
+                    - generic [ref=e238]: BIS Hallmark & NABL Refinery Assay
+                    - generic [ref=e239]: Verified
+                  - cell "Active" [ref=e240]
+                  - cell [ref=e242]:
+                    - generic [ref=e243]:
+                      - button "Edit specs, certificate, and pricing" [ref=e244] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e249] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e256] [cursor=pointer]:
+                        - /url: /p/24k-gold-coin-10g
+                - row [ref=e261]:
+                  - 'cell "24K (999.9) Cast Gold Minted Ingot Bar 50g AU-BULL-BAR-50G • Lot: LOT-AU24-BAR-9901" [ref=e262]':
+                    - generic [ref=e263]: 24K (999.9) Cast Gold Minted Ingot Bar 50g
+                    - generic [ref=e264]: "AU-BULL-BAR-50G • Lot: LOT-AU24-BAR-9901"
+                  - cell "gold ⚡ Rate-Linked" [ref=e265]:
+                    - generic [ref=e266]: gold
+                    - generic [ref=e267]: ⚡ Rate-Linked
+                  - cell [ref=e268]:
+                    - generic [ref=e269]:
+                      - generic [ref=e270]:
+                        - strong [ref=e271]: "Net:"
+                        - text: 50g
+                      - generic [ref=e272]:
+                        - strong [ref=e273]: "Purity:"
+                        - text: 1000 Fine
+                      - generic [ref=e274]:
+                        - strong [ref=e275]: "Making:"
+                        - text: 2.5%
+                  - cell "₹6,87,919 incl. 3% GST" [ref=e276]:
+                    - generic [ref=e277]: ₹6,87,919
+                    - generic [ref=e278]: incl. 3% GST
+                  - cell "5 units (6 on-hand, 1 res)" [ref=e279]:
+                    - generic [ref=e280]: 5 units
+                    - generic [ref=e281]: (6 on-hand, 1 res)
+                  - cell "BAR-AU999-7721 International Precious Metals Assay Verified" [ref=e282]:
+                    - generic [ref=e283]: BAR-AU999-7721
+                    - generic [ref=e288]: International Precious Metals Assay
+                    - generic [ref=e289]: Verified
+                  - cell "Active" [ref=e290]
+                  - cell [ref=e292]:
+                    - generic [ref=e293]:
+                      - button "Edit specs, certificate, and pricing" [ref=e294] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e299] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e306] [cursor=pointer]:
+                        - /url: /p/24k-gold-bar-50g
+                - row [ref=e311]:
+                  - 'cell "22K (916) Royal Heritage Solid Curb Chain 18g AU-JEW-CHN-18G • Lot: LOT-CHN-916-443" [ref=e312]':
+                    - generic [ref=e313]: 22K (916) Royal Heritage Solid Curb Chain 18g
+                    - generic [ref=e314]: "AU-JEW-CHN-18G • Lot: LOT-CHN-916-443"
+                  - cell "gold ⚡ Rate-Linked" [ref=e315]:
+                    - generic [ref=e316]: gold
+                    - generic [ref=e317]: ⚡ Rate-Linked
+                  - cell [ref=e318]:
+                    - generic [ref=e319]:
+                      - generic [ref=e320]:
+                        - strong [ref=e321]: "Net:"
+                        - text: 18g
+                      - generic [ref=e322]:
+                        - strong [ref=e323]: "Purity:"
+                        - text: 917 Fine
+                      - generic [ref=e324]:
+                        - strong [ref=e325]: "Making:"
+                        - text: 12.0%
+                  - cell "₹2,27,924 incl. 3% GST" [ref=e326]:
+                    - generic [ref=e327]: ₹2,27,924
+                    - generic [ref=e328]: incl. 3% GST
+                  - cell "4 units (5 on-hand, 1 res)" [ref=e329]:
+                    - generic [ref=e330]: 4 units
+                    - generic [ref=e331]: (5 on-hand, 1 res)
+                  - cell "HM-916-2026-9022 Bureau of Indian Standards (BIS 916) Verified" [ref=e332]:
+                    - generic [ref=e333]: HM-916-2026-9022
+                    - generic [ref=e338]: Bureau of Indian Standards (BIS 916)
+                    - generic [ref=e339]: Verified
+                  - cell "Active" [ref=e340]
+                  - cell [ref=e342]:
+                    - generic [ref=e343]:
+                      - button "Edit specs, certificate, and pricing" [ref=e344] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e349] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e356] [cursor=pointer]:
+                        - /url: /p/22k-royal-heritage-curb-chain-18g
+                - row [ref=e361]:
+                  - 'cell "999 Fine Silver Commemorative Lakshmi Coin 50g AG-BULL-COIN-50G • Lot: LOT-AG999-2026-110" [ref=e362]':
+                    - generic [ref=e363]: 999 Fine Silver Commemorative Lakshmi Coin 50g
+                    - generic [ref=e364]: "AG-BULL-COIN-50G • Lot: LOT-AG999-2026-110"
+                  - cell "silver ⚡ Rate-Linked" [ref=e365]:
+                    - generic [ref=e366]: silver
+                    - generic [ref=e367]: ⚡ Rate-Linked
+                  - cell [ref=e368]:
+                    - generic [ref=e369]:
+                      - generic [ref=e370]:
+                        - strong [ref=e371]: "Net:"
+                        - text: 50g
+                      - generic [ref=e372]:
+                        - strong [ref=e373]: "Purity:"
+                        - text: 999 Fine
+                      - generic [ref=e374]:
+                        - strong [ref=e375]: "Making:"
+                        - text: 8.0%
+                  - cell "₹10,918 incl. 3% GST" [ref=e376]:
+                    - generic [ref=e377]: ₹10,918
+                    - generic [ref=e378]: incl. 3% GST
+                  - cell "41 units (45 on-hand, 4 res)" [ref=e379]:
+                    - generic [ref=e380]: 41 units
+                    - generic [ref=e381]: (45 on-hand, 4 res)
+                  - cell "AG-999-3321 BIS Hallmarked Silver Testing Center Verified" [ref=e382]:
+                    - generic [ref=e383]: AG-999-3321
+                    - generic [ref=e388]: BIS Hallmarked Silver Testing Center
+                    - generic [ref=e389]: Verified
+                  - cell "Active" [ref=e390]
+                  - cell [ref=e392]:
+                    - generic [ref=e393]:
+                      - button "Edit specs, certificate, and pricing" [ref=e394] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e399] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e406] [cursor=pointer]:
+                        - /url: /p/999-pure-silver-coin-50g
+                - row [ref=e411]:
+                  - 'cell "999 Fine Silver Cast Investment Bar 250g AG-BULL-BAR-250G • Lot: LOT-AG999-BAR-449" [ref=e412]':
+                    - generic [ref=e413]: 999 Fine Silver Cast Investment Bar 250g
+                    - generic [ref=e414]: "AG-BULL-BAR-250G • Lot: LOT-AG999-BAR-449"
+                  - cell "silver ⚡ Rate-Linked" [ref=e415]:
+                    - generic [ref=e416]: silver
+                    - generic [ref=e417]: ⚡ Rate-Linked
+                  - cell [ref=e418]:
+                    - generic [ref=e419]:
+                      - generic [ref=e420]:
+                        - strong [ref=e421]: "Net:"
+                        - text: 250g
+                      - generic [ref=e422]:
+                        - strong [ref=e423]: "Purity:"
+                        - text: 999 Fine
+                      - generic [ref=e424]:
+                        - strong [ref=e425]: "Making:"
+                        - text: 5.0%
+                  - cell "₹52,042 incl. 3% GST" [ref=e426]:
+                    - generic [ref=e427]: ₹52,042
+                    - generic [ref=e428]: incl. 3% GST
+                  - cell "12 units (14 on-hand, 2 res)" [ref=e429]:
+                    - generic [ref=e430]: 12 units
+                    - generic [ref=e431]: (14 on-hand, 2 res)
+                  - cell "AG-BAR-999-8812 National Refinery Assay Bureau Verified" [ref=e432]:
+                    - generic [ref=e433]: AG-BAR-999-8812
+                    - generic [ref=e438]: National Refinery Assay Bureau
+                    - generic [ref=e439]: Verified
+                  - cell "Active" [ref=e440]
+                  - cell [ref=e442]:
+                    - generic [ref=e443]:
+                      - button "Edit specs, certificate, and pricing" [ref=e444] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e449] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e456] [cursor=pointer]:
+                        - /url: /p/999-pure-silver-cast-bar-250g
+                - row [ref=e461]:
+                  - 'cell "Natural Unheated Burmese Pigeon Blood Ruby 3.15 ct GEM-RUBY-BUR-315 • Lot: LOT-RUB-BUR-001" [ref=e462]':
+                    - generic [ref=e463]: Natural Unheated Burmese Pigeon Blood Ruby 3.15 ct
+                    - generic [ref=e464]: "GEM-RUBY-BUR-315 • Lot: LOT-RUB-BUR-001"
+                  - cell "gemstones 🏷️ Fixed Catalog" [ref=e465]:
+                    - generic [ref=e466]: gemstones
+                    - generic [ref=e467]: 🏷️ Fixed Catalog
+                  - cell [ref=e468]:
+                    - generic [ref=e469]:
+                      - generic [ref=e470]:
+                        - strong [ref=e471]: "Carat:"
+                        - text: 3.15 ct
+                      - generic [ref=e472]:
+                        - strong [ref=e473]: "Origin:"
+                        - text: Mogok, Burma (Myanmar)
+                      - generic [ref=e474]:
+                        - strong [ref=e475]: "Cut:"
+                        - text: Cushion Mixed Cut
+                  - 'cell "₹3,96,550 MRP: ₹4,20,000" [ref=e476]':
+                    - generic [ref=e477]: ₹3,96,550
+                    - generic [ref=e478]: "MRP: ₹4,20,000"
+                  - cell "2 units (2 on-hand, 0 res)" [ref=e479]:
+                    - generic [ref=e480]: 2 units
+                    - generic [ref=e481]: (2 on-hand, 0 res)
+                  - cell "GIA-6421990412 GIA (Gemological Institute of America) Verified" [ref=e482]:
+                    - generic [ref=e483]: GIA-6421990412
+                    - generic [ref=e488]: GIA (Gemological Institute of America)
+                    - generic [ref=e489]: Verified
+                  - cell "Active" [ref=e490]
+                  - cell [ref=e492]:
+                    - generic [ref=e493]:
+                      - button "Edit specs, certificate, and pricing" [ref=e494] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e499] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e506] [cursor=pointer]:
+                        - /url: /p/unheated-burmese-pigeon-blood-ruby-3-15ct
+                - row [ref=e511]:
+                  - 'cell "Certified Natural Colombian Muzo Emerald 4.20 ct GEM-EMR-COL-420 • Lot: LOT-EMR-COL-892" [ref=e512]':
+                    - generic [ref=e513]: Certified Natural Colombian Muzo Emerald 4.20 ct
+                    - generic [ref=e514]: "GEM-EMR-COL-420 • Lot: LOT-EMR-COL-892"
+                  - cell "gemstones 🏷️ Fixed Catalog" [ref=e515]:
+                    - generic [ref=e516]: gemstones
+                    - generic [ref=e517]: 🏷️ Fixed Catalog
+                  - cell [ref=e518]:
+                    - generic [ref=e519]:
+                      - generic [ref=e520]:
+                        - strong [ref=e521]: "Carat:"
+                        - text: 4.2 ct
+                      - generic [ref=e522]:
+                        - strong [ref=e523]: "Origin:"
+                        - text: Muzo, Colombia
+                      - generic [ref=e524]:
+                        - strong [ref=e525]: "Cut:"
+                        - text: Octagonal Step Cut (Emerald Cut)
+                  - 'cell "₹3,19,300 MRP: ₹3,50,000" [ref=e526]':
+                    - generic [ref=e527]: ₹3,19,300
+                    - generic [ref=e528]: "MRP: ₹3,50,000"
+                  - cell "1 units (1 on-hand, 0 res)" [ref=e529]:
+                    - generic [ref=e530]: 1 units
+                    - generic [ref=e531]: (1 on-hand, 0 res)
+                  - cell "IGI-51189920 IGI (International Gemological Institute) Verified" [ref=e532]:
+                    - generic [ref=e533]: IGI-51189920
+                    - generic [ref=e538]: IGI (International Gemological Institute)
+                    - generic [ref=e539]: Verified
+                  - cell "Active" [ref=e540]
+                  - cell [ref=e542]:
+                    - generic [ref=e543]:
+                      - button "Edit specs, certificate, and pricing" [ref=e544] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e549] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e556] [cursor=pointer]:
+                        - /url: /p/certified-colombian-muzo-emerald-4-20ct
+                - row [ref=e561]:
+                  - 'cell "Natural Ceylon Royal Cornflower Blue Sapphire 5.05 ct CS-SAP-CEY-505 • Lot: LOT-SAP-CEY-101" [ref=e562]':
+                    - generic [ref=e563]: Natural Ceylon Royal Cornflower Blue Sapphire 5.05 ct
+                    - generic [ref=e564]: "CS-SAP-CEY-505 • Lot: LOT-SAP-CEY-101"
+                  - cell "coloured-stones 🏷️ Fixed Catalog" [ref=e565]:
+                    - generic [ref=e566]: coloured-stones
+                    - generic [ref=e567]: 🏷️ Fixed Catalog
+                  - cell [ref=e568]:
+                    - generic [ref=e569]:
+                      - generic [ref=e570]:
+                        - strong [ref=e571]: "Carat:"
+                        - text: 5.05 ct
+                      - generic [ref=e572]:
+                        - strong [ref=e573]: "Origin:"
+                        - text: Ratnapura, Sri Lanka
+                      - generic [ref=e574]:
+                        - strong [ref=e575]: "Cut:"
+                        - text: Oval Brilliant / Step Cut
+                  - 'cell "₹2,72,950 MRP: ₹2,90,000" [ref=e576]':
+                    - generic [ref=e577]: ₹2,72,950
+                    - generic [ref=e578]: "MRP: ₹2,90,000"
+                  - cell "2 units (3 on-hand, 1 res)" [ref=e579]:
+                    - generic [ref=e580]: 2 units
+                    - generic [ref=e581]: (3 on-hand, 1 res)
+                  - cell "GIA-2201994821 GIA Gemological Laboratory Verified" [ref=e582]:
+                    - generic [ref=e583]: GIA-2201994821
+                    - generic [ref=e588]: GIA Gemological Laboratory
+                    - generic [ref=e589]: Verified
+                  - cell "Active" [ref=e590]
+                  - cell [ref=e592]:
+                    - generic [ref=e593]:
+                      - button "Edit specs, certificate, and pricing" [ref=e594] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e599] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e606] [cursor=pointer]:
+                        - /url: /p/natural-ceylon-cornflower-blue-sapphire-5-05ct
+                - row [ref=e611]:
+                  - 'cell "Untreated Ceylon Canary Yellow Sapphire (Pukhraj) 4.80 ct CS-PUK-CEY-480 • Lot: LOT-PUK-CEY-304" [ref=e612]':
+                    - generic [ref=e613]: Untreated Ceylon Canary Yellow Sapphire (Pukhraj) 4.80 ct
+                    - generic [ref=e614]: "CS-PUK-CEY-480 • Lot: LOT-PUK-CEY-304"
+                  - cell "coloured-stones 🏷️ Fixed Catalog" [ref=e615]:
+                    - generic [ref=e616]: coloured-stones
+                    - generic [ref=e617]: 🏷️ Fixed Catalog
+                  - cell [ref=e618]:
+                    - generic [ref=e619]:
+                      - generic [ref=e620]:
+                        - strong [ref=e621]: "Carat:"
+                        - text: 4.8 ct
+                      - generic [ref=e622]:
+                        - strong [ref=e623]: "Origin:"
+                        - text: Sri Lanka (Ceylon)
+                      - generic [ref=e624]:
+                        - strong [ref=e625]: "Cut:"
+                        - text: Cushion Mixed Cut
+                  - 'cell "₹1,80,250 MRP: ₹1,95,000" [ref=e626]':
+                    - generic [ref=e627]: ₹1,80,250
+                    - generic [ref=e628]: "MRP: ₹1,95,000"
+                  - cell "4 units (4 on-hand, 0 res)" [ref=e629]:
+                    - generic [ref=e630]: 4 units
+                    - generic [ref=e631]: (4 on-hand, 0 res)
+                  - cell "IGI-44910283 IGI Laboratories Verified" [ref=e632]:
+                    - generic [ref=e633]: IGI-44910283
+                    - generic [ref=e638]: IGI Laboratories
+                    - generic [ref=e639]: Verified
+                  - cell "Active" [ref=e640]
+                  - cell [ref=e642]:
+                    - generic [ref=e643]:
+                      - button "Edit specs, certificate, and pricing" [ref=e644] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e649] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e656] [cursor=pointer]:
+                        - /url: /p/untreated-ceylon-canary-yellow-sapphire-4-80ct
+                - row [ref=e661]:
+                  - 'cell "Authentic Nepal 5 Mukhi Rudraksha Japa Mala (108+1 Beads) RUD-5M-MALA-108 • Lot: LOT-RUD-NEP-502" [ref=e662]':
+                    - generic [ref=e663]: Authentic Nepal 5 Mukhi Rudraksha Japa Mala (108+1 Beads)
+                    - generic [ref=e664]: "RUD-5M-MALA-108 • Lot: LOT-RUD-NEP-502"
+                  - cell "rudraksha 🏷️ Fixed Catalog" [ref=e665]:
+                    - generic [ref=e666]: rudraksha
+                    - generic [ref=e667]: 🏷️ Fixed Catalog
+                  - cell [ref=e668]:
+                    - generic [ref=e669]:
+                      - generic [ref=e670]:
+                        - strong [ref=e671]: "Mukhi:"
+                        - text: "5"
+                      - generic [ref=e672]:
+                        - strong [ref=e673]: "Provenance:"
+                        - text: Eastern Nepal Foothills
+                      - generic [ref=e674]:
+                        - strong [ref=e675]: "Thread:"
+                        - text: None
+                  - 'cell "₹6,695 MRP: ₹8,500" [ref=e676]':
+                    - generic [ref=e677]: ₹6,695
+                    - generic [ref=e678]: "MRP: ₹8,500"
+                  - cell "20 units (22 on-hand, 2 res)" [ref=e679]:
+                    - generic [ref=e680]: 20 units
+                    - generic [ref=e681]: (22 on-hand, 2 res)
+                  - cell "IVB-5M-2026-091 International Vedic Botanical Research Lab Verified" [ref=e682]:
+                    - generic [ref=e683]: IVB-5M-2026-091
+                    - generic [ref=e688]: International Vedic Botanical Research Lab
+                    - generic [ref=e689]: Verified
+                  - cell "Active" [ref=e690]
+                  - cell [ref=e692]:
+                    - generic [ref=e693]:
+                      - button "Edit specs, certificate, and pricing" [ref=e694] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e699] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e706] [cursor=pointer]:
+                        - /url: /p/authentic-nepal-5-mukhi-rudraksha-mala-108-beads
+                - row [ref=e711]:
+                  - 'cell "Rare Nepal 7 Mukhi Mahalakshmi Collector Rudraksha Bead RUD-7M-SING-24MM • Lot: LOT-RUD-NEP-707" [ref=e712]':
+                    - generic [ref=e713]: Rare Nepal 7 Mukhi Mahalakshmi Collector Rudraksha Bead
+                    - generic [ref=e714]: "RUD-7M-SING-24MM • Lot: LOT-RUD-NEP-707"
+                  - cell "rudraksha 🏷️ Fixed Catalog" [ref=e715]:
+                    - generic [ref=e716]: rudraksha
+                    - generic [ref=e717]: 🏷️ Fixed Catalog
+                  - cell [ref=e718]:
+                    - generic [ref=e719]:
+                      - generic [ref=e720]:
+                        - strong [ref=e721]: "Mukhi:"
+                        - text: "7"
+                      - generic [ref=e722]:
+                        - strong [ref=e723]: "Provenance:"
+                        - text: Bhojpur, Nepal
+                      - generic [ref=e724]:
+                        - strong [ref=e725]: "Thread:"
+                        - text: None
+                  - 'cell "₹14,935 MRP: ₹18,000" [ref=e726]':
+                    - generic [ref=e727]: ₹14,935
+                    - generic [ref=e728]: "MRP: ₹18,000"
+                  - cell "6 units (7 on-hand, 1 res)" [ref=e729]:
+                    - generic [ref=e730]: 6 units
+                    - generic [ref=e731]: (7 on-hand, 1 res)
+                  - cell "AGL-RUD-7M-9912 NABL Accredited Gemological & Botanical Lab Verified" [ref=e732]:
+                    - generic [ref=e733]: AGL-RUD-7M-9912
+                    - generic [ref=e738]: NABL Accredited Gemological & Botanical Lab
+                    - generic [ref=e739]: Verified
+                  - cell "Active" [ref=e740]
+                  - cell [ref=e742]:
+                    - generic [ref=e743]:
+                      - button "Edit specs, certificate, and pricing" [ref=e744] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e749] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e756] [cursor=pointer]:
+                        - /url: /p/rare-nepal-7-mukhi-collector-rudraksha-bead
+                - row [ref=e761]:
+                  - 'cell "Sacred Half-Moon 1 Mukhi Rudraksha 925 Pure Silver Capped Pendant RUD-1M-SILV-PDNT • Lot: LOT-RUD-SLV-101" [ref=e762]':
+                    - generic [ref=e763]: Sacred Half-Moon 1 Mukhi Rudraksha 925 Pure Silver Capped Pendant
+                    - generic [ref=e764]: "RUD-1M-SILV-PDNT • Lot: LOT-RUD-SLV-101"
+                  - cell "rudraksha 🏷️ Fixed Catalog" [ref=e765]:
+                    - generic [ref=e766]: rudraksha
+                    - generic [ref=e767]: 🏷️ Fixed Catalog
+                  - cell [ref=e768]:
+                    - generic [ref=e769]:
+                      - generic [ref=e770]:
+                        - strong [ref=e771]: "Mukhi:"
+                        - text: "1"
+                      - generic [ref=e772]:
+                        - strong [ref=e773]: "Provenance:"
+                        - text: Rameshwaram / Haridwar Consecrated
+                      - generic [ref=e774]:
+                        - strong [ref=e775]: "Thread:"
+                        - text: Pure Silver 925 Hallmarked
+                  - 'cell "₹20,394 MRP: ₹24,000" [ref=e776]':
+                    - generic [ref=e777]: ₹20,394
+                    - generic [ref=e778]: "MRP: ₹24,000"
+                  - cell "5 units (5 on-hand, 0 res)" [ref=e779]:
+                    - generic [ref=e780]: 5 units
+                    - generic [ref=e781]: (5 on-hand, 0 res)
+                  - cell "RUD-SLV-925-4102 BIS Hallmark 925 & Botanical Lab Verified" [ref=e782]:
+                    - generic [ref=e783]: RUD-SLV-925-4102
+                    - generic [ref=e788]: BIS Hallmark 925 & Botanical Lab
+                    - generic [ref=e789]: Verified
+                  - cell "Active" [ref=e790]
+                  - cell [ref=e792]:
+                    - generic [ref=e793]:
+                      - button "Edit specs, certificate, and pricing" [ref=e794] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e799] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e806] [cursor=pointer]:
+                        - /url: /p/sacred-1-mukhi-rudraksha-pure-silver-capped-pendant
+                - row [ref=e811]:
+                  - 'cell "The Imperial Auspicious Silver Puja Gifting Hamper GFT-HMP-SLV-01 • Lot: LOT-GFT-2026-01" [ref=e812]':
+                    - generic [ref=e813]: The Imperial Auspicious Silver Puja Gifting Hamper
+                    - generic [ref=e814]: "GFT-HMP-SLV-01 • Lot: LOT-GFT-2026-01"
+                  - cell "gifting 🏷️ Fixed Catalog" [ref=e815]:
+                    - generic [ref=e816]: gifting
+                    - generic [ref=e817]: 🏷️ Fixed Catalog
+                  - cell "Standard Gift Hamper" [ref=e818]
+                  - 'cell "₹12,257 MRP: ₹14,500" [ref=e820]':
+                    - generic [ref=e821]: ₹12,257
+                    - generic [ref=e822]: "MRP: ₹14,500"
+                  - cell "11 units (12 on-hand, 1 res)" [ref=e823]:
+                    - generic [ref=e824]: 11 units
+                    - generic [ref=e825]: (12 on-hand, 1 res)
+                  - cell "GFT-SLV-8820 BIS Hallmarked Silver Testing Center Verified" [ref=e826]:
+                    - generic [ref=e827]: GFT-SLV-8820
+                    - generic [ref=e832]: BIS Hallmarked Silver Testing Center
+                    - generic [ref=e833]: Verified
+                  - cell "Active" [ref=e834]
+                  - cell [ref=e836]:
+                    - generic [ref=e837]:
+                      - button "Edit specs, certificate, and pricing" [ref=e838] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e843] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e850] [cursor=pointer]:
+                        - /url: /p/the-imperial-auspicious-puja-silver-gifting-hamper
+                - row [ref=e855]:
+                  - 'cell "Sovereign 24K Gold Coin & Consecrated Mala Luxury Treasury Set GFT-HMP-AU-RUD-02 • Lot: LOT-GFT-AU-501" [ref=e856]':
+                    - generic [ref=e857]: Sovereign 24K Gold Coin & Consecrated Mala Luxury Treasury Set
+                    - generic [ref=e858]: "GFT-HMP-AU-RUD-02 • Lot: LOT-GFT-AU-501"
+                  - cell "gifting ⚡ Rate-Linked" [ref=e859]:
+                    - generic [ref=e860]: gifting
+                    - generic [ref=e861]: ⚡ Rate-Linked
+                  - cell "Standard Gift Hamper" [ref=e862]
+                  - cell "₹73,845 incl. 3% GST" [ref=e864]:
+                    - generic [ref=e865]: ₹73,845
+                    - generic [ref=e866]: incl. 3% GST
+                  - cell "6 units (8 on-hand, 2 res)" [ref=e867]:
+                    - generic [ref=e868]: 6 units
+                    - generic [ref=e869]: (8 on-hand, 2 res)
+                  - cell "GFT-AU999-5501 National Refinery Assay Bureau & IVB Lab Verified" [ref=e870]:
+                    - generic [ref=e871]: GFT-AU999-5501
+                    - generic [ref=e876]: National Refinery Assay Bureau & IVB Lab
+                    - generic [ref=e877]: Verified
+                  - cell "Active" [ref=e878]
+                  - cell [ref=e880]:
+                    - generic [ref=e881]:
+                      - button "Edit specs, certificate, and pricing" [ref=e882] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e887] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e894] [cursor=pointer]:
+                        - /url: /p/sovereign-gold-bullion-consecrated-mala-gift-set
+                - row [ref=e899]:
+                  - 'cell "Natural Certified Basra Pearl Solitaire Ring in 18K Yellow Gold GEM-BAS-PRL-18K • Lot: LOT-PRL-BAS-099" [ref=e900]':
+                    - generic [ref=e901]: Natural Certified Basra Pearl Solitaire Ring in 18K Yellow Gold
+                    - generic [ref=e902]: "GEM-BAS-PRL-18K • Lot: LOT-PRL-BAS-099"
+                  - cell "gemstones 🏷️ Fixed Catalog" [ref=e903]:
+                    - generic [ref=e904]: gemstones
+                    - generic [ref=e905]: 🏷️ Fixed Catalog
+                  - cell [ref=e906]:
+                    - generic [ref=e907]:
+                      - generic [ref=e908]:
+                        - strong [ref=e909]: "Carat:"
+                        - text: 3.4 ct
+                      - generic [ref=e910]:
+                        - strong [ref=e911]: "Origin:"
+                        - text: Persian Gulf (Basra)
+                      - generic [ref=e912]:
+                        - strong [ref=e913]: "Cut:"
+                        - text: Natural Spheroid Button
+                  - 'cell "₹1,46,260 MRP: ₹1,65,000" [ref=e914]':
+                    - generic [ref=e915]: ₹1,46,260
+                    - generic [ref=e916]: "MRP: ₹1,65,000"
+                  - cell "3 units (3 on-hand, 0 res)" [ref=e917]:
+                    - generic [ref=e918]: 3 units
+                    - generic [ref=e919]: (3 on-hand, 0 res)
+                  - cell "GIA-88029911 GIA Natural Pearl Certification Verified" [ref=e920]:
+                    - generic [ref=e921]: GIA-88029911
+                    - generic [ref=e926]: GIA Natural Pearl Certification
+                    - generic [ref=e927]: Verified
+                  - cell "Active" [ref=e928]
+                  - cell [ref=e930]:
+                    - generic [ref=e931]:
+                      - button "Edit specs, certificate, and pricing" [ref=e932] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e937] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e944] [cursor=pointer]:
+                        - /url: /p/natural-basra-pearl-certified-ring-18k-gold
+                - row [ref=e949]:
+                  - 'cell "999 Pure Silver Handcrafted Sacred Ganesha Murti Idol 100g AG-ART-GAN-100G • Lot: LOT-AG999-IDL-301" [ref=e950]':
+                    - generic [ref=e951]: 999 Pure Silver Handcrafted Sacred Ganesha Murti Idol 100g
+                    - generic [ref=e952]: "AG-ART-GAN-100G • Lot: LOT-AG999-IDL-301"
+                  - cell "silver ⚡ Rate-Linked" [ref=e953]:
+                    - generic [ref=e954]: silver
+                    - generic [ref=e955]: ⚡ Rate-Linked
+                  - cell [ref=e956]:
+                    - generic [ref=e957]:
+                      - generic [ref=e958]:
+                        - strong [ref=e959]: "Net:"
+                        - text: 100g
+                      - generic [ref=e960]:
+                        - strong [ref=e961]: "Purity:"
+                        - text: 999 Fine
+                      - generic [ref=e962]:
+                        - strong [ref=e963]: "Making:"
+                        - text: 15.0%
+                  - cell "₹23,307 incl. 3% GST" [ref=e964]:
+                    - generic [ref=e965]: ₹23,307
+                    - generic [ref=e966]: incl. 3% GST
+                  - cell "8 units (9 on-hand, 1 res)" [ref=e967]:
+                    - generic [ref=e968]: 8 units
+                    - generic [ref=e969]: (9 on-hand, 1 res)
+                  - cell "HM-AG999-7719 BIS Hallmark Silver 999 Center Verified" [ref=e970]:
+                    - generic [ref=e971]: HM-AG999-7719
+                    - generic [ref=e976]: BIS Hallmark Silver 999 Center
+                    - generic [ref=e977]: Verified
+                  - cell "Active" [ref=e978]
+                  - cell [ref=e980]:
+                    - generic [ref=e981]:
+                      - button "Edit specs, certificate, and pricing" [ref=e982] [cursor=pointer]
+                      - button "Delist product from storefront" [ref=e987] [cursor=pointer]
+                      - link "Inspect product on storefront" [ref=e994] [cursor=pointer]:
+                        - /url: /p/999-fine-silver-handcrafted-ganesha-idol-100g
+            - generic [ref=e999]:
+              - generic [ref=e1000]:
+                - text: Showing
+                - strong [ref=e1001]: "16"
+                - text: of
+                - strong [ref=e1002]: "16"
+                - text: products
+              - generic [ref=e1003]:
+                - generic [ref=e1004]: Direct Storefront Reactivity Active
+                - generic [ref=e1008]: •
+                - generic [ref=e1009]:
+                  - text: "Audit Module:"
+                  - strong [ref=e1010]: Catalogue

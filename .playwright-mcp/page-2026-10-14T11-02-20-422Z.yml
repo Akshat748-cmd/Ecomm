@@ -1,0 +1,365 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "AURUM & CO" [ref=e6] [cursor=pointer]:
+        - /url: /admin
+      - generic [ref=e7]: Admin Console
+    - generic [ref=e9]:
+      - generic [ref=e12] [cursor=pointer]:
+        - checkbox "Demo Mode (60s Timeout)" [ref=e13]
+        - generic [ref=e14]: Demo Mode (60s Timeout)
+      - generic "Session auto-expires after 15m idle" [ref=e15]: 15:00
+      - generic [ref=e20]:
+        - generic [ref=e21]: "Role:"
+        - combobox "Switch administrative role" [ref=e22]:
+          - option "Super Admin" [selected]
+          - option "Pricing Officer"
+          - option "Catalogue Manager"
+          - option "Warehouse Custodian"
+          - option "Support Desk"
+          - option "Finance Officer"
+          - option "Auditor (Read-Only)"
+      - generic [ref=e23]:
+        - generic [ref=e24]: VS
+        - generic [ref=e25]:
+          - generic [ref=e26]: Vikram Sharma
+          - generic [ref=e27]: Principal Officer
+      - link "Store" [ref=e28] [cursor=pointer]:
+        - /url: /
+      - button "Sign out of Admin Console" [ref=e34]
+  - generic [ref=e38]:
+    - complementary [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: Modules & Clearance
+        - generic [ref=e42]:
+          - generic [ref=e43]: Super Admin
+          - generic [ref=e44]: All Modules
+      - navigation [ref=e45]:
+        - link "Dashboard" [ref=e46] [cursor=pointer]:
+          - /url: /admin
+        - link "Rates and Pricing" [ref=e54] [cursor=pointer]:
+          - /url: /admin/rates
+        - link "Catalogue" [ref=e60] [cursor=pointer]:
+          - /url: /admin/catalogue
+        - link "Inventory & Quotes" [ref=e67] [cursor=pointer]:
+          - /url: /admin/inventory
+        - link "Orders & Payments" [ref=e80] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Customers & Support" [ref=e86] [cursor=pointer]:
+          - /url: /admin/customers
+        - link "Compliance & Legal" [ref=e94] [cursor=pointer]:
+          - /url: /admin/compliance
+        - link "Reports & Analytics" [ref=e100] [cursor=pointer]:
+          - /url: /admin/reports
+        - link "Roles & Permissions" [ref=e105] [cursor=pointer]:
+          - /url: /admin/roles
+        - link "Audit Log" [ref=e111] [cursor=pointer]:
+          - /url: /admin/audit
+        - link "Platform & Integrations" [ref=e117] [cursor=pointer]:
+          - /url: /admin/platform
+        - link "Settings" [ref=e123] [cursor=pointer]:
+          - /url: /admin/settings
+      - button "Re-Authenticate Maker-Checker" [ref=e130]:
+        - generic [ref=e131]: Re-Authenticate
+        - generic [ref=e136]: Maker-Checker
+    - main [ref=e137]:
+      - generic [ref=e138]:
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - heading "Statutory Compliance & Regulatory Governance" [level=1] [ref=e142]
+              - generic [ref=e143]: Phase 10
+            - paragraph [ref=e144]: Mandatory GST/HSN rules, Legal Metrology, BIS hallmarking, return policy safeguards, and statutory document version audit.
+          - generic [ref=e150]:
+            - generic [ref=e151]: Compliance Health Score
+            - generic [ref=e152]:
+              - generic [ref=e153]: 100%
+              - generic [ref=e154]: (12/12 Controls Passed)
+        - generic [ref=e155]:
+          - generic [ref=e156]:
+            - 'heading "Statutory Advisory: Open Regulatory Items & Jurisdictional Interpretations" [level=2] [ref=e160]'
+            - generic [ref=e161]: 4 Open Review Notes
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - generic [ref=e164]:
+                - generic [ref=e165]: "1. GST/HSN Classification: Rudraksha, Malas & Hampers"
+                - generic [ref=e170]: Tax Ambiguity
+              - paragraph [ref=e171]:
+                - strong [ref=e172]: "Statutory Conflict:"
+                - text: Raw botanical seeds (HSN 9602 / 1211) enjoy agricultural/handicraft exemptions, whereas silver/gold-capped malas and mixed hampers fall under Precious Jewellery (HSN 7113 / 7117) attracting 3% GST.
+              - generic [ref=e173]:
+                - strong [ref=e174]: "Standard Operational Ruling:"
+                - text: All consecrated malas and corporate hampers containing precious components are invoiced under unified 3% GST (HSN 7117 / 7113) with itemized component valuations to prevent tax classification disputes.
+            - generic [ref=e175]:
+              - generic [ref=e176]:
+                - generic [ref=e177]: 2. Cash-on-Delivery (COD) Statutory Prohibition
+                - generic [ref=e182]: PMLA Rule
+              - paragraph [ref=e183]:
+                - strong [ref=e184]: "PMLA & Courier Mandate:"
+                - text: Under the Prevention of Money Laundering Act (PMLA) 2002 and RBI high-value transaction guidelines, cash settlements for un-assayed deliveries pose severe anti-money laundering and courier transit hijacking exposure.
+              - generic [ref=e185]:
+                - strong [ref=e186]: "Standard Operational Ruling:"
+                - text: COD is permanently disabled storewide for precious bullion, coins, and jewellery above ₹10,000. All orders must complete 100% advance digital settlement via RTGS, NetBanking, or UPI.
+            - generic [ref=e187]:
+              - generic [ref=e188]:
+                - generic [ref=e189]: 3. Bullion Returns & Volatility Risk Buyback Protocol
+                - generic [ref=e193]: Market Exemption
+              - paragraph [ref=e194]:
+                - strong [ref=e195]: "Consumer Protection Exemption:"
+                - text: Standard statutory 7-day "no-questions" e-commerce returns cannot apply to investment-grade bullion due to continuous intraday spot market price fluctuations (Consumer Protection Rules 2020, Rule 5).
+              - generic [ref=e196]:
+                - strong [ref=e197]: "Standard Operational Ruling:"
+                - text: Orders are non-cancellable once payment is confirmed. Post-delivery returns are routed through our Guaranteed Lifetime Buyback Protocol based on prevailing live spot rates less refining spread.
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e200]: 4. Statutory Disclosures in Additional Vernacular Languages
+                - generic [ref=e205]: Phase 11 Sprint
+              - paragraph [ref=e206]:
+                - strong [ref=e207]: "Consumer Rights Provision:"
+                - text: The Consumer Protection Act 2019 stipulates that mandatory weight disclosures, BIS hallmarking guides, and consumer grievance contact points be available in prominent regional languages.
+              - generic [ref=e208]:
+                - strong [ref=e209]: "Standard Operational Ruling:"
+                - text: Digital PDF disclosures are currently English and Hindi compliant. Phase 11 localization sprint will incorporate Marathi, Gujarati, and Tamil consumer charters.
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - generic [ref=e212]:
+              - heading "Statutory Governance Controls Checklist" [level=2] [ref=e213]
+              - paragraph [ref=e214]: Click individual checkmarks to record live audit sign-offs. All modifications are immutably logged in the system audit trail.
+            - generic [ref=e215]:
+              - button "All" [ref=e216] [cursor=pointer]
+              - button "GST & Legal Metrology" [ref=e217] [cursor=pointer]
+              - button "BIS Hallmark & Assay" [ref=e218] [cursor=pointer]
+              - button "Product Claims & Certs" [ref=e219] [cursor=pointer]
+              - button "Returns & Disclosures" [ref=e220] [cursor=pointer]
+              - button "Data Privacy & DPDP" [ref=e221] [cursor=pointer]
+          - table [ref=e223]:
+            - rowgroup [ref=e224]:
+              - row [ref=e225]:
+                - columnheader "Status" [ref=e226]
+                - columnheader "Governance Area & Control" [ref=e227]
+                - columnheader "Statutory Reference" [ref=e228]
+                - columnheader "Risk Level" [ref=e229]
+                - columnheader "Last Audited" [ref=e230]
+                - columnheader "Auditor" [ref=e231]
+            - rowgroup [ref=e232]:
+              - row [ref=e233]:
+                - cell [ref=e234]:
+                  - button "Click to mark as non-compliant" [ref=e235] [cursor=pointer]
+                - 'cell "HSN Code & GST Rate Verification Mandatory 3% GST on precious metals and jewellery (HSN 7108 for Gold, HSN 7106 for Silver, HSN 7103 for Precious Gemstones). Itemized tax invoices with CGST/SGST/IGST. Category: GST & Legal Metrology" [ref=e239]':
+                  - generic [ref=e240]: HSN Code & GST Rate Verification
+                  - generic [ref=e241]: Mandatory 3% GST on precious metals and jewellery (HSN 7108 for Gold, HSN 7106 for Silver, HSN 7103 for Precious Gemstones). Itemized tax invoices with CGST/SGST/IGST.
+                  - generic [ref=e242]: "Category: GST & Legal Metrology"
+                - cell "CGST Act 2017 / Notification No. 1/2017-Central Tax (Rate)" [ref=e243]
+                - cell "Critical" [ref=e244]
+                - cell "2026-10-10" [ref=e246]
+                - cell "S. Kulkarni (Finance Head)" [ref=e247]
+              - row [ref=e248]:
+                - cell [ref=e249]:
+                  - button "Click to mark as non-compliant" [ref=e250] [cursor=pointer]
+                - 'cell "Taxable Value & Net Price Breakdown Rule Every product page and tax invoice must explicitly itemize metal value at live rate, making charges, packaging, transit insurance, and GST. Category: GST & Legal Metrology" [ref=e254]':
+                  - generic [ref=e255]: Taxable Value & Net Price Breakdown Rule
+                  - generic [ref=e256]: Every product page and tax invoice must explicitly itemize metal value at live rate, making charges, packaging, transit insurance, and GST.
+                  - generic [ref=e257]: "Category: GST & Legal Metrology"
+                - cell "Consumer Protection (E-Commerce) Rules 2020, Rule 6(5)" [ref=e258]
+                - cell "Critical" [ref=e259]
+                - cell "2026-10-12" [ref=e261]
+                - cell "Vikram Sharma (Super Admin)" [ref=e262]
+              - row [ref=e263]:
+                - cell [ref=e264]:
+                  - button "Click to mark as non-compliant" [ref=e265] [cursor=pointer]
+                - 'cell "Legal Metrology Declarations & Net Quantity Net weight declared in standard metric units (grams / carats). Country of origin, generic name, manufacturing month/year, and customer grievance contact displayed. Category: GST & Legal Metrology" [ref=e269]':
+                  - generic [ref=e270]: Legal Metrology Declarations & Net Quantity
+                  - generic [ref=e271]: Net weight declared in standard metric units (grams / carats). Country of origin, generic name, manufacturing month/year, and customer grievance contact displayed.
+                  - generic [ref=e272]: "Category: GST & Legal Metrology"
+                - cell "Legal Metrology (Packaged Commodities) Amendment Rules 2022" [ref=e273]
+                - cell "Critical" [ref=e274]
+                - cell "2026-10-08" [ref=e276]
+                - cell "R. Kulkarni (Legal)" [ref=e277]
+              - row [ref=e278]:
+                - cell [ref=e279]:
+                  - button "Click to mark as non-compliant" [ref=e280] [cursor=pointer]
+                - 'cell "Manufacturer, Packer & Importer Identification Complete legal corporate entity name, registered office address, factory licence, and BIS hallmarking centre licence number disclosed on every packaging slip. Category: GST & Legal Metrology" [ref=e284]':
+                  - generic [ref=e285]: Manufacturer, Packer & Importer Identification
+                  - generic [ref=e286]: Complete legal corporate entity name, registered office address, factory licence, and BIS hallmarking centre licence number disclosed on every packaging slip.
+                  - generic [ref=e287]: "Category: GST & Legal Metrology"
+                - cell "Legal Metrology Act 2009, Section 18" [ref=e288]
+                - cell "Medium" [ref=e289]
+                - cell "2026-10-05" [ref=e291]
+                - cell "Deepak Patil (Warehouse Mgr)" [ref=e292]
+              - row [ref=e293]:
+                - cell [ref=e294]:
+                  - button "Click to mark as non-compliant" [ref=e295] [cursor=pointer]
+                - 'cell "Mandatory BIS Hallmarking & 6-Digit HUID Controls All gold and silver bullion/artefacts must bear official BIS hallmark, purity grade mark, assay centre identification, and unique laser HUID serial number. Category: BIS Hallmark & Assay" [ref=e299]':
+                  - generic [ref=e300]: Mandatory BIS Hallmarking & 6-Digit HUID Controls
+                  - generic [ref=e301]: All gold and silver bullion/artefacts must bear official BIS hallmark, purity grade mark, assay centre identification, and unique laser HUID serial number.
+                  - generic [ref=e302]: "Category: BIS Hallmark & Assay"
+                - cell "Bureau of Indian Standards (Hallmarking) Regulations 2018" [ref=e303]
+                - cell "Critical" [ref=e304]
+                - cell "2026-10-14" [ref=e306]
+                - cell "Meera Nambiar (Assay QC)" [ref=e307]
+              - row [ref=e308]:
+                - cell [ref=e309]:
+                  - button "Click to mark as non-compliant" [ref=e310] [cursor=pointer]
+                - 'cell "NABL-Accredited Refinery Assay Certification Consignment lots must possess certified assay test certificates from NABL/BIS-approved testing laboratories before allocation to the online stock pool. Category: BIS Hallmark & Assay" [ref=e314]':
+                  - generic [ref=e315]: NABL-Accredited Refinery Assay Certification
+                  - generic [ref=e316]: Consignment lots must possess certified assay test certificates from NABL/BIS-approved testing laboratories before allocation to the online stock pool.
+                  - generic [ref=e317]: "Category: BIS Hallmark & Assay"
+                - cell "NABL ISO/IEC 17025:2017 Fire Assay Calibration Protocol" [ref=e318]
+                - cell "Critical" [ref=e319]
+                - cell "2026-10-11" [ref=e321]
+                - cell "Meera Nambiar (Assay QC)" [ref=e322]
+              - row [ref=e323]:
+                - cell [ref=e324]:
+                  - button "Click to mark as non-compliant" [ref=e325] [cursor=pointer]
+                - 'cell "Natural Gemstone Treatment & Origin Controls Strict prohibition on misleading disclosures. Heat treatments, clarity enhancements, or synthetic origins must be prominently flagged with GIA/IGI certificate verification. Category: Product Claims & Certs" [ref=e329]':
+                  - generic [ref=e330]: Natural Gemstone Treatment & Origin Controls
+                  - generic [ref=e331]: Strict prohibition on misleading disclosures. Heat treatments, clarity enhancements, or synthetic origins must be prominently flagged with GIA/IGI certificate verification.
+                  - generic [ref=e332]: "Category: Product Claims & Certs"
+                - cell "FTC Jewellery Guides / CIBJO Gemstone Commission Standard" [ref=e333]
+                - cell "Critical" [ref=e334]
+                - cell "2026-10-09" [ref=e336]
+                - cell "Dr. Arvind Swaminathan (Gemologist)" [ref=e337]
+              - row [ref=e338]:
+                - cell [ref=e339]:
+                  - button "Click to mark as non-compliant" [ref=e340] [cursor=pointer]
+                - 'cell "Rudraksha Consecration & Botanical Authenticity Verification of Elaeocarpus ganitrus botanical origin, Himalayan provenance, natural mukhi indentations, and sacred temple trust consecration affidavits. Category: Product Claims & Certs" [ref=e344]':
+                  - generic [ref=e345]: Rudraksha Consecration & Botanical Authenticity
+                  - generic [ref=e346]: Verification of Elaeocarpus ganitrus botanical origin, Himalayan provenance, natural mukhi indentations, and sacred temple trust consecration affidavits.
+                  - generic [ref=e347]: "Category: Product Claims & Certs"
+                - cell "Ayush & Botanical Heritage Verification Protocol" [ref=e348]
+                - cell "Medium" [ref=e349]
+                - cell "2026-10-06" [ref=e351]
+                - cell "K. Shastri (Temple Liaison)" [ref=e352]
+              - row [ref=e353]:
+                - cell [ref=e354]:
+                  - button "Click to mark as non-compliant" [ref=e355] [cursor=pointer]
+                - 'cell "Precious Metals Return Eligibility & Buyback Protocol Clear disclosure that market-linked bullion coins and bars are exempt from standard no-questions returns due to live rate volatility; lifetime buyback policy applies. Category: Returns & Disclosures" [ref=e359]':
+                  - generic [ref=e360]: Precious Metals Return Eligibility & Buyback Protocol
+                  - generic [ref=e361]: Clear disclosure that market-linked bullion coins and bars are exempt from standard no-questions returns due to live rate volatility; lifetime buyback policy applies.
+                  - generic [ref=e362]: "Category: Returns & Disclosures"
+                - cell "Consumer Protection (E-Commerce) Rules 2020, Rule 5(3)" [ref=e363]
+                - cell "Critical" [ref=e364]
+                - cell "2026-10-13" [ref=e366]
+                - cell "R. Kulkarni (Legal)" [ref=e367]
+              - row [ref=e368]:
+                - cell [ref=e369]:
+                  - button "Click to mark as non-compliant" [ref=e370] [cursor=pointer]
+                - 'cell "Cash-on-Delivery (COD) Prohibition on Bullion COD disabled across the platform for precious metals and items over ₹10,000 to comply with statutory anti-money laundering and armoured courier security rules. Category: Returns & Disclosures" [ref=e374]':
+                  - generic [ref=e375]: Cash-on-Delivery (COD) Prohibition on Bullion
+                  - generic [ref=e376]: COD disabled across the platform for precious metals and items over ₹10,000 to comply with statutory anti-money laundering and armoured courier security rules.
+                  - generic [ref=e377]: "Category: Returns & Disclosures"
+                - cell "Prevention of Money Laundering Act (PMLA) 2002 / RBI NBFC Guidelines" [ref=e378]
+                - cell "Critical" [ref=e379]
+                - cell "2026-10-01" [ref=e381]
+                - cell "Vikram Sharma (Super Admin)" [ref=e382]
+              - row [ref=e383]:
+                - cell [ref=e384]:
+                  - button "Click to mark as non-compliant" [ref=e385] [cursor=pointer]
+                - 'cell "DPDP Act 2023 Digital Consent & Preference Controls Explicit, itemized opt-in consent for marketing communications, WhatsApp dispatch updates, and transactional SMS. Instant consent withdrawal from customer dashboard. Category: Data Privacy & DPDP" [ref=e389]':
+                  - generic [ref=e390]: DPDP Act 2023 Digital Consent & Preference Controls
+                  - generic [ref=e391]: Explicit, itemized opt-in consent for marketing communications, WhatsApp dispatch updates, and transactional SMS. Instant consent withdrawal from customer dashboard.
+                  - generic [ref=e392]: "Category: Data Privacy & DPDP"
+                - cell "Digital Personal Data Protection Act (DPDP) 2023, Section 6" [ref=e393]
+                - cell "Critical" [ref=e394]
+                - cell "2026-10-14" [ref=e396]
+                - cell "Vikram Sharma (Super Admin)" [ref=e397]
+              - row [ref=e398]:
+                - cell [ref=e399]:
+                  - button "Click to mark as non-compliant" [ref=e400] [cursor=pointer]
+                - 'cell "Customer Data Retention & Immutable Audit Log Trail All admin staff access to customer KYC, phone records, and transaction histories is recorded in tamper-evident system audit log. Category: Data Privacy & DPDP" [ref=e404]':
+                  - generic [ref=e405]: Customer Data Retention & Immutable Audit Log Trail
+                  - generic [ref=e406]: All admin staff access to customer KYC, phone records, and transaction histories is recorded in tamper-evident system audit log.
+                  - generic [ref=e407]: "Category: Data Privacy & DPDP"
+                - cell "IT (Reasonable Security Practices) Rules 2011, Rule 5" [ref=e408]
+                - cell "Critical" [ref=e409]
+                - cell "2026-10-14" [ref=e411]
+                - cell "Vikram Sharma (Super Admin)" [ref=e412]
+        - generic [ref=e413]:
+          - generic [ref=e414]:
+            - generic [ref=e415]:
+              - heading "Statutory Document & Policy Version Records" [level=2] [ref=e421]
+              - paragraph [ref=e422]: Official legal charters, terms, privacy frameworks, and assay quality SOPs with approved version history.
+            - generic [ref=e423]: 6 Controlled Documents
+          - table [ref=e425]:
+            - rowgroup [ref=e426]:
+              - row [ref=e427]:
+                - columnheader "Document Title & Code" [ref=e428]
+                - columnheader "Version" [ref=e429]
+                - columnheader "Effective Date" [ref=e430]
+                - columnheader "Approved By" [ref=e431]
+                - columnheader "Status" [ref=e432]
+                - columnheader "Review Cycle" [ref=e433]
+                - columnheader "Actions" [ref=e434]
+            - rowgroup [ref=e435]:
+              - row [ref=e436]:
+                - cell "Master Terms of Service & Investor Agreement DOC-TOS-2026-V3 Incorporated dynamic rate-lock clauses (10-minute expiry) and armoured transit custody limits." [ref=e437]:
+                  - generic [ref=e438]: Master Terms of Service & Investor Agreement
+                  - generic [ref=e439]: DOC-TOS-2026-V3
+                  - generic [ref=e440]: Incorporated dynamic rate-lock clauses (10-minute expiry) and armoured transit custody limits.
+                - cell "v3.2.0" [ref=e441]
+                - cell "2026-10-01" [ref=e442]
+                - cell "R. Kulkarni (Chief Legal Counsel)" [ref=e443]
+                - cell "Effective" [ref=e444]
+                - cell "Bi-annual" [ref=e446]
+                - cell [ref=e447]:
+                  - button "Bump Version" [ref=e448] [cursor=pointer]
+              - row [ref=e453]:
+                - cell "Privacy Policy & DPDP Data Consent Charter DOC-DPDP-2026-V2 Aligned with DPDP Act 2023 notice requirements and customer consent retraction workflows." [ref=e454]:
+                  - generic [ref=e455]: Privacy Policy & DPDP Data Consent Charter
+                  - generic [ref=e456]: DOC-DPDP-2026-V2
+                  - generic [ref=e457]: Aligned with DPDP Act 2023 notice requirements and customer consent retraction workflows.
+                - cell "v2.1.0" [ref=e458]
+                - cell "2026-09-15" [ref=e459]
+                - cell "Vikram Sharma (Super Admin)" [ref=e460]
+                - cell "Effective" [ref=e461]
+                - cell "Quarterly" [ref=e463]
+                - cell [ref=e464]:
+                  - button "Bump Version" [ref=e465] [cursor=pointer]
+              - row [ref=e470]:
+                - cell "Precious Metals Return, Buyback & Cancellation Policy DOC-RET-2026-V4 Explicit disclosure regarding gold market price risk and non-applicability of standard e-commerce returns." [ref=e471]:
+                  - generic [ref=e472]: Precious Metals Return, Buyback & Cancellation Policy
+                  - generic [ref=e473]: DOC-RET-2026-V4
+                  - generic [ref=e474]: Explicit disclosure regarding gold market price risk and non-applicability of standard e-commerce returns.
+                - cell "v4.0.1" [ref=e475]
+                - cell "2026-10-05" [ref=e476]
+                - cell "S. Kulkarni (Finance Head)" [ref=e477]
+                - cell "Effective" [ref=e478]
+                - cell "Monthly" [ref=e480]
+                - cell [ref=e481]:
+                  - button "Bump Version" [ref=e482] [cursor=pointer]
+              - row [ref=e487]:
+                - cell "BIS Hallmark & Assay Quality Assurance Protocol DOC-QA-2026-V1 Mandatory 6-digit laser HUID scanning protocol prior to picking from high-security vault trays." [ref=e488]:
+                  - generic [ref=e489]: BIS Hallmark & Assay Quality Assurance Protocol
+                  - generic [ref=e490]: DOC-QA-2026-V1
+                  - generic [ref=e491]: Mandatory 6-digit laser HUID scanning protocol prior to picking from high-security vault trays.
+                - cell "v1.4.0" [ref=e492]
+                - cell "2026-08-20" [ref=e493]
+                - cell "Meera Nambiar (Assay QC)" [ref=e494]
+                - cell "Effective" [ref=e495]
+                - cell "Quarterly" [ref=e497]
+                - cell [ref=e498]:
+                  - button "Bump Version" [ref=e499] [cursor=pointer]
+              - row [ref=e504]:
+                - cell "Armoured Courier Fulfilment & Transit Insurance SOP DOC-LOG-2026-V2 Sequel and BVC courier SLA guidelines, tamper seal verification, and dual-OTP delivery verification." [ref=e505]:
+                  - generic [ref=e506]: Armoured Courier Fulfilment & Transit Insurance SOP
+                  - generic [ref=e507]: DOC-LOG-2026-V2
+                  - generic [ref=e508]: Sequel and BVC courier SLA guidelines, tamper seal verification, and dual-OTP delivery verification.
+                - cell "v2.3.0" [ref=e509]
+                - cell "2026-09-01" [ref=e510]
+                - cell "Deepak Patil (Warehouse Operations)" [ref=e511]
+                - cell "Effective" [ref=e512]
+                - cell "Bi-annual" [ref=e514]
+                - cell [ref=e515]:
+                  - button "Bump Version" [ref=e516] [cursor=pointer]
+              - row [ref=e521]:
+                - cell "Rudraksha & Gemstone Authenticity Certification Framework DOC-GEM-2026-V1 Scheduled for update upon finalization of new botanical DNA classification protocols." [ref=e522]:
+                  - generic [ref=e523]: Rudraksha & Gemstone Authenticity Certification Framework
+                  - generic [ref=e524]: DOC-GEM-2026-V1
+                  - generic [ref=e525]: Scheduled for update upon finalization of new botanical DNA classification protocols.
+                - cell "v1.2.0" [ref=e526]
+                - cell "2026-07-10" [ref=e527]
+                - cell "Dr. Arvind Swaminathan (Gemologist)" [ref=e528]
+                - cell "Pending Review" [ref=e529]
+                - cell "Annual" [ref=e531]
+                - cell [ref=e532]:
+                  - button "Bump Version" [ref=e533] [cursor=pointer]

@@ -1,0 +1,319 @@
+- generic [ref=f1e3]:
+  - banner [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "AURUM & CO" [ref=f1e6] [cursor=pointer]:
+        - /url: /admin
+      - generic [ref=f1e7]: Admin Console
+    - generic [ref=f1e9]:
+      - generic [ref=f1e12] [cursor=pointer]:
+        - checkbox "Demo Mode (60s Timeout)" [ref=f1e13]
+        - generic [ref=f1e14]: Demo Mode (60s Timeout)
+      - generic "Session auto-expires after 15m idle" [ref=f1e15]: 15:00
+      - generic [ref=f1e20]:
+        - generic [ref=f1e21]: "Role:"
+        - combobox "Switch administrative role" [ref=f1e22]:
+          - option "Super Admin" [selected]
+          - option "Pricing Officer"
+          - option "Catalogue Manager"
+          - option "Warehouse Custodian"
+          - option "Support Desk"
+          - option "Finance Officer"
+          - option "Auditor (Read-Only)"
+      - generic [ref=f1e23]:
+        - generic [ref=f1e24]: VS
+        - generic [ref=f1e25]:
+          - generic [ref=f1e26]: Vikram Sharma
+          - generic [ref=f1e27]: Principal Officer
+      - link "Store" [ref=f1e28] [cursor=pointer]:
+        - /url: /
+      - button "Sign out of Admin Console" [ref=f1e34]
+  - generic [ref=f1e38]:
+    - complementary [ref=f1e39]:
+      - generic [ref=f1e40]:
+        - generic [ref=f1e41]: Modules & Clearance
+        - generic [ref=f1e42]:
+          - generic [ref=f1e43]: Super Admin
+          - generic [ref=f1e44]: All Modules
+      - navigation [ref=f1e45]:
+        - link "Dashboard" [ref=f1e46] [cursor=pointer]:
+          - /url: /admin
+        - link "Rates and Pricing" [ref=f1e54] [cursor=pointer]:
+          - /url: /admin/rates
+        - link "Catalogue" [ref=f1e60] [cursor=pointer]:
+          - /url: /admin/catalogue
+        - link "Inventory & Quotes" [ref=f1e67] [cursor=pointer]:
+          - /url: /admin/inventory
+        - link "Orders & Payments" [ref=f1e80] [cursor=pointer]:
+          - /url: /admin/orders
+        - link "Customers & Support" [ref=f1e86] [cursor=pointer]:
+          - /url: /admin/customers
+        - link "Compliance & Legal" [ref=f1e94] [cursor=pointer]:
+          - /url: /admin/compliance
+        - link "Reports & Analytics" [ref=f1e100] [cursor=pointer]:
+          - /url: /admin/reports
+        - link "Roles & Permissions" [ref=f1e105] [cursor=pointer]:
+          - /url: /admin/roles
+        - link "Audit Log" [ref=f1e111] [cursor=pointer]:
+          - /url: /admin/audit
+        - link "Platform & Integrations" [ref=f1e117] [cursor=pointer]:
+          - /url: /admin/platform
+        - link "Settings" [ref=f1e123] [cursor=pointer]:
+          - /url: /admin/settings
+      - button "Re-Authenticate Maker-Checker" [ref=f1e130]:
+        - generic [ref=f1e131]: Re-Authenticate
+        - generic [ref=f1e136]: Maker-Checker
+    - main [ref=f1e137]:
+      - generic [ref=f1e138]:
+        - generic [ref=f1e139]:
+          - generic [ref=f1e140]:
+            - generic [ref=f1e141]:
+              - heading "Customer Directory & High-Value Intelligence" [level=1] [ref=f1e142]
+              - generic [ref=f1e143]: Phase 10
+            - paragraph [ref=f1e144]: Verified investor profiles, DPDP communication consent logs, order custody history, and fraud risk monitoring.
+          - generic [ref=f1e145]:
+            - generic [ref=f1e146]: 5 Registered Accounts
+            - generic [ref=f1e147]: 1 Flagged
+        - generic [ref=f1e148]:
+          - generic [ref=f1e150]:
+            - generic [ref=f1e151]:
+              - generic [ref=f1e152]: Investor Registry
+              - generic [ref=f1e159]: 5 of 5
+            - textbox "Search investor, email, phone, city..." [ref=f1e164]
+            - generic [ref=f1e165]:
+              - generic [ref=f1e166]: "Status:"
+              - button "All" [ref=f1e167] [cursor=pointer]
+              - button "Verified" [ref=f1e168] [cursor=pointer]
+              - button "Unverified" [ref=f1e169] [cursor=pointer]
+              - generic [ref=f1e170]: "Risk:"
+              - button "All" [ref=f1e171] [cursor=pointer]
+              - button "Clean" [ref=f1e172] [cursor=pointer]
+              - button "Flagged" [ref=f1e173] [cursor=pointer]
+            - generic [ref=f1e174]:
+              - generic [ref=f1e176] [cursor=pointer]:
+                - generic [ref=f1e177]:
+                  - generic [ref=f1e178]:
+                    - generic [ref=f1e179]: Vikramaditya Singhania
+                    - generic "KYC Verified" [ref=f1e180]
+                  - generic [ref=f1e184]: vikram.singhania@heritage.in
+                  - generic [ref=f1e185]:
+                    - generic [ref=f1e186]: +91 98200 11223
+                    - generic [ref=f1e187]: •
+                    - generic [ref=f1e188]: Mumbai
+                - generic [ref=f1e189]:
+                  - generic [ref=f1e190]: ₹4,85,000
+                  - generic [ref=f1e191]: 3 orders
+              - generic [ref=f1e193] [cursor=pointer]:
+                - generic [ref=f1e194]:
+                  - generic [ref=f1e195]:
+                    - generic [ref=f1e196]: Ananya Deshmukh
+                    - generic "KYC Verified" [ref=f1e197]
+                  - generic [ref=f1e201]: ananya.deshmukh@gmail.com
+                  - generic [ref=f1e202]:
+                    - generic [ref=f1e203]: +91 98450 44556
+                    - generic [ref=f1e204]: •
+                    - generic [ref=f1e205]: Bengaluru
+                - generic [ref=f1e206]:
+                  - generic [ref=f1e207]: ₹3,98,000
+                  - generic [ref=f1e208]: 2 orders
+              - generic [ref=f1e210] [cursor=pointer]:
+                - generic [ref=f1e211]:
+                  - generic [ref=f1e212]:
+                    - generic [ref=f1e213]: Rohit Khandelwal
+                    - generic "KYC Verified" [ref=f1e214]
+                  - generic [ref=f1e218]: rohit.khandelwal@jaipurjewels.com
+                  - generic [ref=f1e219]:
+                    - generic [ref=f1e220]: +91 94140 88990
+                    - generic [ref=f1e221]: •
+                    - generic [ref=f1e222]: Jaipur
+                - generic [ref=f1e223]:
+                  - generic [ref=f1e224]: ₹6,20,000
+                  - generic [ref=f1e225]: 4 orders
+              - generic [ref=f1e227] [cursor=pointer]:
+                - generic [ref=f1e228]:
+                  - generic [ref=f1e229]:
+                    - generic [ref=f1e230]: Dr. Meenakshi Sundaram
+                    - generic "KYC Verified" [ref=f1e231]
+                  - generic [ref=f1e235]: dr.meenakshi@apollo-health.org
+                  - generic [ref=f1e236]:
+                    - generic [ref=f1e237]: +91 98401 22334
+                    - generic [ref=f1e238]: •
+                    - generic [ref=f1e239]: Chennai
+                - generic [ref=f1e240]:
+                  - generic [ref=f1e241]: ₹19,800
+                  - generic [ref=f1e242]: 1 order
+              - generic [ref=f1e244] [cursor=pointer]:
+                - generic [ref=f1e245]:
+                  - generic [ref=f1e246]:
+                    - generic [ref=f1e247]: Siddharth Bhansali
+                    - generic [ref=f1e248]: Fraud Flag
+                  - generic [ref=f1e249]: sbhansali@venture.co
+                  - generic [ref=f1e250]:
+                    - generic [ref=f1e251]: +91 97110 99887
+                    - generic [ref=f1e252]: •
+                    - generic [ref=f1e253]: New Delhi
+                - generic [ref=f1e254]:
+                  - generic [ref=f1e255]: ₹0
+                  - generic [ref=f1e256]: 0 orders
+          - generic [ref=f1e257]:
+            - generic [ref=f1e258]:
+              - generic [ref=f1e259]:
+                - generic [ref=f1e260]:
+                  - generic [ref=f1e261]:
+                    - heading "Vikramaditya Singhania" [level=2] [ref=f1e262]
+                    - generic [ref=f1e263]: Verified Investor
+                  - generic [ref=f1e267]:
+                    - generic [ref=f1e268]:
+                      - text: "ID:"
+                      - strong [ref=f1e269]: cust-01
+                    - generic [ref=f1e270]: •
+                    - generic [ref=f1e271]: Customer since Jan 2026
+                - generic [ref=f1e272]:
+                  - button "Add Note" [ref=f1e273] [cursor=pointer]
+                  - button "Flag as Fraud" [ref=f1e276] [cursor=pointer]
+              - generic [ref=f1e280]:
+                - generic [ref=f1e281]:
+                  - generic [ref=f1e282]: Total Portfolio Value
+                  - generic [ref=f1e283]: ₹4,85,000
+                - generic [ref=f1e284]:
+                  - generic [ref=f1e285]: Completed Orders
+                  - generic [ref=f1e286]: "3"
+                - generic [ref=f1e287]:
+                  - generic [ref=f1e288]: Risk Status
+                  - generic [ref=f1e289]: Clean / Standing OK
+                - generic [ref=f1e290]:
+                  - generic [ref=f1e291]: Support Logs
+                  - generic [ref=f1e292]: 1 Tickets
+              - generic [ref=f1e293]:
+                - generic [ref=f1e294]:
+                  - generic [ref=f1e295]: Verified Contacts
+                  - generic [ref=f1e299]:
+                    - generic [ref=f1e300]:
+                      - generic [ref=f1e301]: "Email:"
+                      - generic [ref=f1e302]: vikram.singhania@heritage.in
+                    - generic [ref=f1e303]:
+                      - generic [ref=f1e304]: "Mobile Phone:"
+                      - generic [ref=f1e305]: +91 98200 11223
+                    - generic [ref=f1e306]:
+                      - generic [ref=f1e307]: "KYC Verification:"
+                      - generic [ref=f1e308]: Completed
+                - generic [ref=f1e309]:
+                  - generic [ref=f1e310]: Registered Destinations
+                  - generic [ref=f1e314]:
+                    - generic [ref=f1e315]:
+                      - generic [ref=f1e316]:
+                        - generic [ref=f1e317]: Home Address
+                        - generic [ref=f1e318]: Default
+                      - generic [ref=f1e319]: 72 Altamount Road, Cumballa Hill, Mumbai, Maharashtra - 400026
+                    - generic [ref=f1e320]:
+                      - generic [ref=f1e321]: Office Address
+                      - generic [ref=f1e323]: Heritage House, Nariman Point, Mumbai, Maharashtra - 400021
+              - generic [ref=f1e324]:
+                - generic [ref=f1e325]:
+                  - generic [ref=f1e326]: DPDP Act 2023 Digital Consent Audit
+                  - generic [ref=f1e330]: Click toggle to update customer records
+                - generic [ref=f1e331]:
+                  - generic [ref=f1e333] [cursor=pointer]:
+                    - generic [ref=f1e334]: Market Briefings
+                    - generic [ref=f1e335]: Weekly spot reports
+                  - generic [ref=f1e340] [cursor=pointer]:
+                    - generic [ref=f1e341]: SMS Notifications
+                    - generic [ref=f1e342]: OTP & dispatch alerts
+                  - generic [ref=f1e347] [cursor=pointer]:
+                    - generic [ref=f1e348]: WhatsApp Tracking
+                    - generic [ref=f1e349]: Live courier link & PDF
+            - generic [ref=f1e353]:
+              - generic [ref=f1e354]:
+                - heading "Custody Order History (2)" [level=3] [ref=f1e358]
+                - link "All Orders Queue" [ref=f1e359] [cursor=pointer]:
+                  - /url: /admin/orders
+              - table [ref=f1e365]:
+                - rowgroup [ref=f1e366]:
+                  - row [ref=f1e367]:
+                    - columnheader "Order Ref" [ref=f1e368]
+                    - columnheader "Date" [ref=f1e369]
+                    - columnheader "Items" [ref=f1e370]
+                    - columnheader "Amount" [ref=f1e371]
+                    - columnheader "Payment" [ref=f1e372]
+                    - columnheader "Custody Status" [ref=f1e373]
+                    - columnheader "Action" [ref=f1e374]
+                - rowgroup [ref=f1e375]:
+                  - row [ref=f1e376]:
+                    - cell "AUR-ORD-901" [ref=f1e377]
+                    - cell "08 Oct 2026" [ref=f1e378]
+                    - cell "24K (999.9) Pure Gold Investment Coin 10g (×1)" [ref=f1e379]
+                    - cell "₹1,39,947" [ref=f1e380]
+                    - cell "Success" [ref=f1e381]
+                    - cell "Delivered" [ref=f1e383]
+                    - cell [ref=f1e385]:
+                      - link [ref=f1e386] [cursor=pointer]:
+                        - /url: /admin/orders/ORD-2026-901
+                        - button "Fulfilment" [ref=f1e387]
+                  - row [ref=f1e389]:
+                    - cell "AUR-ORD-905" [ref=f1e390]
+                    - cell "14 Oct 2026" [ref=f1e391]
+                    - cell "22K (916) Royal Heritage Solid Curb Chain 18g (×1)" [ref=f1e392]
+                    - cell "₹2,46,520" [ref=f1e393]
+                    - cell "Success" [ref=f1e394]
+                    - cell "Payment confirmed" [ref=f1e396]
+                    - cell [ref=f1e398]:
+                      - link [ref=f1e399] [cursor=pointer]:
+                        - /url: /admin/orders/ORD-2026-905
+                        - button "Fulfilment" [ref=f1e400]
+            - generic [ref=f1e402]:
+              - generic [ref=f1e403]:
+                - heading "Internal Service & Order-Linked Notes" [level=3] [ref=f1e408]
+                - button "Add Note" [ref=f1e409] [cursor=pointer]
+              - generic [ref=f1e412]:
+                - generic [ref=f1e413]:
+                  - generic [ref=f1e414]:
+                    - generic [ref=f1e415]: Vikram Sharma (Super Admin)
+                    - generic [ref=f1e416]: 8/10/2026, 3:45:00 pm
+                  - paragraph [ref=f1e417]: Customer requested expedited vault release; verified direct RTGS bank confirmation.
+                  - generic [ref=f1e418]: "Linked to Order #ORD-2026-901"
+                - generic [ref=f1e419]:
+                  - generic [ref=f1e420]:
+                    - generic [ref=f1e421]: Meera Nambiar (Assay QC)
+                    - generic [ref=f1e422]: 8/10/2026, 8:50:00 pm
+                  - paragraph [ref=f1e423]: Security tamper seal verified intact prior to handover to Sequel air wing.
+                  - generic [ref=f1e424]: "Linked to Order #ORD-2026-901"
+                - generic [ref=f1e425]:
+                  - generic [ref=f1e426]: "Historical Advisory Notes:"
+                  - generic [ref=f1e427]: • High Net Worth investor in 24K bullion coins (50g/100g consignments).
+                  - generic [ref=f1e428]: • Prefers Sequel armoured delivery on weekdays between 10am - 2pm with prior OTP.
+            - generic [ref=f1e429]:
+              - generic [ref=f1e430]:
+                - heading "Customer Support & Consultation History (1)" [level=3] [ref=f1e434]
+                - button "Log Interaction" [ref=f1e435] [cursor=pointer]
+              - generic [ref=f1e439]:
+                - generic [ref=f1e440]:
+                  - generic [ref=f1e441]:
+                    - generic [ref=f1e442]: Phone Concierge
+                    - generic [ref=f1e443]: Armoured delivery schedule confirmation for 10g Gold Coin
+                  - generic [ref=f1e444]: Resolved
+                - paragraph [ref=f1e445]: Investor confirmed availability for Thursday delivery with photo ID ready.
+                - generic [ref=f1e446]:
+                  - generic [ref=f1e447]:
+                    - text: "Officer:"
+                    - strong [ref=f1e448]: Concierge Desk (Sneha)
+                  - generic [ref=f1e449]: "Logged: 9/10/2026, 4:30:00 pm"
+        - generic [ref=f1e450]:
+          - generic [ref=f1e451]:
+            - 'heading "TAGGED PROPOSED: Enterprise Customer Intelligence & Concierge CRM" [level=4] [ref=f1e456]'
+            - generic [ref=f1e457]: Roadmap Concept
+          - paragraph [ref=f1e458]: "The following modules are planned for subsequent expansion to serve high-net-worth bullion investors and corporate gifting accounts:"
+          - generic [ref=f1e459]:
+            - generic [ref=f1e460]:
+              - generic [ref=f1e461]: Segmentation & CLV
+              - generic [ref=f1e465]: Predictive lifetime value, RFM scoring & churn models.
+            - generic [ref=f1e466]:
+              - generic [ref=f1e467]: VIP Investor Tier Tags
+              - generic [ref=f1e471]: Sovereign Bullion Club, Diamond HNW & Corporate Trust tiers.
+            - generic [ref=f1e472]:
+              - generic [ref=f1e473]: Omnichannel Live Chat
+              - generic [ref=f1e476]: In-app encrypted chat with designated bullion desk dealers.
+            - generic [ref=f1e477]:
+              - generic [ref=f1e478]: Disputes & SLA Monitor
+              - generic [ref=f1e481]: Automated 4-hour SLA timers for payment decline reconciliations.
+            - generic [ref=f1e482]:
+              - generic [ref=f1e483]: Knowledge Base & AI
+              - generic [ref=f1e487]: Precious metals taxation FAQ, HUID lookups & assay guides.

@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FFFBF3;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F8EFD9;
+  --color-gold: #C9A24B;
+  --color-gold-soft: #F1E3BD;
+  --color-heading: #5A4630;
+  --color-body: #7A6A55;
+  --color-border: #EADFC8;
+  --color-rose-soft: #F3D9D2;
+  --color-sage-soft: #DCE8D5;
+  --color-amber-soft: #FBE7B8;
+  --color-coral-soft: #F7D4CF;
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --shadow-soft: 0 4px 20px rgba(90, 70, 48, 0.08);
+  --shadow-card: 0 2px 12px rgba(90, 70, 48, 0.06);
+  --radius-card: 12px;
+}
+
+:root {
+  --bg: #FFFBF3;
+  --surface: #FFFFFF;
+  --surface-alt: #F8EFD9;
+  --gold: #C9A24B;
+  --gold-soft: #F1E3BD;
+  --heading: #5A4630;
+  --body: #7A6A55;
+  --border: #EADFC8;
+  --rose-soft: #F3D9D2;
+  --sage-soft: #DCE8D5;
+  --amber-soft: #FBE7B8;
+  --coral-soft: #F7D4CF;
+}
+
+body {
+  background-color: #FFFBF3;
+  color: #7A6A55;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  color: #5A4630;
+  letter-spacing: -0.01em;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes celestial-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes celestial-float {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-8px) scale(1.02);
+  }
+}
+
+.animate-celestial-spin {
+  animation: celestial-spin 35s linear infinite;
+}
+
+.animate-celestial-spin-reverse {
+  animation: celestial-spin 50s linear infinite reverse;
+}
+
+.animate-celestial-float {
+  animation: celestial-float 6s ease-in-out infinite;
+}
