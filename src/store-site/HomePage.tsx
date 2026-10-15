@@ -224,7 +224,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#3E2F20] leading-[1.18] tracking-tight">
-            Timeless Purity in Precious<br className="hidden sm:inline" />
+            Timeless Purity in Precious <br className="hidden sm:inline" />
             Metals & Sacred Artefacts
           </h1>
 

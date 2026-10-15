@@ -905,7 +905,8 @@ export const AdminOrderDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[450px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#F8EFD9] text-[#5A4630] border-b border-[#EADFC8]">
                 <th className="py-2 px-3">SKU</th>
@@ -925,6 +926,7 @@ export const AdminOrderDetailPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
 
           <div className="pt-3 border-t border-[#EADFC8] flex justify-between items-center text-[11px] text-[#7A6A55]">
             <div>Assayer Signature: <strong>V. Sharma (Principal Vault Officer)</strong></div>

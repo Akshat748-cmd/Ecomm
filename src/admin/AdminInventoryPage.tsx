@@ -847,7 +847,8 @@ export const AdminInventoryPage: React.FC = () => {
           </Card>
 
           <Card className="overflow-hidden border-[#EADFC8] bg-white">
-            <table className="w-full text-left text-xs border-collapse">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[700px] text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-[#F8EFD9] text-[#5A4630] border-b border-[#EADFC8]">
                   <th className="py-3 px-4 font-semibold">Quote ID</th>
@@ -921,6 +922,7 @@ export const AdminInventoryPage: React.FC = () => {
                 )}
               </tbody>
             </table>
+            </div>
           </Card>
         </div>
       )}
@@ -939,7 +941,8 @@ export const AdminInventoryPage: React.FC = () => {
             </span>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[700px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FFFBF3] text-[#7A6A55] border-b border-[#EADFC8]">
                 <th className="py-2.5 px-4 font-semibold">Timestamp</th>
@@ -1003,6 +1006,7 @@ export const AdminInventoryPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
 

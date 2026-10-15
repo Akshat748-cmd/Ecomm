@@ -811,7 +811,8 @@ export const AdminCataloguePage: React.FC = () => {
             </div>
 
             <Card className="overflow-hidden border-[#EADFC8] bg-white">
-              <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[650px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-[#F8EFD9] text-[#5A4630] border-b border-[#EADFC8]">
                     <th className="py-2.5 px-4 font-semibold">Supplier Name</th>
@@ -850,6 +851,7 @@ export const AdminCataloguePage: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </Card>
           </div>
 
@@ -877,7 +879,8 @@ export const AdminCataloguePage: React.FC = () => {
             </div>
 
             <Card className="overflow-hidden border-[#EADFC8] bg-white">
-              <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[750px] text-left text-xs border-collapse">
                 <thead>
                   <tr className="bg-[#F8EFD9] text-[#5A4630] border-b border-[#EADFC8]">
                     <th className="py-2.5 px-4 font-semibold">PO / Invoice #</th>
@@ -927,6 +930,7 @@ export const AdminCataloguePage: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             </Card>
           </div>
         </div>

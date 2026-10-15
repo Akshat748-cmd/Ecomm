@@ -547,7 +547,8 @@ export const AdminOrdersPage: React.FC = () => {
             </span>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[650px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FFFBF3] text-[#7A6A55] border-b border-[#EADFC8]">
                 <th className="py-2.5 px-4 font-semibold">Order Reference</th>
@@ -601,6 +602,7 @@ export const AdminOrdersPage: React.FC = () => {
               )}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
 
@@ -621,7 +623,8 @@ export const AdminOrdersPage: React.FC = () => {
             <Badge variant="amber" size="sm">Dual-Auth Required for Refunds</Badge>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[650px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FFFBF3] text-[#7A6A55] border-b border-[#EADFC8]">
                 <th className="py-2.5 px-4 font-semibold">Order #</th>
@@ -714,6 +717,7 @@ export const AdminOrdersPage: React.FC = () => {
               )}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
 
@@ -736,7 +740,8 @@ export const AdminOrdersPage: React.FC = () => {
             </span>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[700px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FFFBF3] text-[#7A6A55] border-b border-[#EADFC8]">
                 <th className="py-2.5 px-4 font-semibold">Transaction ID</th>
@@ -805,6 +810,7 @@ export const AdminOrdersPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
 
@@ -827,7 +833,8 @@ export const AdminOrdersPage: React.FC = () => {
             </span>
           </div>
 
-          <table className="w-full text-left text-xs border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[650px] text-left text-xs border-collapse">
             <thead>
               <tr className="bg-[#FFFBF3] text-[#7A6A55] border-b border-[#EADFC8]">
                 <th className="py-2.5 px-4 font-semibold">Claim ID</th>
@@ -872,6 +879,7 @@ export const AdminOrdersPage: React.FC = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
 
