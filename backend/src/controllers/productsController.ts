@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 
 export async function listProducts(req: Request, res: Response): Promise<void> {
   const { category, q } = req.query;
@@ -11,7 +11,7 @@ export async function listProducts(req: Request, res: Response): Promise<void> {
 }
 
 export async function getProductBySlug(req: Request, res: Response): Promise<void> {
-  const { slug } = req.params;
+  const slug = req.params.slug as string;
   const product = await db.getProductBySlug(slug);
   if (!product) {
     res.status(404).json({ error: 'NotFound', message: `Product with slug '${slug}' not found` });
@@ -21,7 +21,7 @@ export async function getProductBySlug(req: Request, res: Response): Promise<voi
 }
 
 export async function getProductById(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const product = await db.getProductById(id);
   if (!product) {
     res.status(404).json({ error: 'NotFound', message: `Product with id '${id}' not found` });
@@ -68,7 +68,7 @@ export async function createProduct(req: Request, res: Response): Promise<void> 
 }
 
 export async function updateProduct(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const existing = await db.getProductById(id);
   if (!existing) {
     res.status(404).json({ error: 'NotFound', message: `Product '${id}' not found` });
@@ -83,7 +83,7 @@ export async function updateProduct(req: Request, res: Response): Promise<void> 
 }
 
 export async function verifyCertificate(req: Request, res: Response): Promise<void> {
-  const { certNo } = req.params;
+  const certNo = req.params.certNo as string;
   const cert = await db.getCertificate(certNo);
   if (!cert) {
     res.status(404).json({

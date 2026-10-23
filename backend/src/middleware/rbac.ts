@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { AdminRole } from '../../src/data/types';
+import type { AdminRole } from '../types';
 
 export function requireRole(...allowedRoles: AdminRole[]) {
   return (req: Request, res: Response, next: NextFunction): void => {

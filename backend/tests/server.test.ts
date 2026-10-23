@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-import { createApp } from '../app';
-import { db } from '../db/database';
-import { config } from '../config';
+import { createApp } from '../src/app';
+import { db } from '../src/database/database';
+import { config } from '../src/config';
 
 describe('Precious Commerce Platform — Backend Foundation & Production Business Rules', () => {
   let app: any;

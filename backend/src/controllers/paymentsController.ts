@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import crypto from 'crypto';
-import { db } from '../db/database';
+import { db } from '../database/database';
 import { config } from '../config';
 
 export async function createPaymentSession(req: Request, res: Response): Promise<void> {

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 
 export async function getComplianceChecklist(_req: Request, res: Response): Promise<void> {
   const checklist = await db.getComplianceChecklist();
@@ -7,7 +7,7 @@ export async function getComplianceChecklist(_req: Request, res: Response): Prom
 }
 
 export async function toggleComplianceItem(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { isCompliant } = req.body;
 
   if (isCompliant === undefined) {

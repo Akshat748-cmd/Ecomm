@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 
 export async function submitEnquiry(req: Request, res: Response): Promise<void> {
   const {
@@ -50,7 +50,7 @@ export async function listEnquiries(_req: Request, res: Response): Promise<void>
 }
 
 export async function generateQuote(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { unitPrice, customizationFee, packagingFee, paymentTerms, validDays } = req.body;
 
   const enquiry = (await db.getCorporateEnquiries()).find((e) => e.id === id);
@@ -87,7 +87,7 @@ export async function generateQuote(req: Request, res: Response): Promise<void> 
 }
 
 export async function approveQuote(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { approvedByClient, remarks } = req.body;
 
   const actor = req.user ? req.user.name : (approvedByClient || 'Client Executive');
@@ -100,7 +100,7 @@ export async function approveQuote(req: Request, res: Response): Promise<void> {
 }
 
 export async function importRecipients(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { recipients } = req.body;
 
   if (!recipients || !Array.isArray(recipients) || recipients.length === 0) {

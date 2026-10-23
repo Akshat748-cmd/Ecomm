@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 import { config } from '../config';
-import type { OrderStatus, OrderItem } from '../../src/data/types';
+import type { OrderStatus, OrderItem } from '../types';
 
 export async function createOrder(req: Request, res: Response): Promise<void> {
   const {
@@ -118,7 +118,7 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
 }
 
 export async function getOrder(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const order = await db.getOrderById(id);
   if (!order) {
     res.status(404).json({ error: 'NotFound', message: `Order '${id}' not found` });
@@ -133,7 +133,7 @@ export async function listOrders(_req: Request, res: Response): Promise<void> {
 }
 
 export async function updateOrderStatus(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { status, note } = req.body;
 
   if (!status) {
@@ -153,7 +153,7 @@ export async function updateOrderStatus(req: Request, res: Response): Promise<vo
 }
 
 export async function attachInvoice(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { invoiceNumber, invoiceUrl } = req.body;
 
   if (!invoiceNumber) {

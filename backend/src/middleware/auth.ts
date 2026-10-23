@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import type { AdminRole } from '../../src/data/types';
+import type { AdminRole } from '../types';
 
 export interface AuthenticatedUser {
   id: string;

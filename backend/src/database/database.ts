@@ -1,4 +1,4 @@
-import { MOCK_PRODUCTS } from '../../src/data/mockProducts';
+import { MOCK_PRODUCTS } from './mockProducts';
 import {
   INITIAL_RATES,
   INITIAL_PRICING_CONFIG,
@@ -11,7 +11,7 @@ import {
   MOCK_COMPLIANCE_CHECKLIST,
   MOCK_DOCUMENT_VERSIONS,
   MOCK_CERTIFICATES,
-} from '../../src/data/mockData';
+} from './mockData';
 import type {
   Product,
   Order,
@@ -28,7 +28,7 @@ import type {
   InventoryLog,
   OrderStatus,
   AdminRole,
-} from '../../src/data/types';
+} from '../types';
 import bcrypt from 'bcryptjs';
 
 export interface AdminUserRecord {

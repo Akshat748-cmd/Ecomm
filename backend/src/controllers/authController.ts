@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { db } from '../db/database';
+import { db } from '../database/database';
 import { config } from '../config';
 
 export async function login(req: Request, res: Response): Promise<void> {
@@ -66,7 +66,7 @@ export async function verifyMfa(req: Request, res: Response): Promise<void> {
       role: user.role,
     },
     config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
+    { expiresIn: config.jwtExpiresIn as any }
   );
 
   db.addAuditLog(user.name, 'Security', `Officer Authenticated with Dual-Factor MFA (${user.role})`, '', 'Session Issued', req.ip);

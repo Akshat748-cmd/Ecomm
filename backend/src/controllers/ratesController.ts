@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 
 export async function getRates(_req: Request, res: Response): Promise<void> {
   const data = await db.getRates();
@@ -30,7 +30,7 @@ export async function proposeRateOverride(req: Request, res: Response): Promise<
 }
 
 export async function resolveRateOverride(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { decision, password } = req.body;
 
   if (!decision || !['Approved', 'Rejected'].includes(decision)) {

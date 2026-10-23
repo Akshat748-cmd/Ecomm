@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { db } from '../db/database';
+import { db } from '../database/database';
 
 export async function lockQuote(req: Request, res: Response): Promise<void> {
   const { productId, quantity, customerId } = req.body;
@@ -29,7 +29,7 @@ export async function lockQuote(req: Request, res: Response): Promise<void> {
 }
 
 export async function getQuote(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const quote = await db.getQuote(id);
   if (!quote) {
     res.status(404).json({ error: 'NotFound', message: `Quote '${id}' not found` });
@@ -45,7 +45,7 @@ export async function getQuote(req: Request, res: Response): Promise<void> {
 }
 
 export async function requote(req: Request, res: Response): Promise<void> {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const oldQuote = await db.getQuote(id);
   if (!oldQuote) {
     res.status(404).json({ error: 'NotFound', message: `Quote '${id}' not found` });
