@@ -94,6 +94,11 @@ export const ProductPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [activeQuote]);
 
+  const crossSellProducts = useMemo(() => {
+    if (!product) return [];
+    return products.filter((p) => p.id !== product.id).slice(0, 3);
+  }, [products, product]);
+
   if (!product) {
     return (
       <div className="py-16 text-center space-y-4 max-w-md mx-auto">
@@ -109,10 +114,6 @@ export const ProductPage: React.FC = () => {
   }
 
   const isWishlisted = wishlist.includes(product.id);
-
-  const crossSellProducts = useMemo(() => {
-    return products.filter((p) => p.id !== product.id).slice(0, 3);
-  }, [products, product]);
   const livePriceCalc = calculatePrice(product, rates, pricingConfig);
   const availableStock = product.stock - product.reserved;
   const isQuoteExpired = activeQuote && (activeQuote.status === 'Expired' || remainingSeconds <= 0);
