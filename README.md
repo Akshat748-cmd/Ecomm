@@ -51,50 +51,7 @@ Precious-Commerce-Platform/
 
 ---
 
-## 3. Environment Configuration
-
-### Frontend (`frontend/.env`)
-Create `frontend/.env` (or copy from `frontend/.env.example`):
-```env
-VITE_API_URL=/api
-VITE_PORT=5173
-```
-
-### Backend (`backend/.env`)
-Create `backend/.env` (or copy from `backend/.env.example`):
-```env
-PORT=3001
-NODE_ENV=development
-API_PREFIX=/api
-
-# Relational Database URL
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/precious_commerce
-
-# JWT Authentication
-JWT_SECRET=super_secure_development_secret_32_chars_min_precious_metals_2026
-JWT_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
-
-# Bullion Feed Settings
-MCX_API_URL=https://api.example.com/mcx/live-rates
-LBMA_API_URL=https://api.example.com/lbma/live-rates
-RATE_STALE_THRESHOLD_SECONDS=20
-
-# Payment Gateway (Sandbox)
-PAYMENT_GATEWAY_PROVIDER=razorpay_sandbox
-PAYMENT_GATEWAY_KEY_ID=rzp_test_placeholder_key
-PAYMENT_GATEWAY_KEY_SECRET=rzp_test_placeholder_secret
-PAYMENT_WEBHOOK_SECRET=whsec_test_hmac_secret_placeholder
-
-# Statutory & Compliance
-PMLA_PAN_THRESHOLD_INR=200000
-GST_RATE_BULLION=0.03
-GSTIN_COMPANY=27AABCP1234F1Z8
-```
-
----
-
-## 4. Installation
+## 3. Installation
 
 Install all dependencies across the monorepo from the root:
 ```bash
@@ -103,7 +60,7 @@ npm install
 
 ---
 
-## 5. Development Workflow
+## 4. Development Workflow
 
 ### Option A: Run from Root using Workspaces
 - **Start Backend API** (`http://localhost:3001`):
@@ -131,7 +88,7 @@ npm install
 
 ---
 
-## 6. Running Tests
+## 5. Running Tests
 
 - **Run All Tests (Frontend + Backend)**:
   ```bash
@@ -148,7 +105,7 @@ npm install
 
 ---
 
-## 7. Production Build & Linting
+## 6. Production Build & Linting
 
 - **Build Frontend Bundle**:
   ```bash
