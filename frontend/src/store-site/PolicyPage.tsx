@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import { useAppStore } from '../store';
 import { useSEO } from '../lib/useSEO';
 import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
+import { formatFullDateTime } from '../lib/pricing';
 import {
   ShieldCheck,
   ChevronRight,
@@ -15,17 +17,56 @@ import {
   Truck,
   CheckCircle2,
   RotateCcw,
+  Send,
+  HelpCircle,
 } from 'lucide-react';
+import type { SupportTicket } from '../data/types';
 
 export const PolicyPage: React.FC = () => {
   const location = useLocation();
   const path = location.pathname;
+
+  const {
+    orders,
+    supportTickets,
+    authenticatedCustomer,
+    createSupportTicket,
+  } = useAppStore();
 
   // FAQ Accordion state
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   // Contact form state
   const [contactSubmitted, setContactSubmitted] = useState(false);
+
+  // Support Ticket Form State
+  const [selectedOrderId, setSelectedOrderId] = useState<string>(orders[0]?.id || '');
+  const [ticketIssueType, setTicketIssueType] = useState<SupportTicket['issueType']>('Delivery_Delay');
+  const [ticketPriority, setTicketPriority] = useState<SupportTicket['priority']>('High');
+  const [ticketDesc, setTicketDesc] = useState('');
+  const [ticketAttachment, setTicketAttachment] = useState<string | null>(null);
+  const [ticketSuccess, setTicketSuccess] = useState<SupportTicket | null>(null);
+
+  const handleSupportTicketSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ticketDesc.trim()) return;
+
+    const newTicket = createSupportTicket({
+      orderId: selectedOrderId || undefined,
+      customerId: authenticatedCustomer?.id || 'cust-01',
+      customerName: authenticatedCustomer?.name || 'Vikramaditya Singhania',
+      issueType: ticketIssueType,
+      subject: `${ticketIssueType.replace(/_/g, ' ')} Inquiry: ${selectedOrderId || 'Account'}`,
+      message: ticketDesc.trim(),
+      priority: ticketPriority,
+      slaHours: ticketPriority === 'High' ? 4 : 24,
+      assignee: 'Concierge Desk Lead (Meera)',
+      attachments: ticketAttachment ? [ticketAttachment] : undefined,
+    });
+
+    setTicketSuccess(newTicket);
+    setTicketDesc('');
+  };
 
   const getPolicyContent = () => {
     switch (path) {
@@ -71,13 +112,13 @@ export const PolicyPage: React.FC = () => {
         return {
           title: 'Privacy & Data Protection Policy',
           category: 'Statutory Compliance',
-          metaDesc: 'Digital personal data protection policy detailing customer consent, encryption, and KYC security.',
+          metaDesc: 'Digital personal data protection policy detailing customer consent, encryption, and KYC security under DPDP Act 2023.',
           content: (
             <div className="space-y-6 text-xs text-[#7A6A55] leading-relaxed">
               <section className="space-y-2">
                 <h2 className="font-serif text-lg font-bold text-[#5A4630]">1. Data Collection & Purpose Limitation</h2>
                 <p>
-                  AURUM & CO respects customer confidentiality under the Digital Personal Data Protection Act (DPDPA), 2023. We collect only requisite delivery addresses, phone numbers for OTP dispatch, and PAN records where legally mandated for high-value transactions exceeding statutory thresholds.
+                  AURUM & CO respects customer confidentiality under the Digital Personal Data Protection Act (DPDP Act), 2023. We collect only requisite delivery addresses, phone numbers for courier OTP verification, and PAN records where legally mandated for high-value transactions exceeding ₹2,00,000 under Rule 114B.
                 </p>
               </section>
 
@@ -125,6 +166,13 @@ export const PolicyPage: React.FC = () => {
                   Metro and tier-1 destinations are delivered within 2–4 business days. Certain remote postal zones (such as test pincodes starting with digit 9) are designated outside the armoured perimeter and cannot be serviced.
                 </p>
               </section>
+
+              <section className="space-y-2">
+                <h2 className="font-serif text-lg font-bold text-[#5A4630]">4. Address Modification Lock After Dispatch</h2>
+                <p>
+                  Under underwriting transit mandates, consignment destination addresses are permanently locked once an order transitions to Dispatched. Delivery rerouting is strictly prohibited in-transit to prevent diversion and insurance invalidation.
+                </p>
+              </section>
             </div>
           ),
         };
@@ -136,36 +184,69 @@ export const PolicyPage: React.FC = () => {
           metaDesc: 'Transparent returns guidelines, bullion buyback policies, and COD non-applicability notes.',
           content: (
             <div className="space-y-6 text-xs text-[#7A6A55] leading-relaxed">
-              {/* Highlight Client Notes */}
+              {/* Statutory Policy Highlights */}
               <div className="p-4 bg-[#F8EFD9] border border-[#C9A24B] rounded-xl space-y-1.5 text-[#5A4630]">
                 <div className="flex items-center gap-1.5 font-bold">
                   <ShieldCheck className="w-4 h-4 text-[#C9A24B]" />
-                  <span>Key Policy Notice (Client Notes)</span>
+                  <span>Statutory Policy Notice & Client Governance</span>
                 </div>
                 <div className="text-xs space-y-1 font-medium">
-                  <p>• <strong>COD is not applicable:</strong> Cash on Delivery is strictly excluded for precious metals and jewellery.</p>
-                  <p>• <strong>Lifetime buyback: check policies:</strong> Bullion return and buyback terms are currently being finalised under statutory legal review.</p>
+                  <p>• <strong>Cash on Delivery (COD) is not applicable:</strong> COD is strictly excluded for precious metals and certified jewellery.</p>
+                  <p>• <strong>Lifetime Buyback Policy:</strong> Bullion bars and coins are eligible for transparent buyback at current live spot market rates minus refining melts.</p>
+                  <p>• <strong>Custom Laser Inscriptions:</strong> Personalized articles with custom engravings are non-returnable under statutory consumer protection rules.</p>
                 </div>
               </div>
 
-              <section className="space-y-2">
-                <h2 className="font-serif text-lg font-bold text-[#5A4630]">1. 7-Day Inspection for Jewellery & Gemstones</h2>
-                <p>
-                  Certified gemstones, sacred Rudraksha malas, and fine gold chains carry an unconditional 7-day inspection and exchange period provided the article is returned in original unmounted condition with laboratory certificates and tamper tags intact.
-                </p>
-              </section>
+              {/* Statutory Eligibility Matrix */}
+              <div className="space-y-3 pt-2">
+                <h2 className="font-serif text-base font-bold text-[#5A4630]">
+                  Category Return & Buyback Eligibility Matrix
+                </h2>
 
-              <section className="space-y-2">
-                <h2 className="font-serif text-lg font-bold text-[#5A4630]">2. Bullion Coins & Cast Bars Policy</h2>
-                <p>
-                  Because bullion prices are linked directly to fluctuating international spot commodities, standard e-commerce cancellation does not apply to open market fluctuations once minted. Sealed assay cards must remain unopened for buyback inspection.
-                </p>
-              </section>
+                <div className="border border-[#EADFC8] rounded-xl overflow-hidden bg-white">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-[#FFFBF3] border-b border-[#EADFC8] text-[#5A4630] font-semibold">
+                        <th className="p-3">Category</th>
+                        <th className="p-3">Return Window</th>
+                        <th className="p-3">Condition & Terms</th>
+                        <th className="p-3">Refund / Settlement</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#EADFC8]">
+                      <tr>
+                        <td className="p-3 font-semibold text-[#5A4630]">24K / 22K Gold Bullion & Silver Coins</td>
+                        <td className="p-3 text-[#8C2E24] font-medium">Non-Returnable (Open market rule)</td>
+                        <td className="p-3 text-[#7A6A55]">Eligible for <strong>Lifetime Buyback</strong> at live spot rates. Assayer blister must be intact.</td>
+                        <td className="p-3 text-[#5A4630]">NEFT/RTGS to source account within 3 days</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-[#5A4630]">Custom Engraved & Personalized Gifts</td>
+                        <td className="p-3 text-[#8C2E24] font-medium">Non-Returnable</td>
+                        <td className="p-3 text-[#7A6A55]">Bespoke engraved text is permanent. Replaced only if assay defect is proven.</td>
+                        <td className="p-3 text-[#7A6A55]">Replacement of defective component</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-[#5A4630]">Fine Jewellery & Sacred Malas</td>
+                        <td className="p-3 text-[#2D5A27] font-medium">7-Day Inspection Period</td>
+                        <td className="p-3 text-[#7A6A55]">Original unmounted condition with unbroken security seal and lab cert.</td>
+                        <td className="p-3 text-[#5A4630]">100% refund to original payment instrument</td>
+                      </tr>
+                      <tr>
+                        <td className="p-3 font-semibold text-[#5A4630]">Certified Loose Gemstones</td>
+                        <td className="p-3 text-[#2D5A27] font-medium">7-Day Inspection Period</td>
+                        <td className="p-3 text-[#7A6A55]">Must match GIA/IGI laboratory weight and dimensions upon return assay.</td>
+                        <td className="p-3 text-[#5A4630]">100% refund to original payment instrument</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-              <section className="space-y-2">
-                <h2 className="font-serif text-lg font-bold text-[#5A4630]">3. Refund Processing & Method</h2>
+              <section className="space-y-2 pt-2">
+                <h2 className="font-serif text-lg font-bold text-[#5A4630]">Refund Processing & Reconciliation</h2>
                 <p>
-                  Approved refunds are credited directly to the original bank source account via NEFT/RTGS within 3–5 working days following laboratory assay verification.
+                  Approved refunds are credited directly to the original bank source account via NEFT/RTGS within 3–5 working days following laboratory assay verification. Cash refunds are strictly prohibited under financial transparency mandates.
                 </p>
               </section>
             </div>
@@ -413,11 +494,12 @@ export const PolicyPage: React.FC = () => {
       case '/support':
       default:
         return {
-          title: 'Customer Service & Support Center',
+          title: 'Customer Service & Concierge Support Center',
           category: 'Customer Care',
           metaDesc: 'Help center for order status, shipment tracking, certificate verification, and returns.',
           content: (
-            <div className="space-y-6 text-xs text-[#7A6A55] leading-relaxed">
+            <div className="space-y-8 text-xs text-[#7A6A55] leading-relaxed">
+              {/* Top Quick Links */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-5 bg-white border border-[#EADFC8] rounded-xl space-y-2 text-center">
                   <Truck className="w-7 h-7 text-[#C9A24B] mx-auto" />
@@ -437,7 +519,152 @@ export const PolicyPage: React.FC = () => {
                   <RotateCcw className="w-7 h-7 text-[#C9A24B] mx-auto" />
                   <h3 className="font-serif font-bold text-sm text-[#5A4630]">Returns & Exchanges</h3>
                   <p className="text-[11px] text-[#7A6A55]">Submit return requests or request buyback evaluation.</p>
-                  <Link to="/account" className="text-[#C9A24B] hover:underline block pt-1 font-semibold">Return Request Form →</Link>
+                  <Link to="/returns" className="text-[#C9A24B] hover:underline block pt-1 font-semibold">Read Return Matrix →</Link>
+                </div>
+              </div>
+
+              {/* Support Ticket Creation Form */}
+              <Card variant="surface" className="p-6 sm:p-8 border-[#EADFC8] space-y-6">
+                <div className="flex items-center justify-between pb-3 border-b border-[#EADFC8]">
+                  <span className="font-serif text-lg font-bold text-[#5A4630] flex items-center gap-2">
+                    <HelpCircle className="w-5 h-5 text-[#C9A24B]" />
+                    Raise Formal Concierge Support Ticket
+                  </span>
+                  <Badge variant="sage" size="sm">4-Hour SLA Response</Badge>
+                </div>
+
+                {ticketSuccess ? (
+                  <div className="p-5 bg-[#DCE8D5] border border-[#A4C997] rounded-xl space-y-2 text-[#2D5A27]">
+                    <div className="flex items-center gap-2 font-bold text-sm">
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Ticket #{ticketSuccess.ticketNumber} Raised Successfully</span>
+                    </div>
+                    <p className="text-xs">
+                      Category: <strong>{ticketSuccess.issueType.replace('_', ' ')}</strong> • Priority: <strong>{ticketSuccess.priority}</strong>
+                    </p>
+                    <p className="text-xs">
+                      Assigned to: <strong>{ticketSuccess.assignee}</strong>. You will receive an SMS and email update regarding resolution progress.
+                    </p>
+                    <Button variant="secondary" size="sm" onClick={() => setTicketSuccess(null)}>
+                      Submit Another Ticket
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSupportTicketSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-[#5A4630] font-medium mb-1">Associated Order ID</label>
+                        <select
+                          value={selectedOrderId}
+                          onChange={(e) => setSelectedOrderId(e.target.value)}
+                          className="w-full px-3 py-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+                        >
+                          <option value="">None / General Pre-Sale</option>
+                          {orders.map((o) => (
+                            <option key={o.id} value={o.id}>
+                              {o.orderNumber} ({o.status})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[#5A4630] font-medium mb-1">Issue Category</label>
+                        <select
+                          value={ticketIssueType}
+                          onChange={(e) => setTicketIssueType(e.target.value as any)}
+                          className="w-full px-3 py-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+                        >
+                          <option value="Delivery_Delay">Transit & Courier Tracking</option>
+                          <option value="Damage">Damaged Box / Tampered Seal</option>
+                          <option value="Return">Return or Buyback Request</option>
+                          <option value="Cancellation">Cancellation / Payment Hold</option>
+                          <option value="General">Assay or General Inquiry</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[#5A4630] font-medium mb-1">Priority Level</label>
+                        <select
+                          value={ticketPriority}
+                          onChange={(e) => setTicketPriority(e.target.value as any)}
+                          className="w-full px-3 py-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+                        >
+                          <option value="High">High (Transit or Tamper Issue - 4h SLA)</option>
+                          <option value="Medium">Medium (General Query - 24h SLA)</option>
+                          <option value="Low">Low (Feedback / Archive)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[#5A4630] font-medium mb-1">Detailed Description of Concern</label>
+                      <textarea
+                        value={ticketDesc}
+                        onChange={(e) => setTicketDesc(e.target.value)}
+                        required
+                        rows={4}
+                        placeholder="Please describe the issue in detail, including consignment AWB number or assay reference if applicable..."
+                        className="w-full px-3 py-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+                      />
+                    </div>
+
+                    {/* Simulated Attachment Upload */}
+                    <div>
+                      <label className="block text-[#5A4630] font-medium mb-1">Supporting Documentation / Photos (Optional)</label>
+                      <div className="p-3 border border-dashed border-[#EADFC8] rounded-lg bg-[#FFFBF3] flex items-center justify-between">
+                        <span className="text-[11px] text-[#7A6A55]">
+                          {ticketAttachment || 'Attach photo of parcel or certicard (JPG/PNG/PDF)'}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => {
+                            setTicketAttachment('tampered_box_photo.jpg');
+                            alert('Photo proof attached successfully.');
+                          }}
+                        >
+                          {ticketAttachment ? 'Replace File' : 'Attach Photo'}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex justify-end">
+                      <Button type="submit" variant="primary" size="md" leftIcon={<Send className="w-4 h-4" />}>
+                        Submit Ticket to Concierge Queue
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </Card>
+
+              {/* Active Support Tickets Tracker */}
+              <div className="space-y-3">
+                <h3 className="font-serif text-base font-bold text-[#5A4630]">
+                  Recent Support Tickets & Resolutions ({supportTickets.length})
+                </h3>
+
+                <div className="space-y-3">
+                  {supportTickets.map((tkt) => (
+                    <Card key={tkt.id} variant="surface" className="p-4 border-[#EADFC8] space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-xs text-[#5A4630]">{tkt.ticketNumber}</span>
+                          <Badge variant={tkt.status === 'Resolved' ? 'sage' : 'amber'} size="sm">
+                            {tkt.status.replace('_', ' ')}
+                          </Badge>
+                          <Badge variant="neutral" size="sm">{tkt.issueType.replace('_', ' ')}</Badge>
+                        </div>
+                        <span className="text-[11px] text-[#7A6A55] font-mono">
+                          Logged: {formatFullDateTime(tkt.createdAt)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#5A4630]">
+                        Assigned to: <strong>{tkt.assignee}</strong> • Resolution SLA: {tkt.slaHours} Hours
+                      </p>
+                    </Card>
+                  ))}
                 </div>
               </div>
             </div>
@@ -460,29 +687,33 @@ export const PolicyPage: React.FC = () => {
       <nav aria-label="Breadcrumb" className="text-xs text-[#7A6A55] flex items-center gap-1.5 flex-wrap">
         <Link to="/" className="hover:text-[#C9A24B]">Home</Link>
         <ChevronRight className="w-3.5 h-3.5 text-[#EADFC8]" />
-        <span>Policies & Information</span>
-        <ChevronRight className="w-3.5 h-3.5 text-[#EADFC8]" />
         <span className="text-[#5A4630] font-medium">{policy.title}</span>
       </nav>
 
       {/* Header */}
       <div className="border-b border-[#EADFC8] pb-6 space-y-2">
-        <div className="flex items-center gap-2">
-          <Badge variant="gold" size="sm">{policy.category}</Badge>
-          <Badge variant="neutral" size="sm">Active Regulatory Policy</Badge>
-        </div>
+        <Badge variant="gold" size="sm">{policy.category}</Badge>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#5A4630]">
           {policy.title}
         </h1>
-        <p className="text-xs text-[#7A6A55]">
-          Last reviewed: October 2026 • Valid for all transactions on AURUM & CO.
+        <p className="text-xs sm:text-sm text-[#7A6A55] leading-relaxed">
+          {policy.metaDesc}
         </p>
       </div>
 
-      {/* Policy Card Body */}
-      <Card variant="surface" className="p-6 sm:p-8 border-[#EADFC8] shadow-[0_4px_24px_rgba(90,70,48,0.06)]">
+      {/* Main Content Area */}
+      <div className="bg-[#FFFBF3]/40 p-6 sm:p-8 rounded-2xl border border-[#EADFC8]">
         {policy.content}
-      </Card>
+      </div>
+
+      {/* Statutory Footer Disclaimer */}
+      <div className="p-4 bg-[#F8EFD9] border border-[#EADFC8] rounded-xl text-xs text-[#5A4630] flex items-center justify-between flex-wrap gap-2">
+        <span className="flex items-center gap-1.5">
+          <ShieldCheck className="w-4 h-4 text-[#C9A24B]" />
+          <span>Statutory Governance Version: 2026.4 • Verified against BIS Hallmarking & Legal Metrology Act</span>
+        </span>
+        <span className="text-[11px] text-[#7A6A55]">AURUM & CO Compliance Directorate</span>
+      </div>
     </div>
   );
 };

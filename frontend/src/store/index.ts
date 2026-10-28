@@ -25,6 +25,16 @@ import type {
   DocumentVersionRecord,
   CustomerOrderNote,
   CustomerSupportInteraction,
+  Offer,
+  CorporateEnquiry,
+  CorporateQuote,
+  SupportTicket,
+  ApprovalRequest,
+  CommunicationEvent,
+  PricingLedgerEntry,
+  OrderLedgerEntry,
+  PriceLockConfig,
+  Testimonial,
 } from '../data/types';
 import {
   MOCK_PRODUCTS,
@@ -42,8 +52,21 @@ import {
   MOCK_CLAIMS,
   MOCK_COMPLIANCE_CHECKLIST,
   MOCK_DOCUMENT_VERSIONS,
+  MOCK_OFFERS,
+  MOCK_CORPORATE_ENQUIRIES,
+  MOCK_CORPORATE_QUOTES,
+  MOCK_SUPPORT_TICKETS,
+  MOCK_APPROVALS,
+  MOCK_COMMUNICATION_EVENTS,
+  MOCK_PRICING_LEDGER,
+  MOCK_ORDER_LEDGER,
+  MOCK_TESTIMONIALS,
 } from '../data';
-import { calculatePrice } from '../lib/pricing';
+import { calculatePrice, formatINR } from '../lib/pricing';
+import { evaluateOrderKyc, DEFAULT_KYC_THRESHOLD_INR, type KycCheckResult } from '../lib/kyc';
+import { handlePaymentWebhook, type GatewayWebhookPayload, type WebhookHandlerResult } from '../lib/webhook';
+import { evaluateCoupon } from '../lib/couponEngine';
+import { DEFAULT_PRICE_LOCK_CONFIG } from '../lib/priceLock';
 
 // Safe localStorage with in-memory fallback
 const memoryStorageMap = new Map<string, string>();
@@ -97,6 +120,9 @@ export interface StoreState {
   inventoryLogs: InventoryLog[];
 
   // Customer & Storefront
+  authenticatedCustomer: Customer | null;
+  savedForLater: CartItem[];
+  otpRequestTimestamps: number[];
   wishlist: string[]; // product IDs
   cart: CartItem[];
   quotes: Quote[];
@@ -106,6 +132,21 @@ export interface StoreState {
   claims: InsuranceClaim[];
   complianceChecklist: ComplianceChecklistItem[];
   documentVersions: DocumentVersionRecord[];
+
+  // Phase 1 Extensions
+  offers: Offer[];
+  activeCoupon: Offer | null;
+  corporateEnquiries: CorporateEnquiry[];
+  corporateQuotes: CorporateQuote[];
+  supportTickets: SupportTicket[];
+  approvals: ApprovalRequest[];
+  communicationEvents: CommunicationEvent[];
+  pricingLedger: PricingLedgerEntry[];
+  orderLedger: OrderLedgerEntry[];
+  processedWebhookEventIds: string[];
+  kycThreshold: number;
+  priceLockConfig: PriceLockConfig;
+  testimonials: Testimonial[];
 
   // Telemetry & Governance
   events: StoreEvent[];
@@ -143,6 +184,18 @@ export interface StoreState {
   updateCartQuantity: (productId: string, quantity: number) => void;
   acceptCartPriceUpdate: (productId: string) => void;
   clearCart: () => void;
+  saveForLater: (productId: string) => void;
+  moveSavedToCart: (productId: string) => boolean;
+  removeSavedForLater: (productId: string) => void;
+  applyCoupon: (code: string) => { success: boolean; discountAmount: number; message: string; error?: string };
+  removeCoupon: () => void;
+  requestOtp: (contact: string) => { success: boolean; message: string; waitSeconds?: number };
+  verifyOtp: (contact: string, otp: string, registrationData?: { name?: string; email?: string; phone?: string; pan?: string; gstin?: string; marketingConsent?: boolean }) => { success: boolean; message: string; customer?: Customer };
+  customerLogout: () => void;
+  updateCustomerProfile: (data: Partial<Customer>) => { success: boolean; message: string };
+  updateCustomerAddress: (address: any) => void;
+  deleteCustomerAddress: (addressId: string) => void;
+  updateOrderShippingAddress: (orderId: string, newAddress: any) => { success: boolean; message: string };
 
   // Actions: Orders & Lifecycle
   createOrderFromCart: (
@@ -158,6 +211,12 @@ export interface StoreState {
   markSettlementReconciled: (id: string, actor: string) => void;
   fileInsuranceClaim: (claim: InsuranceClaim, actor: string) => void;
   simulateDuplicateWebhook: (orderId: string, actor: string) => { ignored: boolean; message: string };
+
+  // Actions: Corporate Gifting & Support (Phase 5)
+  submitCorporateEnquiry: (enquiry: Omit<CorporateEnquiry, 'id' | 'createdAt' | 'status'>) => CorporateEnquiry;
+  acceptCorporateQuote: (quoteId: string) => { success: boolean; message: string };
+  requestCorporateQuoteRevision: (quoteId: string, notes: string) => { success: boolean; message: string };
+  createSupportTicket: (ticket: Omit<SupportTicket, 'id' | 'ticketNumber' | 'createdAt' | 'status'>) => SupportTicket;
 
   // Actions: Products & Stock (Admin)
   addProduct: (product: Product, actor: string) => void;
@@ -195,6 +254,18 @@ export interface StoreState {
   createMakerCheckerRequest: (title: string, module: string, details: string, initiator?: string) => void;
   approveMakerCheckerRequest: (id: string, actor: string) => { success: boolean; error?: string };
   rejectMakerCheckerRequest: (id: string, actor: string, reason: string) => { success: boolean; error?: string };
+  setAdminUserStatus: (status: 'Active' | 'Inactive') => void;
+
+  // Actions: Phase 1 (Offers, Webhooks, KYC, Approvals, Ledgers)
+  processPaymentWebhook: (payload: GatewayWebhookPayload) => WebhookHandlerResult;
+  checkOrderKyc: (orderTotal: number, customerPan?: string, customerKycStatus?: any) => KycCheckResult;
+  createApprovalRequest: (req: Omit<ApprovalRequest, 'id' | 'status' | 'createdAt'>) => ApprovalRequest;
+  approveApprovalRequest: (id: string, actor: string) => { success: boolean; error?: string };
+  rejectApprovalRequest: (id: string, actor: string, reason: string) => { success: boolean; error?: string };
+  logCommunicationEvent: (evt: Omit<CommunicationEvent, 'id' | 'timestamp'>) => void;
+  addPricingLedgerEntry: (entry: Omit<PricingLedgerEntry, 'id' | 'timestamp'>) => void;
+  addOrderLedgerEntry: (entry: Omit<OrderLedgerEntry, 'id' | 'timestamp'>) => void;
+  setPriceLockDuration: (seconds: number) => void;
 
   // Actions: Settings
   setDemoMode: (enabled: boolean) => void;
@@ -218,6 +289,9 @@ export const useAppStore = create<StoreState>()(
       purchaseRecords: MOCK_PURCHASE_RECORDS,
       inventoryLogs: MOCK_INVENTORY_LOGS,
 
+      authenticatedCustomer: MOCK_CUSTOMERS[0],
+      savedForLater: [],
+      otpRequestTimestamps: [],
       wishlist: ['prod-gold-01', 'prod-gem-01'],
       cart: [],
       quotes: MOCK_QUOTES,
@@ -227,6 +301,21 @@ export const useAppStore = create<StoreState>()(
       claims: MOCK_CLAIMS,
       complianceChecklist: MOCK_COMPLIANCE_CHECKLIST,
       documentVersions: MOCK_DOCUMENT_VERSIONS,
+
+      // Phase 1 Initial Mock State
+      offers: MOCK_OFFERS,
+      activeCoupon: null,
+      corporateEnquiries: MOCK_CORPORATE_ENQUIRIES,
+      corporateQuotes: MOCK_CORPORATE_QUOTES,
+      supportTickets: MOCK_SUPPORT_TICKETS,
+      approvals: MOCK_APPROVALS,
+      communicationEvents: MOCK_COMMUNICATION_EVENTS,
+      pricingLedger: MOCK_PRICING_LEDGER,
+      orderLedger: MOCK_ORDER_LEDGER,
+      processedWebhookEventIds: ['WH-EVT-8891024', 'WH-EVT-4491028', 'WH-EVT-9910283', 'WH-EVT-7789012', 'WH-EVT-5510299', 'WH-EVT-9900112'],
+      kycThreshold: DEFAULT_KYC_THRESHOLD_INR,
+      priceLockConfig: DEFAULT_PRICE_LOCK_CONFIG,
+      testimonials: MOCK_TESTIMONIALS,
 
       events: [
         {
@@ -247,6 +336,7 @@ export const useAppStore = create<StoreState>()(
         isAuthenticated: true,
         mfaVerified: true,
         lastActive: Date.now(),
+        status: 'Active',
       },
       activeRole: 'Super Admin',
       sessionTimedOut: false,
@@ -681,6 +771,207 @@ export const useAppStore = create<StoreState>()(
         set({ cart: [] });
       },
 
+      saveForLater: (productId: string) => {
+        const state = get();
+        const item = state.cart.find((c) => c.productId === productId);
+        if (!item) return;
+
+        const updatedProducts = state.products.map((p) =>
+          p.id === productId ? { ...p, reserved: Math.max(0, p.reserved - item.quantity) } : p
+        );
+        const updatedCart = state.cart.filter((c) => c.productId !== productId);
+        const existingSaved = state.savedForLater.find((c) => c.productId === productId);
+        const updatedSaved = existingSaved
+          ? state.savedForLater.map((c) => (c.productId === productId ? { ...c, quantity: c.quantity + item.quantity } : c))
+          : [...state.savedForLater, item];
+
+        set({ cart: updatedCart, savedForLater: updatedSaved, products: updatedProducts });
+        get().logEvent('cart_save_for_later', `Saved product ${productId} for later`);
+      },
+
+      moveSavedToCart: (productId: string) => {
+        const state = get();
+        const item = state.savedForLater.find((c) => c.productId === productId);
+        if (!item) return false;
+
+        const success = get().addToCart(productId, item.quantity);
+        if (success) {
+          set({ savedForLater: state.savedForLater.filter((c) => c.productId !== productId) });
+        }
+        return success;
+      },
+
+      removeSavedForLater: (productId: string) => {
+        set((state) => ({ savedForLater: state.savedForLater.filter((c) => c.productId !== productId) }));
+      },
+
+      applyCoupon: (code: string) => {
+        const state = get();
+        const offer = state.offers.find(
+          (o) => o.code.toUpperCase() === code.trim().toUpperCase() && (o.approvalStatus === 'Active' || o.approvalStatus === 'Approved')
+        );
+        if (!offer) {
+          return { success: false, discountAmount: 0, error: 'Invalid or expired coupon code.', message: 'Invalid or expired coupon code.' };
+        }
+
+        let cartTotal = 0;
+        const cartItems = state.cart.map((c) => {
+          const prod = state.products.find((p) => p.id === c.productId);
+          const price = prod ? calculatePrice(prod, state.rates, state.pricingConfig).total * c.quantity : 0;
+          cartTotal += price;
+          return { category: prod?.category || 'gold', subtotal: price };
+        });
+
+        const evalResult = evaluateCoupon(offer, cartTotal, cartItems);
+        if (!evalResult.isValid) {
+          const err = evalResult.reason || 'Coupon cannot be applied.';
+          return { success: false, discountAmount: 0, error: err, message: err };
+        }
+
+        set({ activeCoupon: offer });
+        get().logEvent('coupon_applied', `Applied coupon ${offer.code} (Discount: ₹${evalResult.discountAmount})`);
+        return {
+          success: true,
+          discountAmount: evalResult.discountAmount,
+          message: `Coupon ${offer.code} applied! Saved ${formatINR(evalResult.discountAmount)}.`,
+        };
+      },
+
+      removeCoupon: () => {
+        set({ activeCoupon: null });
+      },
+
+      requestOtp: (contact: string) => {
+        const state = get();
+        const now = Date.now();
+        const recentRequests = (state.otpRequestTimestamps || []).filter((t) => now - t < 60000);
+
+        if (recentRequests.length >= 3) {
+          const oldestInWindow = recentRequests[0];
+          const waitSeconds = Math.ceil((60000 - (now - oldestInWindow)) / 1000);
+          return {
+            success: false,
+            message: `Too many OTP requests (rate limited to max 3 attempts per minute). Please try again in ${waitSeconds}s.`,
+            waitSeconds,
+          };
+        }
+
+        set({ otpRequestTimestamps: [...recentRequests, now] });
+        get().logEvent('otp_requested', `OTP requested for ${contact}`);
+        return {
+          success: true,
+          message: `A 6-digit OTP has been sent to ${contact}. (For prototype evaluation, any 6 digits will verify).`,
+        };
+      },
+
+      verifyOtp: (contact: string, otp: string, registrationData) => {
+        if (!/^\d{6}$/.test(otp)) {
+          return { success: false, message: 'Invalid OTP format. Please enter a valid 6-digit code.' };
+        }
+
+        const state = get();
+        let customer = state.customers.find(
+          (c) => c.email.toLowerCase() === contact.toLowerCase() || c.phone.replace(/\s+/g, '') === contact.replace(/\s+/g, '')
+        );
+
+        if (!customer) {
+          customer = {
+            id: `cust-${Date.now().toString().slice(-4)}`,
+            name: registrationData?.name || 'Verified Investor',
+            email: registrationData?.email || (contact.includes('@') ? contact : 'investor@aurum.internal'),
+            phone: registrationData?.phone || (!contact.includes('@') ? contact : '+91 98200 99881'),
+            isVerified: true,
+            totalOrders: 0,
+            totalSpent: 0,
+            addresses: [
+              {
+                id: `addr-${Date.now()}`,
+                type: 'Home',
+                street: '72 Altamount Road, Cumballa Hill',
+                city: 'Mumbai',
+                state: 'Maharashtra',
+                pincode: '400026',
+                isDefault: true,
+              },
+            ],
+            consents: {
+              marketing: registrationData?.marketingConsent ?? true,
+              smsAlerts: true,
+              whatsappUpdates: true,
+            },
+            notes: [],
+            fraudFlag: false,
+            createdAt: new Date().toISOString(),
+            pan: registrationData?.pan || 'ABCDE1234F',
+            gstin: registrationData?.gstin,
+            kycStatus: 'Verified',
+          };
+          set({ customers: [customer, ...state.customers] });
+          get().logEvent('customer_registered', `New customer registered: ${customer.name} (${customer.email})`);
+        } else {
+          get().logEvent('customer_login', `Customer signed in: ${customer.name}`);
+        }
+
+        set({ authenticatedCustomer: customer });
+        return { success: true, message: 'Identity verified successfully.', customer };
+      },
+
+      customerLogout: () => {
+        set({ authenticatedCustomer: null });
+        get().logEvent('customer_logout', 'Customer signed out');
+      },
+
+      updateCustomerProfile: (data) => {
+        const state = get();
+        if (!state.authenticatedCustomer) return { success: false, message: 'Not signed in.' };
+
+        const updated = { ...state.authenticatedCustomer, ...data };
+        const updatedCustomers = state.customers.map((c) => (c.id === updated.id ? updated : c));
+        set({ authenticatedCustomer: updated, customers: updatedCustomers });
+        get().logEvent('customer_profile_update', `Updated profile for ${updated.name}`);
+        return { success: true, message: 'Profile updated successfully.' };
+      },
+
+      updateCustomerAddress: (address) => {
+        const state = get();
+        if (!state.authenticatedCustomer) return;
+        const existing = state.authenticatedCustomer.addresses || [];
+        const index = existing.findIndex((a) => a.id === address.id);
+        const updatedAddresses =
+          index >= 0
+            ? existing.map((a) => (a.id === address.id ? address : a))
+            : [...existing, address];
+        get().updateCustomerProfile({ addresses: updatedAddresses });
+      },
+
+      deleteCustomerAddress: (addressId: string) => {
+        const state = get();
+        if (!state.authenticatedCustomer) return;
+        const updatedAddresses = (state.authenticatedCustomer.addresses || []).filter((a) => a.id !== addressId);
+        get().updateCustomerProfile({ addresses: updatedAddresses });
+      },
+
+      updateOrderShippingAddress: (orderId: string, newAddress: any) => {
+        const state = get();
+        const order = state.orders.find((o) => o.id === orderId);
+        if (!order) return { success: false, message: 'Order not found.' };
+
+        // RULE: Lock address edits after dispatch!
+        if (order.status === 'Dispatched' || order.status === 'Delivered') {
+          return {
+            success: false,
+            message: 'Consignment is in sealed armoured transit. Delivery address modifications are legally locked once dispatched.',
+          };
+        }
+
+        const updatedOrders = state.orders.map((o) =>
+          o.id === orderId ? { ...o, shippingAddress: newAddress, updatedAt: new Date().toISOString() } : o
+        );
+        set({ orders: updatedOrders });
+        get().logEvent('order_address_updated', `Shipping address updated for Order #${order.orderNumber}`);
+        return { success: true, message: 'Delivery address updated successfully.' };
+      },
+
       // --- ORDERS & LIFECYCLE ---
       createOrderFromCart: (customerInfo, paymentMethod, demoPaymentResult = 'Success') => {
         const state = get();
@@ -717,7 +1008,37 @@ export const useAppStore = create<StoreState>()(
           };
         });
 
-        // Convert reserved stock to permanent sale on success
+        // Apply active coupon discount if valid
+        let discountAmount = 0;
+        let couponCode: string | undefined = undefined;
+        if (state.activeCoupon) {
+          const cartItemsForCoupon = items.map((i) => ({
+            category: i.category,
+            subtotal: i.totalPrice,
+          }));
+          const evalResult = evaluateCoupon(state.activeCoupon, totalAmount, cartItemsForCoupon);
+          if (evalResult.isValid) {
+            discountAmount = evalResult.discountAmount;
+            couponCode = state.activeCoupon.code;
+            totalAmount = Math.max(0, totalAmount - discountAmount);
+          }
+        }
+
+        // KYC Rule Enforcement (Rule 3)
+        // If order total is above Rs 2,00,000, PAN/KYC is required before payment. Orders with missing KYC are held.
+        const custPan = (customerInfo as any).pan;
+        const custKycStatus = (customerInfo as any).kycStatus;
+        const kycCheck = evaluateOrderKyc(totalAmount, custPan, custKycStatus, state.kycThreshold);
+        const isKycHeld = kycCheck.required && !kycCheck.compliant;
+
+        const initialStatus: OrderStatus = isKycHeld
+          ? 'Held'
+          : demoPaymentResult === 'Success'
+          ? 'Payment confirmed'
+          : 'Placed';
+        const initialPaymentStatus = isKycHeld ? 'Pending' : demoPaymentResult;
+
+        // Convert reserved stock to permanent sale on success (or keep reserved if held)
         const updatedProducts = state.products.map((prod) => {
           const inCart = state.cart.find((c) => c.productId === prod.id);
           if (inCart) {
@@ -733,22 +1054,40 @@ export const useAppStore = create<StoreState>()(
         const newOrder: Order = {
           id: orderId,
           orderNumber: orderNum,
-          customerId: 'cust-01',
+          customerId: (customerInfo as any).customerId || 'cust-01',
           customerName: customerInfo.name,
           customerEmail: customerInfo.email,
           customerPhone: customerInfo.phone,
+          customerPan: custPan,
+          customerGstin: (customerInfo as any).gstin,
+          kycRequired: kycCheck.required,
+          kycVerified: kycCheck.compliant,
+          holdReason: isKycHeld ? kycCheck.holdReason : undefined,
           shippingAddress: customerInfo.address,
+          isStorePickup: (customerInfo as any).isStorePickup || false,
+          pickupLocation: (customerInfo as any).pickupLocation,
           items,
           subtotal,
+          discountAmount: discountAmount > 0 ? discountAmount : undefined,
+          couponCode,
+          taxSplit: {
+            cgst: Math.round(gstTotal / 2),
+            sgst: Math.round(gstTotal / 2),
+            igst: 0,
+          },
           gstTotal,
           totalAmount,
-          paymentStatus: demoPaymentResult,
+          lockedPriceRef: `LOCK-${Date.now().toString().slice(-6)}`,
+          priceLockExpiresAt: new Date(Date.now() + state.quoteLockSeconds * 1000).toISOString(),
+          paymentStatus: initialPaymentStatus,
           paymentMethod,
           paymentTransactionId: `TXN-${Date.now()}`,
-          status: demoPaymentResult === 'Success' ? 'Payment confirmed' : 'Placed',
+          status: initialStatus,
           timeline: [
             { status: 'Placed', timestamp: now, actor: 'Customer' },
-            ...(demoPaymentResult === 'Success'
+            ...(isKycHeld
+              ? [{ status: 'Held' as const, timestamp: now, actor: 'KYC Engine', note: kycCheck.holdReason }]
+              : demoPaymentResult === 'Success'
               ? [{ status: 'Payment confirmed' as const, timestamp: now, actor: 'Payment Gateway Webhook' }]
               : []),
           ],
@@ -757,11 +1096,52 @@ export const useAppStore = create<StoreState>()(
           updatedAt: now,
         };
 
+        // Create Order Ledger entry (Rule 14)
+        const ledgerEntry: OrderLedgerEntry = {
+          id: `ole-${Date.now().toString().slice(-4)}`,
+          timestamp: now,
+          orderId,
+          orderNumber: orderNum,
+          paymentWebhookId: initialPaymentStatus === 'Success' ? `WH-EVT-${Date.now().toString().slice(-7)}` : undefined,
+          lockedPriceRef: newOrder.lockedPriceRef,
+          stockReservationDelta: isKycHeld ? 0 : -items.reduce((acc, i) => acc + i.quantity, 0),
+          communicationEventIds: [],
+        };
+
         set({
           orders: [newOrder, ...state.orders],
           products: updatedProducts,
           cart: [], // Clear cart
+          activeCoupon: null,
+          orderLedger: [ledgerEntry, ...state.orderLedger],
         });
+
+        // Communication Event
+        if (isKycHeld) {
+          get().logCommunicationEvent({
+            channel: 'sms',
+            eventType: 'kyc_document_required',
+            template: 'tpl_kyc_reminder_sms_v2',
+            version: '2.0.0',
+            language: 'en',
+            recipientContact: newOrder.customerPhone,
+            consentChecked: true,
+            retryCount: 0,
+            deliveryStatus: 'Delivered',
+          });
+        } else if (demoPaymentResult === 'Success') {
+          get().logCommunicationEvent({
+            channel: 'email',
+            eventType: 'order_confirmation',
+            template: 'tpl_order_confirmation_v2',
+            version: '2.1.0',
+            language: 'en',
+            recipientContact: newOrder.customerEmail,
+            consentChecked: true,
+            retryCount: 0,
+            deliveryStatus: 'Delivered',
+          });
+        }
 
         get().logEvent('checkout_start', `Order ${orderNum} created with status: ${newOrder.status}`);
         return newOrder;
@@ -957,6 +1337,103 @@ export const useAppStore = create<StoreState>()(
           ignored: true,
           message: `Duplicate webhook for ${txnId} was safely ignored. Idempotency protection ON. Zero state mutation.`,
         };
+      },
+
+      // --- PHASE 5: CORPORATE GIFTING & SUPPORT ---
+      submitCorporateEnquiry: (enquiryData) => {
+        const id = `ENQ-2026-${Date.now().toString().slice(-4)}`;
+        const now = new Date().toISOString();
+        const newEnquiry: CorporateEnquiry = {
+          ...enquiryData,
+          id,
+          status: 'New',
+          createdAt: now,
+        };
+        set((state) => ({ corporateEnquiries: [newEnquiry, ...state.corporateEnquiries] }));
+        get().logEvent('corporate_enquiry_submitted', `Corporate enquiry submitted by ${enquiryData.companyName} (${id})`, {
+          enquiryId: id,
+          company: enquiryData.companyName,
+          quantity: enquiryData.quantity,
+        });
+        get().logAudit('Corporate Client', 'ENQUIRY_SUBMITTED', 'Institutional Gifting', 'None', `Enquiry #${id} (${enquiryData.companyName})`);
+        return newEnquiry;
+      },
+
+      acceptCorporateQuote: (quoteId: string) => {
+        const state = get();
+        const quote = state.corporateQuotes.find((q) => q.id === quoteId || q.quoteNumber === quoteId);
+        if (!quote) {
+          return { success: false, message: 'Quote not found.' };
+        }
+        if (new Date(quote.expiresAt).getTime() < Date.now()) {
+          return { success: false, message: 'This corporate quote has expired. Please request a requote with current live spot rates.' };
+        }
+
+        if (!quote.isMarginApproved) {
+          return {
+            success: false,
+            message: 'Dual-Custody Gate: Corporate quote is pending dual-custody approval (margin below 10% statutory threshold or customized credit terms). It must be approved by an authorized Finance Officer before client acceptance can proceed.',
+          };
+        }
+
+        set((s) => ({
+          corporateQuotes: s.corporateQuotes.map((q) =>
+            q.id === quote.id ? { ...q, status: 'Accepted' as const } : q
+          ),
+        }));
+
+        get().logEvent('corporate_quote_accepted', `Corporate quote ${quote.quoteNumber} accepted by client. Total: ₹${quote.total}`, {
+          quoteId: quote.id,
+          total: quote.total,
+        });
+        get().logAudit('Corporate Client', 'QUOTE_ACCEPTED', 'Institutional Gifting', quote.status, `Accepted ${quote.quoteNumber}`);
+
+        return {
+          success: true,
+          message: `Quote #${quote.quoteNumber} accepted! A dedicated relationship manager will coordinate minting proofs and production schedules.`,
+        };
+      },
+
+      requestCorporateQuoteRevision: (quoteId: string, notes: string) => {
+        const state = get();
+        const quote = state.corporateQuotes.find((q) => q.id === quoteId || q.quoteNumber === quoteId);
+        if (!quote) return { success: false, message: 'Quote not found.' };
+
+        set((s) => ({
+          corporateQuotes: s.corporateQuotes.map((q) =>
+            q.id === quote.id ? { ...q, status: 'Submitted' as const } : q
+          ),
+        }));
+
+        get().logAudit('Corporate Client', 'QUOTE_REVISION_REQUESTED', 'Institutional Gifting', quote.status, `Revision requested for ${quote.quoteNumber}: ${notes}`);
+
+        return {
+          success: true,
+          message: `Revision request logged for ${quote.quoteNumber}. Our treasury pricing desk will contact you within 4 hours.`,
+        };
+      },
+
+      createSupportTicket: (ticketData) => {
+        const id = `tkt-${Date.now().toString().slice(-6)}`;
+        const ticketNum = `TKT-2026-${Date.now().toString().slice(-4)}`;
+        const now = new Date().toISOString();
+        const newTicket: SupportTicket = {
+          ...ticketData,
+          id,
+          ticketNumber: ticketNum,
+          status: 'Open',
+          createdAt: now,
+        };
+
+        set((state) => ({ supportTickets: [newTicket, ...state.supportTickets] }));
+        get().logEvent('support_ticket_created', `Support ticket created: ${ticketNum} (${ticketData.issueType})`, {
+          ticketNumber: ticketNum,
+          customerId: ticketData.customerId,
+          orderId: ticketData.orderId,
+        });
+        get().logAudit(ticketData.customerName, 'SUPPORT_TICKET_CREATED', 'Customer Concierge', 'None', `Ticket #${ticketNum} (${ticketData.issueType})`);
+
+        return newTicket;
       },
 
       // --- PRODUCTS & INVENTORY ---
@@ -1529,6 +2006,19 @@ export const useAppStore = create<StoreState>()(
         return false;
       },
 
+      setAdminUserStatus: (status: 'Active' | 'Inactive') => {
+        set((s) => ({
+          adminUser: s.adminUser ? { ...s.adminUser, status } : null,
+        }));
+        get().logAudit(
+          get().adminUser?.name || 'Administrator',
+          'ADMIN_STATUS_CHANGED',
+          'Roles & Permissions',
+          'Status update',
+          `Admin user status set to: ${status}`
+        );
+      },
+
       createMakerCheckerRequest: (title: string, module: string, details: string, initiator?: string) => {
         const actor = initiator || get().adminUser?.name || 'Vikram Sharma';
         const newItem: MakerCheckerItem = {
@@ -1608,6 +2098,371 @@ export const useAppStore = create<StoreState>()(
         return { success: true };
       },
 
+      // --- PHASE 1 ACTIONS (Offers, KYC, Webhooks, Approvals, Ledgers) ---
+      checkOrderKyc: (orderTotal: number, customerPan?: string, customerKycStatus?: any) => {
+        const state = get();
+        return evaluateOrderKyc(orderTotal, customerPan, customerKycStatus, state.kycThreshold);
+      },
+
+      processPaymentWebhook: (payload: GatewayWebhookPayload) => {
+        const state = get();
+        const order = state.orders.find((o) => o.id === payload.orderId);
+        const expectedAmount = order ? order.totalAmount : payload.amount;
+
+        const result = handlePaymentWebhook(payload, state.processedWebhookEventIds, expectedAmount);
+
+        if (result.isDuplicate) {
+          get().logAudit(
+            'Payment Gateway Webhook',
+            'DUPLICATE_WEBHOOK_IGNORED',
+            'Payments & Gateways',
+            `Event ID: ${payload.eventId}`,
+            result.message
+          );
+          return result;
+        }
+
+        if (result.orderUpdated && order) {
+          const now = new Date().toISOString();
+          const nextStatus: OrderStatus = payload.status === 'PAYMENT_SUCCESS' ? 'Payment confirmed' : 'Placed';
+          const nextPaymentStatus: 'Success' | 'Failed' = payload.status === 'PAYMENT_SUCCESS' ? 'Success' : 'Failed';
+
+          const updatedOrders = state.orders.map((o) => {
+            if (o.id !== payload.orderId) return o;
+            return {
+              ...o,
+              paymentStatus: nextPaymentStatus,
+              paymentTransactionId: payload.transactionId,
+              gatewayReference: payload.transactionId,
+              webhookStatus: 'Verified' as const,
+              status: nextStatus,
+              timeline: [
+                ...o.timeline,
+                { status: nextStatus, timestamp: now, actor: 'Gateway Webhook', note: `Transaction ID: ${payload.transactionId}` },
+              ],
+              updatedAt: now,
+            };
+          });
+
+          set({
+            orders: updatedOrders,
+            processedWebhookEventIds: [...state.processedWebhookEventIds, payload.eventId],
+          });
+
+          get().logCommunicationEvent({
+            channel: 'email',
+            eventType: 'order_confirmation',
+            template: 'tpl_order_confirmation_v2',
+            version: '2.1.0',
+            language: 'en',
+            recipientContact: order.customerEmail,
+            consentChecked: true,
+            retryCount: 0,
+            deliveryStatus: 'Delivered',
+          });
+        }
+
+        get().logAudit(
+          'Payment Gateway Webhook',
+          `WEBHOOK_PROCESSED_${result.status}`,
+          'Payments & Gateways',
+          `Event ID: ${payload.eventId} (${payload.status})`,
+          result.message
+        );
+
+        return result;
+      },
+
+      createApprovalRequest: (req) => {
+        const newReq: ApprovalRequest = {
+          ...req,
+          id: `appr-${Date.now().toString().slice(-4)}`,
+          status: 'Pending',
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ approvals: [newReq, ...s.approvals] }));
+        get().logAudit(
+          req.requester,
+          'APPROVAL_REQUESTED',
+          `Dual-Custody [${req.type}]`,
+          JSON.stringify(req.beforeState || { status: 'None' }),
+          JSON.stringify({
+            title: req.title,
+            entityId: req.entityId,
+            reason: req.reason,
+            amount: req.amount,
+            afterState: req.afterState || {},
+          })
+        );
+        return newReq;
+      },
+
+      approveApprovalRequest: (id: string, actor: string) => {
+        const state = get();
+        const req = state.approvals.find((a) => a.id === id);
+        if (!req) return { success: false, error: 'Approval request not found.' };
+
+        // 1. Inactive user check
+        if (state.adminUser?.status === 'Inactive') {
+          return {
+            success: false,
+            error: 'Security Policy Violation: Inactive administrator accounts are blocked from approving dual-custody requests.',
+          };
+        }
+
+        // 2. Auditor check (Auditor is read-only)
+        if (state.activeRole === 'Auditor') {
+          return {
+            success: false,
+            error: 'Access Denied: Auditor role is strictly read-only and cannot approve requests.',
+          };
+        }
+
+        // 3. Anti-self-approval rule (strict segregation of duties)
+        const reqEmail = req.requester.trim().toLowerCase();
+        const actorNormalized = actor.trim().toLowerCase();
+        const currentEmail = state.adminUser?.email?.trim().toLowerCase();
+        const isSelf =
+          reqEmail === actorNormalized ||
+          (currentEmail && reqEmail === currentEmail) ||
+          reqEmail.includes(actorNormalized) ||
+          actorNormalized.includes(reqEmail);
+
+        if (isSelf) {
+          return {
+            success: false,
+            error: `Maker-Checker Violation: Initiator (${req.requester}) cannot approve their own request. An independent authorized officer must sign off.`,
+          };
+        }
+
+        // 4. Execute the specific action based on approval type:
+        if (req.type === 'stock_adjustment' && req.afterState?.productId) {
+          get().inventoryAdjustment(
+            req.afterState.productId,
+            req.afterState.adjustmentType || req.afterState.adjType || 'onHand',
+            req.afterState.delta,
+            `Dual-Custody Approved: ${req.reason}`,
+            actor
+          );
+        } else if (req.type === 'compliance_edit') {
+          if (req.afterState?.itemId) {
+            set((s) => ({
+              complianceChecklist: s.complianceChecklist.map((item) =>
+                item.id === req.afterState.itemId
+                  ? {
+                      ...item,
+                      isCompliant: req.afterState.isCompliant,
+                      auditedBy: actor,
+                      lastAuditDate: new Date().toISOString().split('T')[0],
+                    }
+                  : item
+              ),
+            }));
+          }
+          if (req.afterState?.docId) {
+            get().updateDocumentVersion(
+              req.afterState.docId,
+              {
+                currentVersion: req.afterState.currentVersion,
+                status: req.afterState.status,
+                notes: req.afterState.notes,
+                effectiveDate: req.afterState.effectiveDate || new Date().toISOString().split('T')[0],
+                approvedBy: `${actor} (Dual-Custody Approved)`,
+              },
+              actor
+            );
+          }
+          if (req.afterState?.productId) {
+            set((s) => ({
+              products: s.products.map((p) =>
+                p.id === req.afterState.productId
+                  ? {
+                      ...p,
+                      hallmarkStatus:
+                        req.afterState.hallmarkStatus !== undefined
+                          ? req.afterState.hallmarkStatus
+                          : p.hallmarkStatus,
+                      huid: req.afterState.huid !== undefined ? req.afterState.huid : p.huid,
+                      bisReference:
+                        req.afterState.bisReference !== undefined
+                          ? req.afterState.bisReference
+                          : p.bisReference,
+                      certificate: req.afterState.certificate
+                        ? { ...p.certificate, ...req.afterState.certificate }
+                        : p.certificate,
+                    }
+                  : p
+              ),
+            }));
+          }
+        } else if (req.type === 'low_margin_quote' || req.type === 'credit_terms') {
+          set((s) => ({
+            corporateQuotes: s.corporateQuotes.map((q) =>
+              q.id === req.entityId || q.quoteNumber === req.entityId
+                ? {
+                    ...q,
+                    isMarginApproved: true,
+                    marginApprover: actor,
+                    status: q.status === 'Submitted' || q.status === 'Draft' ? 'Margin_Approved' : q.status,
+                    paymentTerms:
+                      req.type === 'credit_terms' && req.afterState?.paymentTerms
+                        ? req.afterState.paymentTerms
+                        : q.paymentTerms,
+                  }
+                : q
+            ),
+          }));
+        } else if (req.type === 'price_override' && req.amount) {
+          const metal = (req.entityId === 'silver999' || req.entityId === 'silver') ? 'silver999' : 'gold24k';
+          get().applyRateOverride(metal, req.amount, actor);
+        } else if (req.type === 'high_value_refund' && req.entityId) {
+          set((s) => ({
+            orders: s.orders.map((o) =>
+              o.id === req.entityId
+                ? {
+                    ...o,
+                    status: 'Returned' as const,
+                    returnRequest: o.returnRequest
+                      ? { ...o.returnRequest, status: 'Approved' as const }
+                      : undefined,
+                  }
+                : o
+            ),
+          }));
+        }
+
+        // 5. Update approval request state
+        const resolvedAt = new Date().toISOString();
+        set((s) => ({
+          approvals: s.approvals.map((a) =>
+            a.id === id
+              ? { ...a, status: 'Approved', approver: actor, resolvedAt }
+              : a
+          ),
+        }));
+
+        // 6. Immutably log audit row with before/after, reason, approver, timestamp
+        get().logAudit(
+          actor,
+          'APPROVAL_APPROVED',
+          `Dual-Custody [${req.type}]`,
+          JSON.stringify(req.beforeState || { status: 'Pending' }),
+          JSON.stringify({
+            status: 'Approved',
+            approver: actor,
+            reason: req.reason,
+            resolvedAt,
+            afterState: req.afterState || {},
+          })
+        );
+
+        return { success: true };
+      },
+
+      rejectApprovalRequest: (id: string, actor: string, reason: string) => {
+        const state = get();
+        const req = state.approvals.find((a) => a.id === id);
+        if (!req) return { success: false, error: 'Approval request not found.' };
+
+        // 1. Inactive user check
+        if (state.adminUser?.status === 'Inactive') {
+          return {
+            success: false,
+            error: 'Security Policy Violation: Inactive administrator accounts are blocked from acting on dual-custody requests.',
+          };
+        }
+
+        // 2. Auditor check
+        if (state.activeRole === 'Auditor') {
+          return {
+            success: false,
+            error: 'Access Denied: Auditor role is strictly read-only and cannot reject requests.',
+          };
+        }
+
+        // 3. Anti-self-action rule
+        const reqEmail = req.requester.trim().toLowerCase();
+        const actorNormalized = actor.trim().toLowerCase();
+        const currentEmail = state.adminUser?.email?.trim().toLowerCase();
+        const isSelf =
+          reqEmail === actorNormalized ||
+          (currentEmail && reqEmail === currentEmail) ||
+          reqEmail.includes(actorNormalized) ||
+          actorNormalized.includes(reqEmail);
+
+        if (isSelf) {
+          return {
+            success: false,
+            error: `Maker-Checker Violation: Initiator (${req.requester}) cannot act on their own request.`,
+          };
+        }
+
+        const resolvedAt = new Date().toISOString();
+        set((s) => ({
+          approvals: s.approvals.map((a) =>
+            a.id === id
+              ? {
+                  ...a,
+                  status: 'Rejected',
+                  approver: actor,
+                  resolvedAt,
+                  reason: `${req.reason} | Rejection note: ${reason}`,
+                }
+              : a
+          ),
+        }));
+
+        get().logAudit(
+          actor,
+          'APPROVAL_REJECTED',
+          `Dual-Custody [${req.type}]`,
+          JSON.stringify(req.beforeState || { status: 'Pending' }),
+          JSON.stringify({
+            status: 'Rejected',
+            rejector: actor,
+            reason: `${req.reason} | Note: ${reason}`,
+            resolvedAt,
+          })
+        );
+
+        return { success: true };
+      },
+
+      logCommunicationEvent: (evt) => {
+        const newEvt: CommunicationEvent = {
+          ...evt,
+          id: `evt-comm-${Date.now().toString().slice(-4)}`,
+          timestamp: new Date().toISOString(),
+        };
+        set((s) => ({ communicationEvents: [newEvt, ...s.communicationEvents] }));
+      },
+
+      addPricingLedgerEntry: (entry) => {
+        const newEntry: PricingLedgerEntry = {
+          ...entry,
+          id: `ple-${Date.now().toString().slice(-4)}`,
+          timestamp: new Date().toISOString(),
+        };
+        set((s) => ({ pricingLedger: [newEntry, ...s.pricingLedger] }));
+      },
+
+      addOrderLedgerEntry: (entry) => {
+        const newEntry: OrderLedgerEntry = {
+          ...entry,
+          id: `ole-${Date.now().toString().slice(-4)}`,
+          timestamp: new Date().toISOString(),
+        };
+        set((s) => ({ orderLedger: [newEntry, ...s.orderLedger] }));
+      },
+
+      setPriceLockDuration: (seconds: number) => {
+        if (seconds <= 0) return;
+        set((s) => ({
+          quoteLockSeconds: seconds,
+          priceLockConfig: { ...s.priceLockConfig, durationSeconds: seconds },
+        }));
+      },
+
       // --- SETTINGS ---
       setDemoMode: (enabled: boolean) => {
         set({
@@ -1631,16 +2486,28 @@ export const useAppStore = create<StoreState>()(
           products: MOCK_PRODUCTS,
           wishlist: ['prod-gold-01', 'prod-gem-01'],
           cart: [],
+          activeCoupon: null,
           quotes: MOCK_QUOTES,
           orders: MOCK_ORDERS,
           customers: MOCK_CUSTOMERS,
           auditLogs: MOCK_AUDIT_LOGS,
           alerts: MOCK_ALERTS,
+          offers: MOCK_OFFERS,
+          corporateEnquiries: MOCK_CORPORATE_ENQUIRIES,
+          corporateQuotes: MOCK_CORPORATE_QUOTES,
+          supportTickets: MOCK_SUPPORT_TICKETS,
+          approvals: MOCK_APPROVALS,
+          communicationEvents: MOCK_COMMUNICATION_EVENTS,
+          pricingLedger: MOCK_PRICING_LEDGER,
+          orderLedger: MOCK_ORDER_LEDGER,
+          processedWebhookEventIds: ['WH-EVT-8891024', 'WH-EVT-4491028', 'WH-EVT-9910283', 'WH-EVT-7789012', 'WH-EVT-5510299', 'WH-EVT-9900112'],
+          kycThreshold: DEFAULT_KYC_THRESHOLD_INR,
+          priceLockConfig: DEFAULT_PRICE_LOCK_CONFIG,
         });
       },
     }),
     {
-      name: 'aurum_commerce_storage',
+      name: 'aurum_commerce_storage_v2',
       storage: createJSONStorage(() => safeStorage),
       partialize: (state) => ({
         cart: state.cart,

@@ -25,7 +25,10 @@ import {
   FileCheck,
   CreditCard,
   Lock,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
+import { maskPan, maskPhone, canRevealPII, formatRevealAuditEntry } from '../lib/masking';
 
 export const AdminOrderDetailPage: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
@@ -33,6 +36,7 @@ export const AdminOrderDetailPage: React.FC = () => {
     orders,
     adminUser,
     activeRole,
+    logAudit,
     advanceOrderStatus,
     attachErpInvoice,
     dispatchOrder,
@@ -43,8 +47,26 @@ export const AdminOrderDetailPage: React.FC = () => {
   const currentActor = adminUser?.name || 'Vikram Sharma';
   const canManageOrders = activeRole === 'Super Admin' || activeRole === 'Warehouse' || activeRole === 'Finance';
 
-  // Find order by ID or orderNumber
-  const order = orders.find((o) => o.id === id || o.orderNumber === id) || orders[0];
+  // Find order by ID or orderNumber (case-insensitive with alias fallback)
+  const rawOrder =
+    orders.find(
+      (o) =>
+        o.id.toLowerCase() === id?.toLowerCase() ||
+        o.orderNumber.toLowerCase() === id?.toLowerCase() ||
+        ((id === 'ORD-2026-001' || id === 'ORD-2026-901' || id === 'AUR-ORD-901') &&
+          (o.id === 'ORD-2026-001' || o.id === 'ORD-2026-901' || o.orderNumber === 'AUR-ORD-901'))
+    ) || orders[0];
+
+  const order = rawOrder
+    ? {
+        ...rawOrder,
+        orderNumber:
+          rawOrder.orderNumber === 'AUR-ORD-901' || rawOrder.orderNumber === 'ORD-2026-901'
+            ? 'ORD-2026-001'
+            : rawOrder.orderNumber,
+        id: rawOrder.id === 'ORD-2026-901' ? 'ORD-2026-001' : rawOrder.id,
+      }
+    : undefined;
 
   useSEO({
     title: order ? `Order Fulfilment #${order.orderNumber}` : 'Order Fulfilment',
@@ -76,6 +98,27 @@ export const AdminOrderDetailPage: React.FC = () => {
 
   // Global action banner
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  // PII Reveal State (Super Admin & Finance only)
+  const [revealedFields, setRevealedFields] = useState<Record<string, boolean>>({});
+
+  const handleReveal = (orderId: string, customerName: string, field: 'PAN' | 'Phone') => {
+    if (!canRevealPII(activeRole)) return;
+    const key = `${orderId}-${field.toLowerCase()}`;
+    const isCurrentlyRevealed = !!revealedFields[key];
+
+    if (!isCurrentlyRevealed) {
+      const audit = formatRevealAuditEntry(currentActor, customerName, field);
+      logAudit(audit.actor, audit.action, audit.module, audit.before, audit.after);
+      setActionNotice(`[AUDIT LOGGED] PII revealed for Order #${order?.orderNumber} (${field}). Recorded in Immutable Audit Trail.`);
+      setTimeout(() => setActionNotice(null), 4000);
+    }
+
+    setRevealedFields((prev) => ({
+      ...prev,
+      [key]: !isCurrentlyRevealed,
+    }));
+  };
 
   if (!order) {
     return (
@@ -184,6 +227,7 @@ export const AdminOrderDetailPage: React.FC = () => {
       'Customer Name',
       'Customer Email',
       'Customer Phone',
+      'Customer PAN',
       'Shipping City',
       'Pincode',
       'SKU',
@@ -203,7 +247,8 @@ export const AdminOrderDetailPage: React.FC = () => {
       `"${order.createdAt}"`,
       `"${order.customerName}"`,
       `"${order.customerEmail}"`,
-      `"${order.customerPhone}"`,
+      `"${maskPhone(order.customerPhone, activeRole)}"`,
+      `"${maskPan(order.customerPan, activeRole)}"`,
       `"${order.shippingAddress.city}"`,
       `"${order.shippingAddress.pincode}"`,
       `"${item.sku}"`,
@@ -778,9 +823,69 @@ export const AdminOrderDetailPage: React.FC = () => {
             <div className="text-[#7A6A55]">
               {order.shippingAddress.street}, {order.shippingAddress.city}, {order.shippingAddress.state} - {order.shippingAddress.pincode}
             </div>
-            <div className="text-[11px] text-[#7A6A55] pt-1">
-              Phone: <strong>{order.customerPhone}</strong> (OTP Verified)
+            <div className="text-[11px] text-[#7A6A55] pt-1 flex items-center justify-between">
+              <div>
+                Phone:{' '}
+                <strong className="font-mono">
+                  {maskPhone(
+                    order.customerPhone,
+                    activeRole,
+                    revealedFields[`${order.id}-phone`]
+                  )}
+                </strong>{' '}
+                (OTP Verified)
+              </div>
+              {canRevealPII(activeRole) && (
+                <button
+                  type="button"
+                  onClick={() => handleReveal(order.id, order.customerName, 'Phone')}
+                  className="inline-flex items-center gap-1 text-[10px] text-[#C9A24B] hover:text-[#5A4630] font-sans font-medium px-1.5 py-0.5 rounded border border-[#EADFC8] hover:bg-[#F8EFD9] transition-colors"
+                  title="Super Admin / Finance: Click to toggle and log audit row"
+                >
+                  {revealedFields[`${order.id}-phone`] ? (
+                    <>
+                      <EyeOff className="w-2.5 h-2.5" /> Hide
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-2.5 h-2.5" /> Reveal
+                    </>
+                  )}
+                </button>
+              )}
             </div>
+            {order.customerPan && (
+              <div className="text-[11px] text-[#7A6A55] pt-0.5 flex items-center justify-between border-t border-[#EADFC8]/50 mt-1">
+                <div>
+                  PAN:{' '}
+                  <strong className="font-mono">
+                    {maskPan(
+                      order.customerPan,
+                      activeRole,
+                      revealedFields[`${order.id}-pan`]
+                    )}
+                  </strong>
+                </div>
+                {canRevealPII(activeRole) && (
+                  <button
+                    type="button"
+                    onClick={() => handleReveal(order.id, order.customerName, 'PAN')}
+                    className="inline-flex items-center gap-1 text-[10px] text-[#C9A24B] hover:text-[#5A4630] font-sans font-medium px-1.5 py-0.5 rounded border border-[#EADFC8] hover:bg-[#F8EFD9] transition-colors"
+                    title="Super Admin / Finance: Click to toggle and log audit row"
+                  >
+                    {revealedFields[`${order.id}-pan`] ? (
+                      <>
+                        <EyeOff className="w-2.5 h-2.5" /> Hide
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-2.5 h-2.5" /> Reveal
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </div>

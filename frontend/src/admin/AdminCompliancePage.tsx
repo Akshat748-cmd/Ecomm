@@ -5,7 +5,7 @@ import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
-import type { DocumentVersionRecord } from '../data/types';
+import type { DocumentVersionRecord, Product } from '../data/types';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -15,6 +15,8 @@ import {
   Building2,
   Clock,
   Edit,
+  Award,
+  ShieldAlert,
 } from 'lucide-react';
 
 export const AdminCompliancePage: React.FC = () => {
@@ -27,10 +29,10 @@ export const AdminCompliancePage: React.FC = () => {
   const {
     complianceChecklist,
     documentVersions,
+    products,
     adminUser,
     activeRole,
-    toggleComplianceItem,
-    updateDocumentVersion,
+    createApprovalRequest,
   } = useAppStore();
 
   const currentActor = adminUser?.name || 'Vikram Sharma';
@@ -47,6 +49,16 @@ export const AdminCompliancePage: React.FC = () => {
   const [newVersionString, setNewVersionString] = useState('');
   const [newStatus, setNewStatus] = useState<DocumentVersionRecord['status']>('Effective');
   const [docNotes, setDocNotes] = useState('');
+
+  // Edit Hallmark / HUID / Certificate / BIS Modal
+  const [editHallmarkModalOpen, setEditHallmarkModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [editHallmarkStatus, setEditHallmarkStatus] = useState<'Certified' | 'Exempt' | 'Pending'>('Certified');
+  const [editHuid, setEditHuid] = useState('');
+  const [editBisRef, setEditBisRef] = useState('');
+  const [editAssayer, setEditAssayer] = useState('');
+  const [editCertNum, setEditCertNum] = useState('');
+  const [editReason, setEditReason] = useState('');
 
   // Categories
   const categories = [
@@ -69,14 +81,35 @@ export const AdminCompliancePage: React.FC = () => {
   const compliantItems = complianceChecklist.filter((i) => i.isCompliant).length;
   const healthPercent = Math.round((compliantItems / (totalItems || 1)) * 100);
 
-  // Checkbox toggle handler
+  // Checkbox toggle handler -> Routes to Dual-Custody Approval Queue
   const handleToggle = (id: string, title: string) => {
-    toggleComplianceItem(id, currentActor);
-    setActionNotice(`Compliance status updated for: ${title}`);
-    setTimeout(() => setActionNotice(null), 3000);
+    const item = complianceChecklist.find((i) => i.id === id);
+    if (!item) return;
+
+    createApprovalRequest({
+      type: 'compliance_edit',
+      title: `Checklist Sign-off: ${item.title}`,
+      entityId: item.id,
+      requester: currentActor,
+      reason: `Sign-off request: Change control status to ${!item.isCompliant ? 'Compliant' : 'Non-Compliant'} under ${item.statutoryReference}`,
+      beforeState: {
+        itemId: item.id,
+        title: item.title,
+        isCompliant: item.isCompliant,
+      },
+      afterState: {
+        itemId: item.id,
+        title: item.title,
+        isCompliant: !item.isCompliant,
+        statutoryReference: item.statutoryReference,
+      },
+    });
+
+    setActionNotice(`Dual-Custody Request Submitted: Checklist edit for "${title}" sent to Maker-Checker Approval Queue. Control will NOT mutate until approved by an independent officer.`);
+    setTimeout(() => setActionNotice(null), 5000);
   };
 
-  // Document version edit handlers
+  // Document version edit handlers -> Routes to Dual-Custody Approval Queue
   const handleOpenEditDoc = (doc: DocumentVersionRecord) => {
     setSelectedDoc(doc);
     setNewVersionString(doc.currentVersion);
@@ -87,20 +120,82 @@ export const AdminCompliancePage: React.FC = () => {
 
   const handleSaveDocVersion = () => {
     if (!selectedDoc) return;
-    updateDocumentVersion(
-      selectedDoc.id,
-      {
+
+    createApprovalRequest({
+      type: 'compliance_edit',
+      title: `Policy Version Revision: ${selectedDoc.title} (${newVersionString})`,
+      entityId: selectedDoc.id,
+      requester: currentActor,
+      reason: docNotes.trim(),
+      beforeState: {
+        docId: selectedDoc.id,
+        title: selectedDoc.title,
+        currentVersion: selectedDoc.currentVersion,
+        status: selectedDoc.status,
+      },
+      afterState: {
+        docId: selectedDoc.id,
+        title: selectedDoc.title,
         currentVersion: newVersionString.trim(),
         status: newStatus,
         notes: docNotes.trim(),
         effectiveDate: new Date().toISOString().split('T')[0],
         approvedBy: `${currentActor} (${activeRole})`,
       },
-      currentActor
-    );
+    });
+
     setEditDocModalOpen(false);
-    setActionNotice(`Policy document "${selectedDoc.title}" version updated to ${newVersionString.trim()}.`);
-    setTimeout(() => setActionNotice(null), 3000);
+    setActionNotice(`Dual-Custody Request Submitted: Document revision for "${selectedDoc.title}" sent to Approval Queue. Version remains ${selectedDoc.currentVersion} until approved.`);
+    setTimeout(() => setActionNotice(null), 5000);
+  };
+
+  // Hallmark / HUID / BIS Record handlers -> Routes to Dual-Custody Approval Queue
+  const handleOpenEditHallmark = (p: Product) => {
+    setSelectedProduct(p);
+    setEditHallmarkStatus(p.hallmarkStatus || 'Certified');
+    setEditHuid(p.huid || '');
+    setEditBisRef(p.bisReference || 'BIS-L-7200192');
+    setEditAssayer(p.certificate?.assayer || 'MMTC-PAMP India Central Assay');
+    setEditCertNum(p.certificate?.certificateNumber || 'CERT-BIS-9912');
+    setEditReason('Annual assayer accreditation renewal and BIS laser-marking audit verification');
+    setEditHallmarkModalOpen(true);
+  };
+
+  const handleSaveHallmarkRecord = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProduct) return;
+
+    createApprovalRequest({
+      type: 'compliance_edit',
+      title: `BIS Hallmark & HUID Update: ${selectedProduct.name} (${selectedProduct.sku})`,
+      entityId: selectedProduct.id,
+      requester: currentActor,
+      reason: editReason.trim(),
+      beforeState: {
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        hallmarkStatus: selectedProduct.hallmarkStatus,
+        huid: selectedProduct.huid,
+        bisReference: selectedProduct.bisReference,
+        certificate: selectedProduct.certificate,
+      },
+      afterState: {
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        hallmarkStatus: editHallmarkStatus,
+        huid: editHuid.trim().toUpperCase(),
+        bisReference: editBisRef.trim(),
+        certificate: {
+          ...selectedProduct.certificate,
+          assayer: editAssayer.trim(),
+          certificateNumber: editCertNum.trim(),
+        },
+      },
+    });
+
+    setEditHallmarkModalOpen(false);
+    setActionNotice(`Dual-Custody Request Submitted: BIS/HUID record for "${selectedProduct.name}" sent to Approval Queue. Purity certifications will NOT mutate until approved.`);
+    setTimeout(() => setActionNotice(null), 5000);
   };
 
   return (
@@ -433,7 +528,108 @@ export const AdminCompliancePage: React.FC = () => {
         </div>
       </Card>
 
-      {/* MODAL: Bump Document Version */}
+      {/* BIS HALLMARK, HUID & ASSAYER CERTIFICATION REGISTRY */}
+      <Card className="p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-[#EADFC8]">
+          <div>
+            <div className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-[#C9A24B]" />
+              <h2 className="text-base font-serif font-bold text-[#5A4630]">
+                BIS Hallmark, HUID & Assayer Certification Registry
+              </h2>
+              <Badge variant="gold" size="sm">Dual-Custody Gated</Badge>
+            </div>
+            <p className="text-xs text-[#7A6A55] mt-0.5">
+              Governs 6-digit laser-engraved HUIDs, Bureau of Indian Standards refinery licenses, and assay certificates. Any modifications route to the Dual-Custody Approval Queue.
+            </p>
+          </div>
+
+          <Badge variant="neutral" className="text-xs">
+            {products.filter((p) => p.hallmarkStatus || p.huid || p.bisReference).length} Certified Products
+          </Badge>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs text-[#5A4630]">
+            <thead>
+              <tr className="border-b border-[#EADFC8] text-[#7A6A55] bg-[#FFFBF3]">
+                <th className="py-2.5 px-3 font-semibold">Article & SKU</th>
+                <th className="py-2.5 px-3 font-semibold">Metal & Purity</th>
+                <th className="py-2.5 px-3 font-semibold">Hallmark Status</th>
+                <th className="py-2.5 px-3 font-semibold">BIS HUID</th>
+                <th className="py-2.5 px-3 font-semibold">BIS License Reference</th>
+                <th className="py-2.5 px-3 font-semibold">Assayer & Cert #</th>
+                <th className="py-2.5 px-3 font-semibold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#EADFC8]">
+              {products
+                .filter((p) => p.category === 'gold' || p.category === 'silver' || p.huid || p.hallmarkStatus)
+                .slice(0, 8)
+                .map((prod) => (
+                  <tr key={prod.id} className="hover:bg-[#FFFDF9]">
+                    <td className="py-3 px-3">
+                      <div className="font-semibold text-xs text-[#5A4630]">{prod.name}</div>
+                      <div className="text-[10px] font-mono text-[#7A6A55]">{prod.sku}</div>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <span className="font-medium text-[#5A4630]">{prod.metal || prod.category.toUpperCase()}</span>
+                      <div className="text-[10px] text-[#7A6A55]">{prod.purity * 100}% purity</div>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <Badge
+                        variant={
+                          prod.hallmarkStatus === 'Certified'
+                            ? 'sage'
+                            : prod.hallmarkStatus === 'Exempt'
+                            ? 'neutral'
+                            : 'amber'
+                        }
+                        className="text-[10px]"
+                      >
+                        {prod.hallmarkStatus || 'Certified'}
+                      </Badge>
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <span className="font-mono font-bold text-[#C9A24B] bg-[#FFFBF3] px-2 py-0.5 rounded border border-[#EADFC8]">
+                        {prod.huid || '—'}
+                      </span>
+                    </td>
+
+                    <td className="py-3 px-3 font-mono text-[11px] text-[#7A6A55]">
+                      {prod.bisReference || 'BIS-L-7200192'}
+                    </td>
+
+                    <td className="py-3 px-3">
+                      <div className="text-[11px] font-medium text-[#5A4630]">
+                        {prod.certificate?.assayer || 'MMTC-PAMP India Central Assay'}
+                      </div>
+                      <div className="text-[10px] font-mono text-[#7A6A55]">
+                        {prod.certificate?.certificateNumber || 'CERT-BIS-9912'}
+                      </div>
+                    </td>
+
+                    <td className="py-3 px-3 text-right">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenEditHallmark(prod)}
+                        className="text-xs py-1 px-2.5 flex items-center gap-1 inline-flex"
+                      >
+                        <Edit className="w-3 h-3" /> Edit BIS Record
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* MODAL 1: Bump Document Version */}
       <Modal
         isOpen={editDocModalOpen}
         onClose={() => setEditDocModalOpen(false)}
@@ -480,8 +676,9 @@ export const AdminCompliancePage: React.FC = () => {
             />
           </div>
 
-          <div className="p-2.5 bg-[#F8EFD9] border border-[#EADFC8] rounded text-[11px] text-[#7A6A55]">
-            Approver: <strong>{currentActor} ({activeRole})</strong>. Saving will record an immutable entry in the system audit trail.
+          <div className="p-2.5 bg-[#FFF9ED] border border-[#E5C158] rounded text-[11px] text-[#7A6A55] flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-[#C9A24B] shrink-0" />
+            <span>Dual-Custody Gate: Submitting will create a pending request in Maker-Checker queue. An independent officer must approve before version is effective.</span>
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EADFC8]">
@@ -494,10 +691,131 @@ export const AdminCompliancePage: React.FC = () => {
               disabled={!newVersionString.trim() || !docNotes.trim()}
               onClick={handleSaveDocVersion}
             >
-              Confirm Revision
+              Submit for Checker Approval
             </Button>
           </div>
         </div>
+      </Modal>
+
+      {/* MODAL 2: Edit BIS Hallmark & HUID Record */}
+      <Modal
+        isOpen={editHallmarkModalOpen}
+        onClose={() => setEditHallmarkModalOpen(false)}
+        title={`Edit BIS Hallmark & HUID: ${selectedProduct?.name || ''}`}
+        maxWidth="md"
+      >
+        <form onSubmit={handleSaveHallmarkRecord} className="space-y-4 text-xs text-[#5A4630]">
+          <div className="p-3 bg-[#FFFBF3] border border-[#EADFC8] rounded-xl space-y-1">
+            <div className="font-semibold text-[#5A4630]">{selectedProduct?.name}</div>
+            <div className="text-[11px] text-[#7A6A55]">
+              SKU: {selectedProduct?.sku} • Current HUID: {selectedProduct?.huid || 'None'}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-[#5A4630] mb-1">
+                Hallmark Status *
+              </label>
+              <select
+                value={editHallmarkStatus}
+                onChange={(e) => setEditHallmarkStatus(e.target.value as any)}
+                className="w-full p-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+              >
+                <option value="Certified">Certified</option>
+                <option value="Pending">Pending</option>
+                <option value="Exempt">Exempt</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-semibold text-[#5A4630] mb-1">
+                6-Digit BIS HUID *
+              </label>
+              <input
+                type="text"
+                required
+                maxLength={10}
+                value={editHuid}
+                onChange={(e) => setEditHuid(e.target.value.toUpperCase())}
+                placeholder="e.g. HM8812"
+                className="w-full p-2 bg-white border border-[#EADFC8] rounded-md font-mono uppercase text-[#5A4630]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-[#5A4630] mb-1">
+              BIS Refinery / Assayer License Reference *
+            </label>
+            <input
+              type="text"
+              required
+              value={editBisRef}
+              onChange={(e) => setEditBisRef(e.target.value)}
+              placeholder="e.g. BIS-L-7200192"
+              className="w-full p-2 bg-white border border-[#EADFC8] rounded-md font-mono text-[#5A4630]"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block font-semibold text-[#5A4630] mb-1">
+                Assayer Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={editAssayer}
+                onChange={(e) => setEditAssayer(e.target.value)}
+                placeholder="e.g. MMTC-PAMP India"
+                className="w-full p-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-[#5A4630] mb-1">
+                Certificate Number *
+              </label>
+              <input
+                type="text"
+                required
+                value={editCertNum}
+                onChange={(e) => setEditCertNum(e.target.value)}
+                placeholder="e.g. CERT-BIS-9912"
+                className="w-full p-2 bg-white border border-[#EADFC8] rounded-md font-mono text-[#5A4630]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold text-[#5A4630] mb-1">
+              Justification / Reason for Modification *
+            </label>
+            <textarea
+              rows={2}
+              required
+              value={editReason}
+              onChange={(e) => setEditReason(e.target.value)}
+              placeholder="State the audit finding or re-assay calibration reference..."
+              className="w-full p-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630]"
+            />
+          </div>
+
+          <div className="p-2.5 bg-[#FFF9ED] border border-[#E5C158] rounded text-[11px] text-[#7A6A55] flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 text-[#C9A24B] shrink-0" />
+            <span>Dual-Custody Gate: This statutory record will NOT mutate until an independent compliance officer or administrator approves.</span>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#EADFC8]">
+            <Button type="button" variant="outline" size="sm" onClick={() => setEditHallmarkModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" size="sm" leftIcon={<Award className="w-4 h-4" />}>
+              Submit for Dual-Custody Approval
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

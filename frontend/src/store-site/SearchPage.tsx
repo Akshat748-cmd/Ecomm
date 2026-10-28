@@ -5,10 +5,9 @@ import { useSEO } from '../lib/useSEO';
 import { calculatePrice } from '../lib/pricing';
 import { ProductCard } from '../components/ProductCard';
 import { Button } from '../components/Button';
-import { Badge } from '../components/Badge';
 import { Chip } from '../components/Chip';
 import { EmptyState } from '../components/EmptyState';
-import { Search, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
+import { Search, ChevronRight, Sparkles, TrendingUp, X } from 'lucide-react';
 
 export const SearchPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -150,7 +149,7 @@ export const SearchPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Input Bar with Proposed Autocomplete Dropdown */}
+        {/* Input Bar with Autocomplete Dropdown and Clear Query Action */}
         <div className="relative max-w-xl">
           <form onSubmit={handleSearchSubmit} className="flex gap-2">
             <div className="relative flex-1">
@@ -164,16 +163,43 @@ export const SearchPage: React.FC = () => {
                 }}
                 placeholder="Search by metal, purity, gemstone, or SKU..."
                 aria-label="Search catalogue"
-                className="w-full text-xs sm:text-sm pl-9 pr-4 py-2.5 bg-white border border-[#EADFC8] rounded-lg text-[#5A4630] focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
+                className="w-full text-xs sm:text-sm pl-9 pr-9 py-2.5 bg-white border border-[#EADFC8] rounded-lg text-[#5A4630] focus:outline-none focus:ring-2 focus:ring-[#C9A24B]"
               />
               <Search className="w-4 h-4 text-[#7A6A55] absolute left-3 top-3.5" />
+              {inputVal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInputVal('');
+                    setSearchParams({});
+                  }}
+                  className="absolute right-3 top-3 text-[#7A6A55] hover:text-[#5A4630] p-0.5"
+                  title="Clear query"
+                  aria-label="Clear query"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
             <Button type="submit" variant="primary" size="md">
               Search
             </Button>
+            {query && (
+              <Button
+                type="button"
+                variant="outline"
+                size="md"
+                onClick={() => {
+                  setInputVal('');
+                  setSearchParams({});
+                }}
+              >
+                Clear
+              </Button>
+            )}
           </form>
 
-          {/* Autocomplete Dropdown (Proposed) */}
+          {/* Autocomplete Dropdown */}
           {showSuggestions && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#EADFC8] rounded-xl shadow-lg z-30 p-3 space-y-2 animate-in fade-in duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-[#EADFC8]">
@@ -181,16 +207,13 @@ export const SearchPage: React.FC = () => {
                   <TrendingUp className="w-3.5 h-3.5 text-[#C9A24B]" />
                   <span>Popular Investor Searches</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="neutral" size="sm">Proposed Feature</Badge>
-                  <button
-                    type="button"
-                    onClick={() => setShowSuggestions(false)}
-                    className="text-[11px] text-[#7A6A55] hover:text-[#5A4630]"
-                  >
-                    Close
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowSuggestions(false)}
+                  className="text-[11px] text-[#7A6A55] hover:text-[#5A4630]"
+                >
+                  Close
+                </button>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1">
@@ -217,13 +240,30 @@ export const SearchPage: React.FC = () => {
           )}
         </div>
 
+        {/* Suggested Categories Bar */}
+        <div className="flex items-center gap-2 pt-2 flex-wrap">
+          <span className="text-xs text-[#7A6A55] font-medium">Browse Categories:</span>
+          {[
+            { label: 'Gold Bullion', path: '/c/gold' },
+            { label: 'Silver Bullion', path: '/c/silver' },
+            { label: 'Natural Gemstones', path: '/c/gemstones' },
+            { label: 'Nepali Rudraksha', path: '/c/rudraksha' },
+            { label: 'Gifting Sets', path: '/c/gifting' },
+            { label: 'Corporate Gifting', path: '/corporate-gifting' },
+          ].map((cat) => (
+            <Link key={cat.path} to={cat.path}>
+              <Chip label={cat.label} clickable />
+            </Link>
+          ))}
+        </div>
+
         {/* Matched Category Quick Chips */}
         {matchedCategories.length > 0 && query && (
-          <div className="flex items-center gap-2 pt-2 flex-wrap">
-            <span className="text-xs text-[#7A6A55] font-medium">Matched Categories:</span>
+          <div className="flex items-center gap-2 pt-1 flex-wrap">
+            <span className="text-xs text-[#7A6A55] font-medium">Matched in results:</span>
             {matchedCategories.map((cat) => (
               <Link key={cat} to={`/c/${cat}`}>
-                <Chip label={cat.replace('-', ' ').toUpperCase()} clickable />
+                <Chip label={cat.replace('-', ' ').toUpperCase()} active clickable />
               </Link>
             ))}
           </div>
@@ -233,7 +273,8 @@ export const SearchPage: React.FC = () => {
       {/* Results Controls Row */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="text-xs text-[#7A6A55]">
-          Found <strong>{filteredResults.length}</strong> matching articles
+          Found <strong>{filteredResults.length}</strong> matching {filteredResults.length === 1 ? 'article' : 'articles'}
+          {query && <span> for "<span className="font-semibold text-[#5A4630]">{query}</span>"</span>}
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
@@ -265,20 +306,20 @@ export const SearchPage: React.FC = () => {
             aria-label="Sort by"
             className="bg-white border border-[#EADFC8] rounded-md px-2.5 py-1.5 text-xs text-[#5A4630]"
           >
-            <option value="popularity">Sort: Popularity</option>
+            <option value="popularity">Sort: Popularity / Stock</option>
             <option value="price-asc">Sort: Price Low to High</option>
             <option value="price-desc">Sort: Price High to Low</option>
           </select>
         </div>
       </div>
 
-      {/* Grid or Empty State with "Did you mean..." */}
+      {/* Grid or Empty State with "Did you mean..." and Browse Suggestions */}
       {filteredResults.length === 0 ? (
         <div className="space-y-6">
           <EmptyState
             title={`No results found for "${query}"`}
-            description="We could not find any precious pieces matching your search query. Please verify the spelling or try broader keywords like 'gold', 'ruby', or 'silver'."
-            actionLabel="Browse Gold Bullion"
+            description="We could not find any precious pieces matching your search query. Please verify the spelling or explore our certified categories below."
+            actionLabel="Browse All Sovereign Gold"
             onAction={() => setSearchParams({ q: 'gold' })}
           />
 

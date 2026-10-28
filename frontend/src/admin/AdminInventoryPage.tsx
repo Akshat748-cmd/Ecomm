@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { useSEO } from '../lib/useSEO';
-import { formatINR } from '../lib/pricing';
+import { formatINR, calculatePrice } from '../lib/pricing';
 import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
@@ -37,6 +37,7 @@ export const AdminInventoryPage: React.FC = () => {
     inventoryLogs,
     isFeedStale,
     rates,
+    pricingConfig,
     adminUser,
     activeRole,
     inventoryReceipt,
@@ -45,6 +46,7 @@ export const AdminInventoryPage: React.FC = () => {
     reconcileStock,
     cancelQuote,
     requote,
+    createApprovalRequest,
   } = useAppStore();
 
   const currentActor = adminUser?.name || 'Vikram Sharma';
@@ -227,10 +229,53 @@ export const AdminInventoryPage: React.FC = () => {
   const handleConfirmAdjustment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeProduct) return;
+
+    const pricing = calculatePrice(activeProduct, rates, pricingConfig);
+    const unitCost = activeProduct.fixedPrice || pricing.metalValue || activeProduct.mrp || 10000;
+    const delta = Number(adjDelta);
+    const totalDeltaValue = Math.abs(delta) * unitCost;
+
+    if (totalDeltaValue > 100000) {
+      // Dual-custody routing: MUST NOT mutate stock until approved by independent admin
+      createApprovalRequest({
+        type: 'stock_adjustment',
+        title: `High-Value Stock Adjustment: ${delta > 0 ? '+' : ''}${delta} units of ${activeProduct.name} (${adjType})`,
+        entityId: activeProduct.id,
+        requester: currentActor,
+        amount: Math.round(totalDeltaValue),
+        reason: adjReason,
+        beforeState: {
+          productId: activeProduct.id,
+          productName: activeProduct.name,
+          currentStock: activeProduct.stock,
+          adjType,
+          delta,
+          unitCost: Math.round(unitCost),
+          totalDeltaValue: Math.round(totalDeltaValue),
+        },
+        afterState: {
+          productId: activeProduct.id,
+          productName: activeProduct.name,
+          adjustmentType: adjType,
+          delta,
+          reason: adjReason,
+          expectedStock: adjType === 'onHand' ? activeProduct.stock + delta : activeProduct.stock,
+        },
+        approvalLimit: 100000,
+      });
+
+      setFeedbackNotice(
+        `Dual-Custody Approval Required: Adjustment value (${formatINR(totalDeltaValue)}) exceeds ₹1,00,000 threshold. Stock has NOT been modified and is pending checker approval in Admin Roles & Permissions queue.`
+      );
+      setAdjustmentModalOpen(false);
+      setTimeout(() => setFeedbackNotice(null), 5000);
+      return;
+    }
+
     inventoryAdjustment(
       activeProduct.id,
       adjType,
-      Number(adjDelta),
+      delta,
       adjReason,
       currentActor
     );
@@ -1154,67 +1199,112 @@ export const AdminInventoryPage: React.FC = () => {
         title={`Inventory Adjustment: ${activeProduct?.name || ''}`}
         maxWidth="md"
       >
-        <form onSubmit={handleConfirmAdjustment} className="space-y-4 text-xs text-[#5A4630]">
-          <div className="p-3 bg-[#FFFBF3] border border-[#EADFC8] rounded-xl space-y-1">
-            <div className="font-semibold text-[#5A4630]">{activeProduct?.name}</div>
-            <div className="text-[11px] text-[#7A6A55]">
-              On-Hand: {activeProduct?.stock} • Damaged: {activeProduct?.damaged || 0} • Quarantined: {activeProduct?.quarantined || 0}
-            </div>
-          </div>
+        {(() => {
+          const unitCost = activeProduct
+            ? (activeProduct.fixedPrice || calculatePrice(activeProduct, rates, pricingConfig).metalValue || activeProduct.mrp || 10000)
+            : 0;
+          const totalVal = Math.abs(Number(adjDelta || 0)) * unitCost;
+          const isDualCustody = totalVal > 100000;
 
-          <div>
-            <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
-              Adjustment Pool *
-            </label>
-            <select
-              value={adjType}
-              onChange={(e) => setAdjType(e.target.value as any)}
-              className="w-full px-3 py-1.5 text-xs bg-white border border-[#EADFC8] rounded-lg"
-            >
-              <option value="onHand">On-Hand Physical Stock (+/-)</option>
-              <option value="damaged">Damaged Stock (+/-)</option>
-              <option value="quarantined">Quarantined Stock (+/-)</option>
-            </select>
-          </div>
+          return (
+            <form onSubmit={handleConfirmAdjustment} className="space-y-4 text-xs text-[#5A4630]">
+              <div className="p-3 bg-[#FFFBF3] border border-[#EADFC8] rounded-xl space-y-1">
+                <div className="font-semibold text-[#5A4630]">{activeProduct?.name}</div>
+                <div className="text-[11px] text-[#7A6A55]">
+                  On-Hand: {activeProduct?.stock} • Damaged: {activeProduct?.damaged || 0} • Quarantined: {activeProduct?.quarantined || 0}
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
-              Adjustment Delta Quantity (+ / -) *
-            </label>
-            <input
-              type="number"
-              required
-              value={adjDelta}
-              onChange={(e) => setAdjDelta(Number(e.target.value))}
-              className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-[#EADFC8] rounded-lg"
-            />
-            <span className="text-[10px] text-[#7A6A55]">
-              Use negative numbers (e.g. -2) to write off or positive to add back.
-            </span>
-          </div>
+              <div>
+                <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
+                  Adjustment Pool *
+                </label>
+                <select
+                  value={adjType}
+                  onChange={(e) => setAdjType(e.target.value as any)}
+                  className="w-full px-3 py-1.5 text-xs bg-white border border-[#EADFC8] rounded-lg"
+                >
+                  <option value="onHand">On-Hand Physical Stock (+/-)</option>
+                  <option value="damaged">Damaged Stock (+/-)</option>
+                  <option value="quarantined">Quarantined Stock (+/-)</option>
+                </select>
+              </div>
 
-          <div>
-            <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
-              Statutory Justification / Audit Reason *
-            </label>
-            <input
-              type="text"
-              required
-              value={adjReason}
-              onChange={(e) => setAdjReason(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs bg-white border border-[#EADFC8] rounded-lg"
-            />
-          </div>
+              <div>
+                <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
+                  Adjustment Delta Quantity (+ / -) *
+                </label>
+                <input
+                  type="number"
+                  required
+                  value={adjDelta}
+                  onChange={(e) => setAdjDelta(Number(e.target.value))}
+                  className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-[#EADFC8] rounded-lg"
+                />
+                <span className="text-[10px] text-[#7A6A55]">
+                  Use negative numbers (e.g. -2) to write off or positive to add back.
+                </span>
+              </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-[#EADFC8]">
-            <Button type="button" variant="outline" size="sm" onClick={() => setAdjustmentModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="primary" size="sm" leftIcon={<Sliders className="w-4 h-4" />}>
-              Save Adjustment
-            </Button>
-          </div>
-        </form>
+              {/* Live Cost & Dual-Custody Impact Breakdown */}
+              <div className="p-3 bg-[#FFFBF3] border border-[#EADFC8] rounded-xl space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#7A6A55]">Procurement / Metal Cost:</span>
+                  <span className="font-mono font-semibold text-[#5A4630]">{formatINR(unitCost)} / unit</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-[#7A6A55]">Total Adjustment Value (|Δ| × Cost):</span>
+                  <span className="font-mono font-bold text-sm text-[#5A4630]">{formatINR(totalVal)}</span>
+                </div>
+
+                {isDualCustody ? (
+                  <div className="p-2.5 bg-[#FDF0EE] border border-[#F1B5AC] rounded-lg text-[11px] text-[#9E3624] space-y-1">
+                    <div className="font-bold flex items-center gap-1.5">
+                      <ShieldAlert className="w-4 h-4 shrink-0 text-[#9E3624]" />
+                      <span>Exceeds ₹1,00,000 Dual-Custody Limit</span>
+                    </div>
+                    <p className="leading-relaxed">
+                      Statutory Policy: Adjustments above ₹1,00,000 are routed to the Maker-Checker Approval Queue. Stock will <strong>NOT</strong> change until approved by a second independent administrator.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-2 bg-[#E8F3E6] border border-[#A3D9A5] rounded-lg text-[11px] text-[#2D5A27] flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <span>Within warehouse threshold (&le; ₹1,00,000). Applies directly upon confirmation.</span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#7A6A55] mb-1">
+                  Statutory Justification / Audit Reason *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={adjReason}
+                  onChange={(e) => setAdjReason(e.target.value)}
+                  placeholder="State the audit observation or packaging damage rationale..."
+                  className="w-full px-3 py-1.5 text-xs bg-white border border-[#EADFC8] rounded-lg"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-[#EADFC8]">
+                <Button type="button" variant="outline" size="sm" onClick={() => setAdjustmentModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant={isDualCustody ? 'secondary' : 'primary'}
+                  size="sm"
+                  leftIcon={isDualCustody ? <ShieldAlert className="w-4 h-4 text-[#9E3624]" /> : <Sliders className="w-4 h-4" />}
+                >
+                  {isDualCustody ? 'Submit for Dual-Custody Approval' : 'Save Adjustment'}
+                </Button>
+              </div>
+            </form>
+          );
+        })()}
       </Modal>
 
       {/* ============================================================== */}

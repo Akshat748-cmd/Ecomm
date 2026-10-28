@@ -9,12 +9,19 @@ export type ProductCategory =
 export type ProductType = 'rateLinked' | 'fixed';
 
 export interface CertificateInfo {
+  type?: string; // e.g. "BIS Hallmark", "GIA Dossier", "IGI Identification"
   issuer: string;
   number: string;
   status: 'Verified' | 'Not Found' | 'Pending';
   linkedLot?: string;
   issueDate?: string;
   documentUrl?: string;
+  assayingCentre?: string;
+  fileUrl?: string;
+  certNumber?: string;
+  agency?: string;
+  assayer?: string;
+  certificateNumber?: string;
 }
 
 export interface BullionAttributes {
@@ -53,33 +60,60 @@ export interface Product {
   slug: string;
   name: string;
   category: ProductCategory;
+  subcategory?: string;
   type: ProductType;
   sku: string;
   brand: string;
   description: string;
   imageUrl?: string;
   images?: string[];
+  unit?: 'g' | 'kg' | 'carat' | 'piece';
+  dimensions?: string;
+  origin?: string;
+  stoneType?: string;
+  rudrakshMukhi?: number | string;
+  tags?: string[];
+  variant?: string;
   netWeightG: number;
   grossWeightG: number;
-  purity: number; // e.g. 0.999, 0.9167 for 22K, 0.999 for silver
+  purity: number; // e.g. 0.9999, 0.9167 for 22K, 0.999 for silver
   metal?: 'Gold 24K' | 'Gold 22K' | 'Silver 999';
   stock: number;
   reserved: number;
   lotBatchSerial: string;
-  certificate: CertificateInfo;
-  mrp: number; // Maximum Retail Price
-  makingPercent: number; // e.g. 0.08 for 8%
+  hsn?: string;
+  gstRate?: number; // e.g. 0.03
+  isLiveRate?: boolean;
+  markupPercent?: number; // retail markup
+  premiumPercent?: number; // minting/making premium
+  makingPercent: number; // e.g. 0.04
+  fixedCharges?: number;
   fixedPrice?: number; // For type: "fixed"
+  mrp: number; // Maximum Retail Price
+  calculatedMrp?: number;
+  hallmarkStatus?: 'Certified' | 'Exempt' | 'Pending';
+  huid?: string; // 6-digit alphanumeric BIS Hallmark Unique Identifier
+  bisReference?: string; // BIS refinery/assayer license
+  certificate: CertificateInfo;
   packagingCost?: number;
   insuranceCost?: number;
   status?: 'Active' | 'Draft' | 'Delisted';
-  variant?: string;
+  visibility?: 'Public' | 'Unlisted' | 'Private';
+  isFeatured?: boolean;
+  approvalState?: 'draft' | 'validated' | 'submitted' | 'approved' | 'rejected' | 'published';
+  updatedDate?: string;
+  personalizationEligible?: boolean;
+  personalizationCharge?: number;
+  backorderEligible?: boolean;
+  rating?: number;
   barcode?: string;
   launchScheduledAt?: string;
   isDelisted?: boolean;
   damaged?: number;
   quarantined?: number;
   reorderThreshold?: number;
+  seoTitle?: string;
+  seoDescription?: string;
   attributes: {
     bullion?: BullionAttributes;
     gemstone?: GemstoneAttributes;
@@ -99,13 +133,30 @@ export type OrderStatus =
   | 'Delivered'
   | 'Cancelled'
   | 'Return requested'
-  | 'Returned';
+  | 'Returned'
+  | 'Held'; // KYC Hold or payment mismatch hold
 
 export interface OrderTimelineEntry {
   status: OrderStatus;
   timestamp: string; // ISO UTC
   actor: string;
   note?: string;
+}
+
+export interface PersonalizationDetails {
+  engravingText: string;
+  recipientName?: string;
+  giftMessage?: string;
+  occasion?: string;
+  packagingOption: string;
+  customizationCharge: number;
+  languageLimit?: string;
+  symbolLimit?: string;
+  previewUrl?: string;
+  productionStage: 'Proofing' | 'Engraving' | 'QA_Inspection' | 'Packing' | 'Ready_For_Dispatch';
+  artworkApproved: boolean;
+  qaPassed: boolean;
+  qaNotes?: string;
 }
 
 export interface OrderItem {
@@ -119,6 +170,20 @@ export interface OrderItem {
   ratePerGramSnapshot?: number;
   makingCharges?: number;
   gstAmount: number;
+  personalization?: PersonalizationDetails;
+}
+
+export interface CreditDebitNote {
+  id: string;
+  type: 'CreditNote' | 'DebitNote';
+  originalInvoiceNumber: string;
+  orderId: string;
+  adjustmentAmount: number;
+  taxAdjustment: number;
+  reason: string;
+  irn?: string;
+  createdAt: string;
+  approver?: string;
 }
 
 export interface Order {
@@ -128,6 +193,11 @@ export interface Order {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerPan?: string;
+  customerGstin?: string;
+  kycRequired?: boolean;
+  kycVerified?: boolean;
+  holdReason?: string;
   shippingAddress: {
     name: string;
     street: string;
@@ -136,25 +206,50 @@ export interface Order {
     pincode: string;
     country: string;
   };
+  isStorePickup?: boolean;
+  pickupLocation?: string;
   items: OrderItem[];
   subtotal: number;
+  discountAmount?: number;
+  couponCode?: string;
+  taxSplit?: {
+    cgst: number;
+    sgst: number;
+    igst: number;
+  };
   gstTotal: number;
   totalAmount: number;
+  lockedPriceRef?: string;
+  priceLockExpiresAt?: string;
   paymentStatus: 'Success' | 'Failed' | 'Pending' | 'Timeout';
   paymentMethod: string;
   paymentTransactionId?: string;
+  gatewayReference?: string;
+  webhookStatus?: 'Pending' | 'Verified' | 'Duplicate_Ignored' | 'Failed';
+  offlinePaymentApproval?: boolean;
+  settlementReference?: string;
   status: OrderStatus;
   timeline: OrderTimelineEntry[];
   courierName?: string;
   trackingNumber?: string;
+  declaredValue?: number;
+  insuranceRequired?: boolean;
+  proofOfDeliveryUrl?: string;
   erpInvoiceNumber?: string;
   erpInvoiceAttached: boolean;
   erpInvoiceUrl?: string;
+  immutablePdfUrl?: string;
+  emailStatus?: 'Pending' | 'Sent' | 'Failed_Retrying' | 'Delivered';
+  emailRetryCount?: number;
+  irn?: string;
+  qrCode?: string;
+  creditDebitNotes?: CreditDebitNote[];
   returnRequest?: {
     reason: string;
     requestedAt: string;
     status: 'Pending' | 'Approved' | 'Rejected';
     resolutionNote?: string;
+    refundAmount?: number;
   };
   createdAt: string;
   updatedAt: string;
@@ -165,6 +260,13 @@ export interface Customer {
   name: string;
   email: string;
   phone: string;
+  dateOfBirth?: string;
+  anniversary?: string;
+  gstin?: string;
+  pan?: string;
+  panNumber?: string;
+  panVerified?: boolean;
+  kycStatus: 'Pending' | 'Verified' | 'Exempt' | 'Rejected' | 'pending' | 'verified';
   isVerified: boolean;
   totalOrders: number;
   totalSpent: number;
@@ -182,6 +284,16 @@ export interface Customer {
     smsAlerts: boolean;
     whatsappUpdates: boolean;
   };
+  channelConsent?: {
+    email: boolean;
+    sms: boolean;
+    whatsapp: boolean;
+    push: boolean;
+  };
+  preferredLanguage?: string;
+  recentSearches?: string[];
+  savedForLater?: string[];
+  riskFlags?: string[];
   notes: string[];
   orderNotes?: CustomerOrderNote[];
   supportHistory?: CustomerSupportInteraction[];
@@ -233,6 +345,191 @@ export interface Quote {
   createdAt: string; // UTC ISO
   expiresAt: string; // UTC ISO
   status: 'Active' | 'Accepted' | 'Expired' | 'Cancelled';
+}
+
+export interface PriceLockConfig {
+  durationSeconds: number; // Duration must be > 0
+  eligibleProductTypes: string[];
+  expiryBehaviour: 'block_payment_force_reprice';
+}
+
+export interface Offer {
+  id: string;
+  name: string;
+  code: string;
+  type: 'percent' | 'flat';
+  discountValue: number;
+  minOrderValue: number;
+  categoryOrSku: string;
+  customerSegment?: string;
+  usageLimitTotal: number;
+  usageLimitPerCustomer: number;
+  usedCount: number;
+  startDate: string;
+  endDate: string;
+  combinable: boolean;
+  approvalStatus: 'Draft' | 'Approved' | 'Active' | 'Paused' | 'Expired';
+  marginGuardrailPercent: number; // Disallows coupon if bullion gross margin drops below guardrail
+}
+
+export interface CorporateEnquiry {
+  id: string;
+  companyName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  gstin?: string;
+  occasion: string;
+  quantity: number;
+  budgetPerRecipient: number;
+  preferences: string;
+  brandingRequired: boolean;
+  deliverySchedule: string;
+  recipientCount: number;
+  remarks: string;
+  leadSource: string;
+  status: 'New' | 'Qualified' | 'Quoted' | 'Approved' | 'Fulfillment' | 'Closed';
+  createdAt: string;
+}
+
+export interface CorporateQuote {
+  id: string;
+  enquiryId: string;
+  quoteNumber: string;
+  items: {
+    productId: string;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    customizationCost: number;
+  }[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  marginPercent: number;
+  isMarginApproved: boolean;
+  marginApprover?: string;
+  expiresAt: string;
+  paymentTerms: string;
+  brandingProofUrl?: string;
+  status: 'Draft' | 'Submitted' | 'Margin_Approved' | 'Accepted' | 'Expired';
+}
+
+export interface CorporateRecipient {
+  id: string;
+  quoteId: string;
+  name: string;
+  phone: string;
+  email?: string;
+  address: string;
+  pincode: string;
+  giftVariant: string;
+  customMessage?: string;
+  shipmentGroupId: string;
+  deliveryStatus: 'Pending' | 'Dispatched' | 'Delivered';
+}
+
+export interface CorporateShipmentGroup {
+  id: string;
+  quoteId: string;
+  name: string;
+  courier: string;
+  trackingNumber?: string;
+  recipientCount: number;
+  status: 'Pending' | 'Dispatched' | 'Delivered';
+}
+
+export interface SupportTicket {
+  id: string;
+  ticketNumber: string;
+  orderId?: string;
+  customerId: string;
+  customerName: string;
+  issueType: 'Return' | 'Cancellation' | 'Damage' | 'Delivery_Delay' | 'General';
+  priority: 'High' | 'Medium' | 'Low';
+  slaHours: number;
+  assignee: string;
+  status: 'Open' | 'In_Progress' | 'Pending_Evidence' | 'Resolved' | 'Closed';
+  subject: string;
+  message: string;
+  attachments?: string[];
+  resolutionNotes?: string;
+  creditDebitNoteId?: string;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+export type ApprovalType =
+  | 'price_override'
+  | 'high_value_refund'
+  | 'stock_adjustment'
+  | 'compliance_edit'
+  | 'low_margin_quote'
+  | 'credit_terms';
+
+export interface ApprovalRequest {
+  id: string;
+  type: ApprovalType;
+  title: string;
+  entityId: string;
+  requester: string;
+  approver?: string;
+  amount?: number;
+  reason: string;
+  beforeState?: any;
+  afterState?: any;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  createdAt: string;
+  resolvedAt?: string;
+  approvalLimit?: number;
+}
+
+export type CommunicationChannel = 'email' | 'sms' | 'whatsapp' | 'push' | 'in_app';
+
+export interface CommunicationEvent {
+  id: string;
+  channel: CommunicationChannel;
+  eventType: string; // e.g. "otp", "order_confirmation", "invoice_issued", "shipment_dispatched", "refund_approved"
+  template: string;
+  version: string;
+  language: string;
+  recipientContact: string;
+  consentChecked: boolean;
+  priorityFallback?: string;
+  retryCount: number;
+  deliveryStatus: 'Queued' | 'Sent' | 'Delivered' | 'Failed';
+  failureReason?: string;
+  timestamp: string;
+}
+
+export interface PricingLedgerEntry {
+  id: string;
+  timestamp: string;
+  source: string; // MCX India, LBMA London
+  metal: string;
+  baseRate: number;
+  purityConversion: number;
+  markupPercent: number;
+  premiumCharges: number;
+  packagingInsurance: number;
+  gst: number;
+  lockedPrice?: number;
+  overrideReason?: string;
+  approvedBy?: string;
+}
+
+export interface OrderLedgerEntry {
+  id: string;
+  timestamp: string;
+  orderId: string;
+  orderNumber: string;
+  paymentWebhookId?: string;
+  lockedPriceRef?: string;
+  stockReservationDelta: number;
+  invoiceNumber?: string;
+  shipmentTracking?: string;
+  refundCreditNoteId?: string;
+  communicationEventIds: string[];
 }
 
 export interface Alert {
@@ -348,7 +645,26 @@ export interface PricingConfig {
 
 export interface StoreEvent {
   id: string;
-  type: 'product_view' | 'search' | 'add_to_cart' | 'checkout_start' | 'payment_result' | 'support_request' | 'return_request';
+  type:
+    | 'product_view'
+    | 'search'
+    | 'add_to_cart'
+    | 'checkout_start'
+    | 'payment_result'
+    | 'support_request'
+    | 'return_request'
+    | 'cart_save_for_later'
+    | 'coupon_applied'
+    | 'otp_requested'
+    | 'customer_registered'
+    | 'customer_login'
+    | 'customer_logout'
+    | 'customer_profile_update'
+    | 'order_address_updated'
+    | 'corporate_enquiry_submitted'
+    | 'corporate_quote_accepted'
+    | 'support_ticket_created'
+    | 'admin_action';
   details: string;
   timestamp: string; // UTC ISO
   metadata?: Record<string, any>;
@@ -370,6 +686,7 @@ export interface AdminUser {
   isAuthenticated: boolean;
   mfaVerified: boolean;
   lastActive: number;
+  status?: 'Active' | 'Inactive';
 }
 
 export interface MakerCheckerItem {
@@ -432,5 +749,18 @@ export interface DocumentVersionRecord {
   status: 'Effective' | 'Pending Review' | 'Superseded';
   reviewCycle: string;
   notes: string;
+}
+
+export interface Testimonial {
+  id: string;
+  quote: string;
+  customerName: string;
+  permissionGranted: boolean;
+  productName: string;
+  productSku: string;
+  rating: number;
+  approvalStatus: 'Approved' | 'Pending' | 'Rejected';
+  city: string;
+  date: string;
 }
 

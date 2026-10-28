@@ -8,6 +8,7 @@ import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import type { Order, OrderStatus } from '../data/types';
+import { maskPhone } from '../lib/masking';
 import {
   ShoppingBag,
   Search,
@@ -450,7 +451,7 @@ export const AdminOrdersPage: React.FC = () => {
                         <td className="py-3 px-3">
                           <div className="font-semibold text-[#5A4630]">{o.customerName}</div>
                           <div className="text-[10px] text-[#7A6A55]">
-                            {o.shippingAddress.city} • Pin: {o.shippingAddress.pincode}
+                            {o.customerPhone ? `${maskPhone(o.customerPhone, activeRole)} • ` : ''}{o.shippingAddress.city} • Pin: {o.shippingAddress.pincode}
                           </div>
                         </td>
 
@@ -656,7 +657,7 @@ export const AdminOrdersPage: React.FC = () => {
                       </td>
                       <td className="py-3 px-3 text-[#5A4630]">
                         <div className="font-semibold">{o.customerName}</div>
-                        <div className="text-[10px] text-[#7A6A55]">{o.customerPhone}</div>
+                        <div className="text-[10px] text-[#7A6A55] font-mono">{maskPhone(o.customerPhone, activeRole)}</div>
                       </td>
                       <td className="py-3 px-3 text-right font-mono font-bold text-[#5A4630] tabular-nums">
                         {formatINR(o.totalAmount)}

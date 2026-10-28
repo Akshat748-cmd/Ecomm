@@ -19,6 +19,7 @@ import {
   DollarSign,
   Activity,
 } from 'lucide-react';
+import { maskPhone } from '../lib/masking';
 
 export const AdminDashboardPage: React.FC = () => {
   useSEO({
@@ -36,6 +37,7 @@ export const AdminDashboardPage: React.FC = () => {
     alerts,
     quotes,
     resolveAlert,
+    activeRole,
   } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<'executive' | 'orders' | 'rates' | 'inventory'>('executive');
@@ -126,7 +128,7 @@ export const AdminDashboardPage: React.FC = () => {
       )}
 
       {/* 2. Top-Level KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-5 bg-white border border-[#EADFC8] rounded-xl shadow-xs space-y-2">
           <div className="flex items-center justify-between text-xs text-[#7A6A55]">
             <span className="font-medium">Gross Sales Revenue</span>
@@ -155,21 +157,6 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
           <div className="text-[11px] text-[#7A6A55]">
             {metrics.pendingDispatches} pending dispatch • {metrics.activeReturnRequests} return requests
-          </div>
-        </div>
-
-        <div className="p-5 bg-white border border-[#EADFC8] rounded-xl shadow-xs space-y-2">
-          <div className="flex items-center justify-between text-xs text-[#7A6A55]">
-            <span className="font-medium">Vault Physical Reserves</span>
-            <span className="p-1.5 rounded-lg bg-[#FAF1DB] text-[#C9A24B]">
-              <Boxes className="w-4 h-4" />
-            </span>
-          </div>
-          <div className="font-serif text-2xl font-bold text-[#5A4630]">
-            {metrics.totalAvailableStock} <span className="text-sm font-sans font-normal text-[#7A6A55]">Available</span>
-          </div>
-          <div className="text-[11px] text-[#C9A24B] font-medium">
-            {metrics.totalReservedStock} units locked in active quotes & checkouts
           </div>
         </div>
 
@@ -422,7 +409,14 @@ export const AdminDashboardPage: React.FC = () => {
                 {orders.map((o) => (
                   <tr key={o.id} className="hover:bg-[#FFFBF3]">
                     <td className="p-3 font-mono font-bold text-[#5A4630]">{o.orderNumber}</td>
-                    <td className="p-3">{o.customerName}</td>
+                    <td className="p-3">
+                      <div className="font-medium text-[#5A4630]">{o.customerName}</div>
+                      {o.customerPhone && (
+                        <div className="text-[10px] text-[#7A6A55] font-mono">
+                          {maskPhone(o.customerPhone, activeRole)}
+                        </div>
+                      )}
+                    </td>
                     <td className="p-3 font-bold text-[#5A4630]">{formatINR(o.totalAmount)}</td>
                     <td className="p-3">
                       <Badge variant={o.paymentStatus === 'Success' ? 'sage' : 'coral'} size="sm">

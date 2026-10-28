@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { useSEO } from '../lib/useSEO';
@@ -12,85 +12,92 @@ import {
   Coins,
   ArrowRight,
   Sparkles,
-  Lock,
   Truck,
-  ChevronLeft,
   ChevronRight,
+  Gift,
+  Building2,
+  Copy,
+  Check,
+  Star,
+  Quote as QuoteIcon,
+  HelpCircle,
+  FileCheck,
 } from 'lucide-react';
 
-interface FestiveSlide {
+interface HeroBannerData {
   id: string;
-  category: string;
-  tag: string;
-  title: string;
-  description: string;
+  headline: string;
+  supportingCopy: string;
   image: string;
-  ctaText: string;
-  link: string;
-  accentColor: string;
-  bgGradient: string;
+  primaryCtaLabel: string;
+  primaryCtaDestination: string;
+  secondaryCtaLabel: string;
+  secondaryCtaDestination: string;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
 }
 
-const FESTIVE_SLIDES: FestiveSlide[] = [
+const HERO_BANNER_CONFIG: HeroBannerData = {
+  id: 'hero-banner-2026',
+  headline: 'Timeless Purity in Precious Metals & Sacred Artefacts',
+  supportingCopy:
+    'India’s premium destination for physical gold & silver bullion, natural certified gemstones, and authentic consecrated Rudraksha. Guaranteed transparent live rates and 10-minute price quote protection.',
+  image: '/hero-bg.jpg',
+  primaryCtaLabel: 'Explore 24K Bullion & Jewellery',
+  primaryCtaDestination: '/c/gold',
+  secondaryCtaLabel: 'Request Corporate Quote',
+  secondaryCtaDestination: '/corporate-gifting',
+  startDate: '2026-01-01',
+  endDate: '2026-12-31',
+  isActive: true,
+};
+
+interface FestivalCollection {
+  id: string;
+  name: string;
+  occasion: string;
+  banner: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  mappedSkuList: string[];
+  displayOrder: number;
+}
+
+const FESTIVAL_COLLECTIONS: FestivalCollection[] = [
   {
-    id: 'gold',
-    category: 'gold',
-    tag: 'FESTIVE COLLECTION',
-    title: 'Celebrate Tradition in Gold',
-    description: 'Exclusive festive jewellery & 24K bullion collection • Crafted for your special moments',
-    image: '/banners/banner-gold.jpg',
-    ctaText: 'EXPLORE NOW',
-    link: '/c/gold',
-    accentColor: '#BA8332',
-    bgGradient: 'from-[#FFF7EC] via-[#FAF0DF] to-[#FCEFDE]',
+    id: 'col-akshaya',
+    name: 'Akshaya Tritiya Sovereign Bullion Collection',
+    occasion: 'Akshaya Tritiya & Shubh Muhurat',
+    banner: '/banners/banner-gold.jpg',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    description: 'High-relief 24K pure minted coins and 50g cast investment bars for eternal prosperity.',
+    mappedSkuList: ['AU-BULL-COIN-10G', 'AU-BULL-BAR-50G', 'AG-BULL-BAR-250G'],
+    displayOrder: 1,
   },
   {
-    id: 'silver',
-    category: 'silver',
-    tag: 'SACRED TREASURY',
-    title: 'Divine Silver for Auspicious Beginnings',
-    description: '999 Fine Silver Lakshmi Ganesh coins, consecrated idols & heirloom dining sets',
-    image: '/banners/banner-silver.jpg',
-    ctaText: 'EXPLORE SILVER',
-    link: '/c/silver',
-    accentColor: '#8C7A65',
-    bgGradient: 'from-[#F8F9FA] via-[#F2F4F7] to-[#E9ECEF]',
+    id: 'col-diwali',
+    name: 'Sacred Deepavali Lakshmi Ganesh Treasury',
+    occasion: 'Diwali & Dhanteras Treasury',
+    banner: '/banners/banner-silver.jpg',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    description: 'Consciously refined 999 Fine Silver Lakshmi Ganesh coins and consecrated heirloom puja idols.',
+    mappedSkuList: ['AG-COIN-LAKSHMI-50G', 'AG-IDOL-GANESH-100G', 'GIFT-PUJA-SET-SILVER'],
+    displayOrder: 2,
   },
   {
-    id: 'gemstones',
-    category: 'gemstones',
-    tag: 'ROYAL ADORNMENT',
-    title: 'Natural Certified Gemstones of Kings',
-    description: 'Untreated Burmese Rubies, Colombian Emeralds & vivid certified Ceylon Sapphires',
-    image: '/banners/banner-gemstones.jpg',
-    ctaText: 'EXPLORE GEMS',
-    link: '/c/gemstones',
-    accentColor: '#2D5A27',
-    bgGradient: 'from-[#F6FAF5] via-[#EBF3EA] to-[#E2EFE0]',
-  },
-  {
-    id: 'rudraksha',
-    category: 'rudraksha',
-    tag: 'VEDIC DEVOTION',
-    title: 'Sacred Himalayan Rudraksha & Silver Malas',
-    description: 'Lab-certified Nepali 1 to 14 Mukhi beads & energized sterling silver sadhana malas',
-    image: '/banners/banner-rudraksha.jpg',
-    ctaText: 'EXPLORE RUDRAKSHA',
-    link: '/c/rudraksha',
-    accentColor: '#8C3A2D',
-    bgGradient: 'from-[#FDF7F5] via-[#F9EBE7] to-[#F5DED8]',
-  },
-  {
-    id: 'gifting',
-    category: 'gifting',
-    tag: 'CELEBRATORY GIFTS',
-    title: 'Curated Treasury & Corporate Gifting',
-    description: 'Custom-minted 24K gold keepsakes, auspicious coins & sterling silver hamper sets',
-    image: '/banners/banner-gifting.jpg',
-    ctaText: 'EXPLORE GIFTING',
-    link: '/c/gifting',
-    accentColor: '#966D24',
-    bgGradient: 'from-[#FCF9F2] via-[#F8F1E1] to-[#F2E7CD]',
+    id: 'col-navaratri',
+    name: 'Navaratri Royal Gemstone & Rudraksha Adornment',
+    occasion: 'Sacred Vedic Celebrations',
+    banner: '/banners/banner-gemstones.jpg',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    description: 'Natural unheated Burmese rubies and certified Himalayan 7 Mukhi beads energized in silver.',
+    mappedSkuList: ['GEM-RUBY-BUR-315', 'GEM-EMER-COL-240', 'RUD-7MUKHI-NEPAL'],
+    displayOrder: 3,
   },
 ];
 
@@ -102,290 +109,282 @@ export const HomePage: React.FC = () => {
     canonicalPath: '/',
   });
 
-  const { rates, isFeedStale, products } = useAppStore();
+  const { rates, isFeedStale, products, offers, testimonials } = useAppStore();
 
-  // Festive Banner Carousel State
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isSliderPaused, setIsSliderPaused] = useState(false);
+  const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
 
-  const nextSlide = useCallback(() => {
-    setCurrentSlideIndex((prev) => (prev + 1) % FESTIVE_SLIDES.length);
+  // Validate hero banner schedule
+  const isHeroActive = useMemo(() => {
+    if (!HERO_BANNER_CONFIG.isActive) return false;
+    const now = new Date().toISOString();
+    return now >= HERO_BANNER_CONFIG.startDate && now <= HERO_BANNER_CONFIG.endDate;
   }, []);
 
-  const prevSlide = useCallback(() => {
-    setCurrentSlideIndex((prev) => (prev - 1 + FESTIVE_SLIDES.length) % FESTIVE_SLIDES.length);
+  // Filter active collections (hide expired)
+  const activeFestivalCollections = useMemo(() => {
+    const now = new Date().toISOString();
+    return FESTIVAL_COLLECTIONS.filter(
+      (c) => now >= c.startDate && now <= c.endDate
+    ).sort((a, b) => a.displayOrder - b.displayOrder);
   }, []);
 
-  // Autoplay timer (5 seconds)
-  useEffect(() => {
-    if (isSliderPaused) return;
-    const timer = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [isSliderPaused, nextSlide]);
+  // Filter active offers (hide expired/paused)
+  const activeOffers = useMemo(() => {
+    const now = new Date().toISOString().slice(0, 10);
+    return (offers || []).filter(
+      (off) =>
+        off.approvalStatus === 'Active' &&
+        now >= off.startDate &&
+        now <= off.endDate
+    );
+  }, [offers]);
 
-  // Featured 4 items across categories
-  const featuredProducts = products.filter((p) =>
-    ['prod-gold-01', 'prod-silver-02', 'prod-gem-01', 'prod-rud-01'].includes(p.id)
-  );
+  // Filter approved testimonials only (strictly enforce rule: only approved show)
+  const approvedTestimonials = useMemo(() => {
+    return (testimonials || []).filter(
+      (t) => t.approvalStatus === 'Approved' && t.permissionGranted
+    );
+  }, [testimonials]);
 
-  const categoryModules = [
+  // Featured 4 in-stock items across categories
+  const featuredProducts = useMemo(() => {
+    return products
+      .filter((p) => p.stock - p.reserved > 0 || p.backorderEligible)
+      .slice(0, 4);
+  }, [products]);
+
+  // Category tiles specified in Phase 2
+  const categoryTiles = [
     {
-      id: 'gold',
-      title: '24K & 22K Gold Bullion',
-      subtitle: '999.9 Minted Coins, Cast Bars & Heritage Chains',
+      id: 'cat-gold',
+      name: 'Gold Coins & Bars',
+      subtitle: '24K (999.9) Minted Bullion & 22K Jewellery',
       image: '/banners/banner-gold.jpg',
       badge: 'BIS 999.9 & 916',
-      tag: '3 Investment Bullion & Jewellery Pieces',
+      tag: 'Certified Bullion Coins & Cast Bars',
       path: '/c/gold',
       gradient: 'from-[#FFFDF7] to-[#FAF1DB]',
       border: 'border-[#E8D4A2]',
+      displayOrder: 1,
     },
     {
-      id: 'silver',
-      title: '999 Fine Silver',
-      subtitle: 'Auspicious Lakshmi Coins, 250g Bars & Sacred Idols',
+      id: 'cat-silver',
+      name: 'Silver Coins & Bars',
+      subtitle: '999 Fine Bullion, Lakshmi Coins & Sacred Idols',
       image: '/banners/banner-silver.jpg',
       badge: '999 Fine Silver',
-      tag: '3 Coins, Bars & Consecrated Idols',
+      tag: 'Commemorative Coins & 250g Bars',
       path: '/c/silver',
       gradient: 'from-[#FFFFFF] to-[#EAECEF]',
       border: 'border-[#D5DCE2]',
+      displayOrder: 2,
     },
     {
-      id: 'gemstones',
-      title: 'Certified Gemstones',
-      subtitle: 'Burmese Rubies, Colombian Emeralds & Basra Pearls',
+      id: 'cat-gemstones',
+      name: 'Gems and Coloured Stones',
+      subtitle: 'Untreated Burmese Rubies, Emeralds & Sapphires',
       image: '/banners/banner-gemstones.jpg',
       badge: 'GIA & IGI Certified',
-      tag: '3 Natural Unheated Rubies, Emeralds & Pearls',
+      tag: 'Natural Precious Gemstones & Pearls',
       path: '/c/gemstones',
       gradient: 'from-[#FCFDFB] to-[#DCE8D5]',
       border: 'border-[#BFD6B5]',
+      displayOrder: 3,
     },
     {
-      id: 'coloured-stones',
-      title: 'Coloured Sapphires',
-      subtitle: 'Ceylon Cornflower Blue & Golden Yellow Pukhraj',
-      image: '/banners/banner-cstone.jpg',
-      badge: 'Ceylon Provenance',
-      tag: '2 Natural Royal Blue & Yellow Sapphires',
-      path: '/c/coloured-stones',
-      gradient: 'from-[#FAFBFE] to-[#DDE7F6]',
-      border: 'border-[#C1D2EC]',
-    },
-    {
-      id: 'rudraksha',
-      title: 'Sacred Rudraksha',
-      subtitle: 'Consecrated 5 Mukhi Malas & Rare 7 Mukhi Beads',
+      id: 'cat-rudraksha',
+      name: 'Rudraksh',
+      subtitle: 'Consecrated Nepali 1-14 Mukhi Beads & Malas',
       image: '/banners/banner-rudraksha.jpg',
       badge: 'Vedic Consecration',
-      tag: '3 Authentic Himalayan Malas & Beads',
+      tag: 'Authentic Himalayan Rosaries',
       path: '/c/rudraksha',
       gradient: 'from-[#FEFAF8] to-[#F3D9D2]',
       border: 'border-[#E0B9AE]',
+      displayOrder: 4,
     },
     {
-      id: 'gifting',
-      title: 'Curated Treasury Gifting',
-      subtitle: 'Imperial Silver Puja Sets & Gold Coin Keepsakes',
+      id: 'cat-gifting',
+      name: 'Gifts',
+      subtitle: 'Curated Festive Hampers & Imperial Coin Chests',
       image: '/banners/banner-gifting.jpg',
       badge: 'Imperial Presentation',
-      tag: '2 Curated Silver & Gold Keepsake Hampers',
+      tag: 'Luxury Velvet & Wooden Gift Keepsakes',
       path: '/c/gifting',
       gradient: 'from-[#FCFAF5] to-[#EEDCC0]',
       border: 'border-[#DDC5A1]',
+      displayOrder: 5,
+    },
+    {
+      id: 'cat-corporate',
+      name: 'Corporate Gifting',
+      subtitle: 'Custom Minting with Corporate Emblem from 25 pcs',
+      image: '/hero-bg.jpg',
+      badge: 'B2B Institutional',
+      tag: 'Volume Tiers, Branding Proof & Split Delivery',
+      path: '/corporate-gifting',
+      gradient: 'from-[#FDFBF7] to-[#F2E8D3]',
+      border: 'border-[#C9A24B]',
+      displayOrder: 6,
     },
   ];
 
+  const handleCopyCoupon = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCoupon(code);
+    setTimeout(() => setCopiedCoupon(null), 2500);
+  };
+
   return (
     <div className="space-y-16">
-      {/* 1. HERO SECTION */}
-      <section className="relative rounded-2xl border border-[#E8DDC6] bg-[#F7F1E5] p-6 sm:p-12 lg:p-16 overflow-hidden shadow-[0_8px_32px_rgba(90,70,48,0.06)] min-h-[440px] sm:min-h-[480px] lg:min-h-[520px] flex items-center">
-        {/* Artwork Image cleanly occupying the Right Side with soft fade to the left */}
-        <div className="absolute top-0 right-0 bottom-0 w-full sm:w-[70%] md:w-[60%] lg:w-[56%] pointer-events-none select-none overflow-hidden opacity-35 sm:opacity-100">
-          <img
-            src="/hero-bg.jpg"
-            alt="Lotus 24K Gold Coin, Emerald and Sacred Rudraksha"
-            className="w-full h-full object-cover object-[74%_center]"
-            style={{
-              maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
-            }}
-          />
-        </div>
-
-        {/* Left Side Content */}
-        <div className="relative z-10 max-w-xl lg:max-w-2xl space-y-5 sm:space-y-7">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#E6D9C3] text-[11px] sm:text-xs font-semibold text-[#4A3B2C] shadow-xs">
-            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BA8332] shrink-0" />
-            <span className="truncate">BIS Hallmarked • LBMA Standard • 100% Insured</span>
-          </div>
-
-          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#3E2F20] leading-[1.18] tracking-tight">
-            Timeless Purity in Precious <br className="hidden sm:inline" />
-            Metals & Sacred Artefacts
-          </h1>
-
-          <p className="text-xs sm:text-base text-[#665543] leading-relaxed max-w-xl font-normal">
-            India’s premium destination for physical gold & silver bullion, natural certified gemstones, and authentic consecrated Rudraksha. Guaranteed transparent live rates and 10-minute price quote protection.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1 w-full sm:w-auto">
-            <Link to="/c/gold" className="w-full sm:w-auto">
-              <button
-                type="button"
-                className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-[#BA8332] hover:bg-[#A37025] text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>Explore 24K Bullion & Jewellery</span>
-                <span className="text-lg leading-none">→</span>
-              </button>
-            </Link>
-            <Link to="/verify/B24-999-5481" className="w-full sm:w-auto">
-              <button
-                type="button"
-                className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-white/95 hover:bg-white text-[#3E2F20] border border-[#D5C2A5] font-medium text-sm sm:text-base shadow-xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center"
-              >
-                Verify Assay Certificate
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FESTIVE & PRODUCT OFFER SLIDING CAROUSEL BANNER (Replaces static banner) */}
-      <section
-        className={`relative rounded-2xl border border-[#E8D9C0] overflow-hidden shadow-[0_4px_24px_rgba(90,70,48,0.06)] transition-all duration-700 select-none bg-gradient-to-r ${FESTIVE_SLIDES[currentSlideIndex].bgGradient}`}
-        onMouseEnter={() => setIsSliderPaused(true)}
-        onMouseLeave={() => setIsSliderPaused(false)}
-        aria-label="Festive Offers and Collections Carousel"
-      >
-        {/* Subtle decorative background watermarks */}
-        <div className="absolute left-[-20px] top-[-20px] w-48 h-48 opacity-10 pointer-events-none">
-          <Sparkles className="w-full h-full text-[#C9A24B]" />
-        </div>
-        <div className="absolute right-[-20px] bottom-[-20px] w-48 h-48 opacity-10 pointer-events-none">
-          <Coins className="w-full h-full text-[#C9A24B]" />
-        </div>
-
-        {/* Previous Slide Button */}
-        <button
-          type="button"
-          onClick={prevSlide}
-          aria-label="Previous festive slide"
-          className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 hover:bg-white text-[#5A4630] border border-[#EADFC8] shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
-        >
-          <ChevronLeft className="w-5 h-5 text-[#5A4630]" />
-        </button>
-
-        {/* Next Slide Button */}
-        <button
-          type="button"
-          onClick={nextSlide}
-          aria-label="Next festive slide"
-          className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/95 hover:bg-white text-[#5A4630] border border-[#EADFC8] shadow-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer"
-        >
-          <ChevronRight className="w-5 h-5 text-[#5A4630]" />
-        </button>
-
-        {/* Slide Content Track */}
-        <div className="px-12 sm:px-16 md:px-20 py-5 sm:py-6 md:py-7 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 min-h-[140px] sm:min-h-[155px]">
-          {/* Left: Product Thumbnail in exact ratio */}
-          <div className="w-28 sm:w-36 md:w-44 lg:w-48 h-20 sm:h-24 md:h-26 lg:h-28 shrink-0 rounded-xl overflow-hidden shadow-xs border border-[#EADFC8] bg-white/80 p-1 flex items-center justify-center transition-transform duration-500 hover:scale-105">
+      {/* 1. HERO BANNER (G) */}
+      {isHeroActive && (
+        <section className="relative rounded-2xl border border-[#E8DDC6] bg-[#F7F1E5] p-6 sm:p-12 lg:p-16 overflow-hidden shadow-[0_8px_32px_rgba(90,70,48,0.06)] min-h-[440px] sm:min-h-[480px] lg:min-h-[520px] flex items-center">
+          {/* Artwork Image cleanly occupying the Right Side */}
+          <div className="absolute top-0 right-0 bottom-0 w-full sm:w-[70%] md:w-[60%] lg:w-[56%] pointer-events-none select-none overflow-hidden opacity-35 sm:opacity-100">
             <img
-              src={FESTIVE_SLIDES[currentSlideIndex].image}
-              alt={FESTIVE_SLIDES[currentSlideIndex].title}
-              className="w-full h-full object-cover rounded-lg"
+              src={HERO_BANNER_CONFIG.image}
+              alt="Lotus 24K Gold Coin, Emerald and Sacred Rudraksha"
+              className="w-full h-full object-cover object-[74%_center]"
+              style={{
+                maskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 30%, black 100%)',
+              }}
             />
           </div>
 
-          {/* Center: Slide Typography */}
-          <div className="text-center md:text-left space-y-1 sm:space-y-1.5 flex-1">
-            <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase text-[#BA8332] block font-sans">
-              {FESTIVE_SLIDES[currentSlideIndex].tag}
-            </span>
-            <h2 className="font-serif text-lg sm:text-2xl md:text-3xl font-bold text-[#3E2F20] tracking-tight leading-tight">
-              {FESTIVE_SLIDES[currentSlideIndex].title}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#7A6A55] leading-relaxed max-w-xl">
-              {FESTIVE_SLIDES[currentSlideIndex].description}
+          {/* Left Side Content */}
+          <div className="relative z-10 max-w-xl lg:max-w-2xl space-y-5 sm:space-y-7">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#E6D9C3] text-[11px] sm:text-xs font-semibold text-[#4A3B2C] shadow-xs">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#BA8332] shrink-0" />
+              <span className="truncate">BIS Hallmarked • LBMA Benchmark • 100% Insured</span>
+            </div>
+
+            <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#3E2F20] leading-[1.18] tracking-tight">
+              {HERO_BANNER_CONFIG.headline}
+            </h1>
+
+            <p className="text-xs sm:text-base text-[#665543] leading-relaxed max-w-xl font-normal">
+              {HERO_BANNER_CONFIG.supportingCopy}
             </p>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-1 w-full sm:w-auto">
+              <Link to={HERO_BANNER_CONFIG.primaryCtaDestination} className="w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-[#BA8332] hover:bg-[#A37025] text-white font-medium text-sm sm:text-base shadow-sm hover:shadow-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>{HERO_BANNER_CONFIG.primaryCtaLabel}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+              <Link to={HERO_BANNER_CONFIG.secondaryCtaDestination} className="w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 sm:px-7 py-3 sm:py-3.5 rounded-lg bg-white/95 hover:bg-white text-[#3E2F20] border border-[#D5C2A5] font-medium text-sm sm:text-base shadow-xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Building2 className="w-4 h-4 text-[#BA8332]" />
+                  <span>{HERO_BANNER_CONFIG.secondaryCtaLabel}</span>
+                </button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2. PROMOTIONAL OFFERS CAROUSEL / STRIP (A) */}
+      {activeOffers.length > 0 && (
+        <section aria-label="Active Promotional Offers" className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#C9A24B]" />
+              <h2 className="font-serif text-lg sm:text-xl font-bold text-[#5A4630]">
+                Exclusive Privileges & Bullion Offers
+              </h2>
+            </div>
+            <span className="text-[11px] text-[#7A6A55]">
+              Thin-margin guardrail protected
+            </span>
           </div>
 
-          {/* Right: Slide Action Button */}
-          <Link to={FESTIVE_SLIDES[currentSlideIndex].link} className="shrink-0 mt-1 md:mt-0">
-            <button
-              type="button"
-              className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-[#BA8332] hover:bg-[#A37025] text-white text-xs sm:text-sm font-semibold tracking-wider uppercase shadow-sm hover:shadow-md transition-all inline-flex items-center gap-2 cursor-pointer"
-            >
-              <span>{FESTIVE_SLIDES[currentSlideIndex].ctaText}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </Link>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {activeOffers.map((off) => (
+              <div
+                key={off.id}
+                className="p-4 bg-gradient-to-br from-[#FFFDF9] via-[#FAF5EB] to-[#F5EAD4] border border-[#EADFC8] rounded-xl flex flex-col justify-between space-y-3 shadow-xs hover:shadow-md transition-all"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <span className="font-mono font-bold text-[#8C6418] text-sm tracking-wider">
+                      {off.code}
+                    </span>
+                    <Badge variant="gold" size="sm">
+                      {off.type === 'percent' ? `${off.discountValue}% OFF` : `₹${off.discountValue} OFF`}
+                    </Badge>
+                  </div>
+                  <h3 className="font-serif font-bold text-[#5A4630] text-sm">
+                    {off.name}
+                  </h3>
+                  <p className="text-[11px] text-[#7A6A55] mt-1 leading-relaxed">
+                    Min order value: <strong>{formatINR(off.minOrderValue)}</strong> • Valid till {off.endDate}.
+                  </p>
+                </div>
 
-        {/* Carousel Navigation Indicators (Dots) */}
-        <div className="absolute bottom-1.5 sm:bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
-          {FESTIVE_SLIDES.map((slide, idx) => (
-            <button
-              key={slide.id}
-              type="button"
-              onClick={() => setCurrentSlideIndex(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentSlideIndex
-                  ? 'w-6 bg-[#BA8332]'
-                  : 'w-1.5 bg-[#BA8332]/35 hover:bg-[#BA8332]/70'
-              }`}
-            />
-          ))}
-        </div>
-      </section>
+                <div className="pt-2 border-t border-[#EADFC8]/60 flex items-center justify-between gap-2">
+                  <span className="text-[10px] text-[#7A6A55] truncate">
+                    Max bullion discount floor: {((off.marginGuardrailPercent || 0.005) * 100).toFixed(1)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCoupon(off.code)}
+                    className="px-2.5 py-1 rounded bg-white border border-[#EADFC8] hover:border-[#C9A24B] text-[11px] font-semibold text-[#5A4630] flex items-center gap-1 transition-all shrink-0 cursor-pointer"
+                  >
+                    {copiedCoupon === off.code ? (
+                      <>
+                        <Check className="w-3 h-3 text-[#2D5A27]" />
+                        <span className="text-[#2D5A27]">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3 text-[#C9A24B]" />
+                        <span>Copy Code</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
-      {/* PROPOSED: Personalization Strip */}
-      <section className="p-4 bg-[#FFFFFF] border border-[#EADFC8] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-[#5A4630]">
-          <Badge variant="neutral" size="sm">Proposed</Badge>
-          <span className="font-medium">
-            <strong>Recommended for you:</strong> Investors who viewed 10g 24K Bullion Coins also shortlisted 50g Investment Cast Bars.
-          </span>
-        </div>
-        <Link to="/c/gold" className="text-[#C9A24B] hover:underline font-semibold flex items-center gap-1 shrink-0">
-          <span>View Recommendations</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </section>
-
-      {/* 2. LIVE RATE CARDS (24K, 22K, Silver 999) */}
-      <section aria-label="Live Bullion Rates">
+      {/* 3. LIVE SPOT RATE CARDS (24K, 22K, Silver 999) (G) */}
+      <section aria-label="Live Bullion Spot Rates">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="font-serif text-2xl font-bold text-[#5A4630] flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-[#C9A24B]" />
-              Live Precious Metal Rates
+              Live Precious Metal Spot Benchmarks
             </h2>
             <p className="text-xs text-[#7A6A55]">
-              Real-time spot prices dynamically linked to international assay benchmarks.
+              Real-time prices dynamically linked to international assay benchmarks (MCX Mumbai Delivery).
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant={isFeedStale ? 'amber' : 'sage'} size="sm">
               <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${isFeedStale ? 'bg-[#E8C26E]' : 'bg-[#2D5A27] animate-pulse'}`}></span>
-              {isFeedStale ? 'Rate Delayed' : 'Live Ingestion'}
+              {isFeedStale ? 'Rate Delayed (>20s)' : 'Live Feed Active'}
             </Badge>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Gold 24K (999.9 Purity) - Sovereign Bullion */}
+          {/* Card 1: Gold 24K */}
           <div className="relative bg-gradient-to-br from-[#FFFDF8] via-[#FAF3E2] to-[#F5E6BD] border-2 border-[#D4AF37]/60 hover:border-[#D4AF37] rounded-2xl p-6 sm:p-7 shadow-[0_8px_30px_rgba(212,175,55,0.16)] hover:shadow-[0_16px_40px_rgba(212,175,55,0.26)] transition-all duration-300 hover:-translate-y-1.5 group overflow-hidden">
-            {/* Watermark Bullion Icon */}
             <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-500">
               <Coins className="w-full h-full text-[#D4AF37]" />
             </div>
 
-            {/* Header: Emblem + Badge */}
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-xl bg-white/90 border border-[#D4AF37]/50 flex items-center justify-center text-[#8C6418] shadow-xs">
@@ -395,7 +394,7 @@ export const HomePage: React.FC = () => {
                   <span className="text-[11px] font-bold tracking-wider uppercase text-[#8C6418] block font-sans">
                     Gold 24K
                   </span>
-                  <span className="text-[10px] text-[#7A6A55] font-medium">999.9 Fine Bullion</span>
+                  <span className="text-[10px] text-[#7A6A55] font-medium">999.9 Fine Investment Bullion</span>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 border border-[#D4AF37]/60 text-[#8C6418] text-[10px] font-bold uppercase tracking-wider shadow-xs">
@@ -404,7 +403,6 @@ export const HomePage: React.FC = () => {
               </span>
             </div>
 
-            {/* Price Row */}
             <div className="my-4">
               <div className="text-3xl sm:text-4xl lg:text-[40px] font-serif font-extrabold text-[#744F0D] tabular-nums tracking-tight flex items-baseline gap-1">
                 <span>{formatINR(rates.gold24k)}</span>
@@ -412,7 +410,6 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Benchmark Indicator */}
             <div className="flex items-center gap-2 text-[11px] mb-4">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/80 border border-[#2D5A27]/30 text-[#2D5A27] font-semibold text-[10px] shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27] animate-pulse"></span>
@@ -421,9 +418,8 @@ export const HomePage: React.FC = () => {
               <span className="text-[11px] text-[#7A6A55] font-medium">Basis: 1g fine net weight</span>
             </div>
 
-            {/* Footer Row with Quick Navigation */}
             <div className="pt-3 border-t border-[#D4AF37]/25 flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated)}</span>
+              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated).slice(11)}</span>
               <Link to="/c/gold" className="font-semibold text-[#8C6418] hover:text-[#5A3F08] flex items-center gap-1 transition-colors">
                 <span>View 24K Bullion</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -431,14 +427,12 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 2: Gold 22K (916 Hallmark) - Heritage Jewellery */}
+          {/* Card 2: Gold 22K */}
           <div className="relative bg-gradient-to-br from-[#FFFDF9] via-[#FAF4EA] to-[#F5E5D1] border-2 border-[#C9A24B]/40 hover:border-[#BA8332] rounded-2xl p-6 sm:p-7 shadow-[0_8px_30px_rgba(201,162,75,0.12)] hover:shadow-[0_16px_40px_rgba(201,162,75,0.22)] transition-all duration-300 hover:-translate-y-1.5 group overflow-hidden">
-            {/* Watermark Sparkles Icon */}
             <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-500">
               <Sparkles className="w-full h-full text-[#C9A24B]" />
             </div>
 
-            {/* Header: Emblem + Badge */}
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-xl bg-white/90 border border-[#C9A24B]/40 flex items-center justify-center text-[#735025] shadow-xs">
@@ -448,7 +442,7 @@ export const HomePage: React.FC = () => {
                   <span className="text-[11px] font-bold tracking-wider uppercase text-[#735025] block font-sans">
                     Gold 22K
                   </span>
-                  <span className="text-[10px] text-[#7A6A55] font-medium">916 Hallmark Jewellery</span>
+                  <span className="text-[10px] text-[#7A6A55] font-medium">916 Hallmark Fine Jewellery</span>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 border border-[#C9A24B]/40 text-[#735025] text-[10px] font-bold uppercase tracking-wider shadow-xs">
@@ -456,7 +450,6 @@ export const HomePage: React.FC = () => {
               </span>
             </div>
 
-            {/* Price Row */}
             <div className="my-4">
               <div className="text-3xl sm:text-4xl lg:text-[40px] font-serif font-extrabold text-[#5A3F1E] tabular-nums tracking-tight flex items-baseline gap-1">
                 <span>{formatINR(rates.gold22k)}</span>
@@ -464,7 +457,6 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Benchmark Indicator */}
             <div className="flex items-center gap-2 text-[11px] mb-4">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/80 border border-[#C9A24B]/30 text-[#735025] font-semibold text-[10px] shadow-2xs">
                 BIS 916 Standard
@@ -472,9 +464,8 @@ export const HomePage: React.FC = () => {
               <span className="text-[11px] text-[#7A6A55] font-medium">Basis: 24K × 0.9167</span>
             </div>
 
-            {/* Footer Row with Quick Navigation */}
             <div className="pt-3 border-t border-[#C9A24B]/25 flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated)}</span>
+              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated).slice(11)}</span>
               <Link to="/c/gold" className="font-semibold text-[#735025] hover:text-[#4A3215] flex items-center gap-1 transition-colors">
                 <span>View Jewellery</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -482,14 +473,12 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 3: Silver 999 - Auspicious Pure Bullion */}
+          {/* Card 3: Silver 999 */}
           <div className="relative bg-gradient-to-br from-[#FFFFFF] via-[#F4F6F9] to-[#E3E8EF] border-2 border-[#B8C5D4]/70 hover:border-[#7A8E9F] rounded-2xl p-6 sm:p-7 shadow-[0_8px_30px_rgba(150,165,185,0.16)] hover:shadow-[0_16px_40px_rgba(150,165,185,0.26)] transition-all duration-300 hover:-translate-y-1.5 group overflow-hidden">
-            {/* Watermark Shield Icon */}
             <div className="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 pointer-events-none group-hover:scale-110 transition-transform duration-500">
               <ShieldCheck className="w-full h-full text-[#7A8E9F]" />
             </div>
 
-            {/* Header: Emblem + Badge */}
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-10 h-10 rounded-xl bg-white/90 border border-[#B8C5D4] flex items-center justify-center text-[#4A5568] shadow-xs">
@@ -499,7 +488,7 @@ export const HomePage: React.FC = () => {
                   <span className="text-[11px] font-bold tracking-wider uppercase text-[#3E4A5B] block font-sans">
                     Silver 999
                   </span>
-                  <span className="text-[10px] text-[#7A6A55] font-medium">999 Fine Bullion</span>
+                  <span className="text-[10px] text-[#7A6A55] font-medium">999 Fine Pure Bullion</span>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 border border-[#B8C5D4] text-[#3E4A5B] text-[10px] font-bold uppercase tracking-wider shadow-xs">
@@ -507,7 +496,6 @@ export const HomePage: React.FC = () => {
               </span>
             </div>
 
-            {/* Price Row */}
             <div className="my-4">
               <div className="text-3xl sm:text-4xl lg:text-[40px] font-serif font-extrabold text-[#2D3748] tabular-nums tracking-tight flex items-baseline gap-1">
                 <span>{formatINR(rates.silver999)}</span>
@@ -515,17 +503,15 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Benchmark Indicator */}
             <div className="flex items-center gap-2 text-[11px] mb-4">
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/80 border border-[#B8C5D4] text-[#3E4A5B] font-semibold text-[10px] shadow-2xs">
-                LBMA Spot Silver
+                LBMA London Spot
               </span>
               <span className="text-[11px] text-[#7A6A55] font-medium">Basis: 1g pure silver</span>
             </div>
 
-            {/* Footer Row with Quick Navigation */}
             <div className="pt-3 border-t border-[#B8C5D4]/40 flex items-center justify-between text-xs">
-              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated)}</span>
+              <span className="text-[11px] text-[#7A6A55]/80 font-mono">Updated: {formatDateTime(rates.lastUpdated).slice(11)}</span>
               <Link to="/c/silver" className="font-semibold text-[#3E4A5B] hover:text-[#1A202C] flex items-center gap-1 transition-colors">
                 <span>View Silver Coins</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -535,7 +521,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. CATEGORY MODULES */}
+      {/* 4. EXACT 6 CATEGORY TILES (G) */}
       <section aria-label="Curated Categories">
         <div className="text-center max-w-xl mx-auto space-y-2 mb-8">
           <Badge variant="gold" size="sm">Authentic Collections</Badge>
@@ -548,23 +534,21 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categoryModules.map((cat) => (
+          {categoryTiles.map((cat) => (
             <Link
               key={cat.id}
               to={cat.path}
               className={`group bg-gradient-to-br ${cat.gradient} border ${cat.border} rounded-2xl overflow-hidden flex flex-col justify-between transition-all duration-300 hover:shadow-[0_12px_32px_rgba(90,70,48,0.14)] hover:-translate-y-1.5`}
             >
-              {/* Luxury Real Category Image Showcase */}
               <div className="relative aspect-16/10 overflow-hidden bg-[#FAF6EE]">
                 <img
                   src={cat.image}
-                  alt={cat.title}
+                  alt={cat.name}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent pointer-events-none" />
 
-                {/* Hallmark / Lab Badge */}
                 <div className="absolute top-3 left-3 z-10">
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-xs text-[10px] font-bold text-[#8C6418] border border-[#D4AF37]/50 shadow-xs uppercase tracking-wider">
                     <Sparkles className="w-3 h-3 text-[#B07E17]" />
@@ -572,17 +556,15 @@ export const HomePage: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Subtitle tag overlay */}
                 <div className="absolute bottom-2.5 left-3 right-3 text-[11px] font-sans text-white/90 drop-shadow-xs font-medium">
                   {cat.tag}
                 </div>
               </div>
 
-              {/* Card Body */}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div>
                   <h3 className="font-serif text-xl font-bold text-[#5A4630] group-hover:text-[#C9A24B] transition-colors leading-snug">
-                    {cat.title}
+                    {cat.name}
                   </h3>
                   <p className="text-xs text-[#7A6A55] mt-1.5 leading-relaxed">
                     {cat.subtitle}
@@ -590,7 +572,7 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 <div className="pt-3 border-t border-[#EADFC8]/60 flex items-center justify-between text-xs font-semibold text-[#8C6418] group-hover:text-[#5A3F08]">
-                  <span>Explore Collection</span>
+                  <span>Open Category Listing</span>
                   <div className="w-7 h-7 rounded-full bg-white/90 border border-[#D4AF37]/40 flex items-center justify-center shadow-2xs group-hover:bg-[#C9A24B] group-hover:text-white transition-all">
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
@@ -601,16 +583,84 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 4. FEATURED PRODUCTS WITH LIVE PRICES */}
+      {/* 5. FESTIVAL & CURATED COLLECTIONS (A) */}
+      {activeFestivalCollections.length > 0 && (
+        <section aria-label="Curated Festival Collections" className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <Badge variant="gold" size="sm">Festive Muhurat</Badge>
+              <h2 className="font-serif text-3xl font-bold text-[#5A4630] mt-1">
+                Curated Occasion Collections
+              </h2>
+              <p className="text-xs text-[#7A6A55]">
+                Specialized celebratory collections mapped strictly to active investment SKUs.
+              </p>
+            </div>
+            <Link to="/occasions">
+              <Button variant="secondary" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                View All Festive Collections
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {activeFestivalCollections.map((col) => (
+              <div
+                key={col.id}
+                className="bg-white border border-[#EADFC8] rounded-2xl overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col justify-between"
+              >
+                <div className="relative aspect-16/9 overflow-hidden bg-[#FAF7F2]">
+                  <img
+                    src={col.banner}
+                    alt={col.name}
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="px-2.5 py-1 rounded-full bg-white/90 text-[#8C6418] text-[10px] font-bold uppercase tracking-wider border border-[#EADFC8]">
+                      {col.occasion}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <h3 className="font-serif text-lg font-bold text-[#5A4630]">
+                      {col.name}
+                    </h3>
+                    <p className="text-xs text-[#7A6A55] mt-1.5 leading-relaxed">
+                      {col.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-[#EADFC8]/60 flex items-center justify-between">
+                    <span className="text-[11px] text-[#7A6A55] font-mono">
+                      {col.mappedSkuList.length} Curated Pieces
+                    </span>
+                    <Link
+                      to="/occasions"
+                      className="text-xs font-semibold text-[#C9A24B] hover:text-[#5A4630] flex items-center gap-1"
+                    >
+                      <span>Explore Collection</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 6. FEATURED & BESTSELLER PRODUCTS (G) */}
       <section aria-label="Featured Precious Items">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <Badge variant="gold" size="sm">Signature Creations</Badge>
             <h2 className="font-serif text-3xl font-bold text-[#5A4630] mt-1">
-              Featured Precious Pieces
+              Featured & Bestseller Precious Pieces
             </h2>
             <p className="text-xs text-[#7A6A55]">
-              Real-time prices computed live from spot bullion rates and gemstone certifications.
+              Real-time prices computed live from spot bullion rates. Includes Quick View & Direct Cart additions.
             </p>
           </div>
           <Link to="/c/gold">
@@ -627,67 +677,174 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. TRUST PILLARS & CLIENT COMMITMENT (BENEFITS STRIP) */}
-      <section className="bg-[#FAF7F2] border border-[#EAE2D5] rounded-xl py-10 px-6 sm:px-8 lg:px-12 my-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#EAE2D5]">
-          {/* Benefit 01 */}
-          <div className="flex items-start gap-4 sm:gap-5 py-6 md:py-2 md:pr-8 first:pt-0 last:pb-0">
-            <div className="w-12 h-12 rounded-full bg-[#F5ECE0] flex items-center justify-center shrink-0 text-[#9E7736] shadow-2xs">
-              <Lock className="w-5 h-5 stroke-[1.5]" />
+      {/* 7. CORPORATE GIFTING VALUE PROPOSITION (G) */}
+      <section className="bg-gradient-to-r from-[#FAF6EE] via-[#F5EDDA] to-[#ECE1C4] border border-[#E0D0AD] rounded-2xl p-6 sm:p-10 lg:p-12 relative overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#D4AF37]/50 text-[11px] font-bold text-[#8C6418] uppercase tracking-wider">
+              <Gift className="w-3.5 h-3.5" />
+              Institutional Gifting & Custom Minting
             </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-sans font-medium text-[#B88E3E] tracking-wider">01</span>
-                <span className="w-8 h-[1px] bg-[#B88E3E]/60" />
+
+            <h2 className="font-serif text-2xl sm:text-4xl font-bold text-[#3E2F20] tracking-tight">
+              Bespoke Corporate Coins & Presentation Hampers
+            </h2>
+
+            <p className="text-xs sm:text-sm text-[#665543] leading-relaxed max-w-2xl">
+              Elevate corporate relationships with custom-minted 24K gold coins and 999 fine silver bullion bars carrying your corporate insignia, personalized serial engravings, and tamper-proof blister cards.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
+              <div className="p-3 bg-white/90 rounded-xl border border-[#EADFC8]">
+                <div className="font-bold text-[#5A4630]">Low Minimums</div>
+                <div className="text-[11px] text-[#7A6A55] mt-0.5">Custom minting from 25 units • Starting ₹2,500/kit</div>
               </div>
-              <h3 className="font-serif text-lg font-medium text-[#2C2016] tracking-tight">
-                10-Minute Quote Lock
-              </h3>
-              <p className="text-xs text-[#7A6A55] leading-relaxed max-w-[280px]">
-                Protect your gold and silver price from market fluctuations while completing payment. Stock is reserved exclusively for you.
-              </p>
+
+              <div className="p-3 bg-white/90 rounded-xl border border-[#EADFC8]">
+                <div className="font-bold text-[#5A4630]">Split Delivery</div>
+                <div className="text-[11px] text-[#7A6A55] mt-0.5">Multi-branch armored dispatch with recipient verification</div>
+              </div>
+
+              <div className="p-3 bg-white/90 rounded-xl border border-[#EADFC8]">
+                <div className="font-bold text-[#5A4630]">GST Invoicing</div>
+                <div className="text-[11px] text-[#7A6A55] mt-0.5">100% compliant B2B tax invoices with full input credit</div>
+              </div>
             </div>
           </div>
 
-          {/* Benefit 02 */}
-          <div className="flex items-start gap-4 sm:gap-5 py-6 md:py-2 md:px-8 first:pt-0 last:pb-0">
-            <div className="w-12 h-12 rounded-full bg-[#F5ECE0] flex items-center justify-center shrink-0 text-[#9E7736] shadow-2xs">
-              <ShieldCheck className="w-5 h-5 stroke-[1.5]" />
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-sans font-medium text-[#B88E3E] tracking-wider">02</span>
-                <span className="w-8 h-[1px] bg-[#B88E3E]/60" />
-              </div>
-              <h3 className="font-serif text-lg font-medium text-[#2C2016] tracking-tight">
-                100% Laboratory Assay
-              </h3>
-              <p className="text-xs text-[#7A6A55] leading-relaxed max-w-[280px]">
-                Every gold coin carries BIS hallmarking and refinery assay cards. Gemstones are independently certified by GIA and IGI.
-              </p>
-            </div>
-          </div>
-
-          {/* Benefit 03 */}
-          <div className="flex items-start gap-4 sm:gap-5 py-6 md:py-2 md:pl-8 first:pt-0 last:pb-0">
-            <div className="w-12 h-12 rounded-full bg-[#F5ECE0] flex items-center justify-center shrink-0 text-[#9E7736] shadow-2xs">
-              <Truck className="w-5 h-5 stroke-[1.5]" />
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-sans font-medium text-[#B88E3E] tracking-wider">03</span>
-                <span className="w-8 h-[1px] bg-[#B88E3E]/60" />
-              </div>
-              <h3 className="font-serif text-lg font-medium text-[#2C2016] tracking-tight">
-                Armoured Insured Transit
-              </h3>
-              <p className="text-xs text-[#7A6A55] leading-relaxed max-w-[280px]">
-                Dispatched via specialized precious couriers (Sequel & BVC) with OTP delivery verification and 100% transit insurance cover.
-              </p>
-            </div>
+          <div className="flex flex-col gap-3 justify-center items-start lg:items-end">
+            <Link to="/corporate-gifting" className="w-full sm:w-auto">
+              <button
+                type="button"
+                className="w-full sm:w-auto px-6 py-3.5 bg-[#BA8332] hover:bg-[#A37025] text-white rounded-lg font-semibold text-sm shadow-sm hover:shadow-md transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>Request Corporate Quote</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
+            <Link to="/c/gifting" className="text-xs font-semibold text-[#8C6418] hover:underline flex items-center gap-1">
+              <span>Explore Curated Gift Kits</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
+
+      {/* 8. TRUST & EDUCATION SECTION (G) */}
+      <section aria-label="Trust & Assurance" className="space-y-6">
+        <div className="text-center max-w-xl mx-auto space-y-2">
+          <Badge variant="gold" size="sm">Uncompromising Integrity</Badge>
+          <h2 className="font-serif text-3xl font-bold text-[#5A4630]">
+            Metallurgical Rigour & Client Assurance
+          </h2>
+          <p className="text-xs text-[#7A6A55]">
+            Every claims made on our platform is backed by statutory compliance records and NABL accredited assaying.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="p-5 bg-white border border-[#EADFC8] rounded-xl space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5EB] border border-[#EADFC8] flex items-center justify-center text-[#C9A24B]">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-[#5A4630] text-sm">BIS Hallmark & HUID</h3>
+            <p className="text-[11px] text-[#7A6A55] leading-relaxed">
+              Every gold article is laser-embossed with a unique 6-character alphanumeric HUID verifying refinery origin and 999.9 purity.
+            </p>
+            <Link to="/authenticity" className="text-[11px] font-semibold text-[#C9A24B] hover:underline block pt-1">
+              Read BIS Standards →
+            </Link>
+          </div>
+
+          <div className="p-5 bg-white border border-[#EADFC8] rounded-xl space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5EB] border border-[#EADFC8] flex items-center justify-center text-[#C9A24B]">
+              <FileCheck className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-[#5A4630] text-sm">Lab Certicard Verification</h3>
+            <p className="text-[11px] text-[#7A6A55] leading-relaxed">
+              Gemstones are accompanied by GIA/IGI laboratory credentials. Search any certificate number online for real-time verification.
+            </p>
+            <Link to="/verify/B24-999-5481" className="text-[11px] font-semibold text-[#C9A24B] hover:underline block pt-1">
+              Verify Certificate →
+            </Link>
+          </div>
+
+          <div className="p-5 bg-white border border-[#EADFC8] rounded-xl space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5EB] border border-[#EADFC8] flex items-center justify-center text-[#C9A24B]">
+              <Truck className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-[#5A4630] text-sm">Armoured Courier Transit</h3>
+            <p className="text-[11px] text-[#7A6A55] leading-relaxed">
+              High-value consignments are insured to 100% invoice declared value and transported exclusively via Sequel & BVC Logistics.
+            </p>
+            <Link to="/shipping" className="text-[11px] font-semibold text-[#C9A24B] hover:underline block pt-1">
+              Shipping Guidelines →
+            </Link>
+          </div>
+
+          <div className="p-5 bg-white border border-[#EADFC8] rounded-xl space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-[#FAF5EB] border border-[#EADFC8] flex items-center justify-center text-[#C9A24B]">
+              <HelpCircle className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-[#5A4630] text-sm">Statutory Buyback Guarantee</h3>
+            <p className="text-[11px] text-[#7A6A55] leading-relaxed">
+              Transparent liquidation at prevailing spot rates. Full metallurgical assay report provided upon return inspection.
+            </p>
+            <Link to="/returns" className="text-[11px] font-semibold text-[#C9A24B] hover:underline block pt-1">
+              Buyback Policy →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. APPROVED CLIENT TESTIMONIALS (G) */}
+      {approvedTestimonials.length > 0 && (
+        <section aria-label="Client Testimonials" className="space-y-6">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <Badge variant="gold" size="sm">Client Experiences</Badge>
+            <h2 className="font-serif text-3xl font-bold text-[#5A4630]">
+              Verified Client Testimonials
+            </h2>
+            <p className="text-xs text-[#7A6A55]">
+              Real feedback from verified investors and institutional corporate partners.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {approvedTestimonials.map((t) => (
+              <div
+                key={t.id}
+                className="p-5 bg-white border border-[#EADFC8] rounded-xl flex flex-col justify-between space-y-4 shadow-xs"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-0.5 text-[#BA8332]">
+                      {[...Array(t.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-[#BA8332]" />
+                      ))}
+                    </div>
+                    <QuoteIcon className="w-5 h-5 text-[#EADFC8]" />
+                  </div>
+
+                  <p className="text-xs text-[#5A4630] leading-relaxed italic">
+                    "{t.quote}"
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#EADFC8]/60 text-xs">
+                  <div className="font-bold text-[#5A4630] flex items-center gap-1.5">
+                    <span>{t.customerName}</span>
+                    <span className="text-[10px] text-[#2D5A27] bg-[#DCE8D5] px-1 rounded">Verified</span>
+                  </div>
+                  <div className="text-[11px] text-[#7A6A55] mt-0.5">
+                    {t.city} • <span className="text-[#C9A24B]">{t.productName}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

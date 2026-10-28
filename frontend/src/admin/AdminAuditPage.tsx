@@ -6,6 +6,7 @@ import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { Modal } from '../components/Modal';
 import type { AuditRow } from '../data/types';
+import { maskTextPII } from '../lib/masking';
 import {
   ShieldCheck,
   Search,
@@ -22,7 +23,7 @@ export const AdminAuditPage: React.FC = () => {
     canonicalPath: '/admin/audit',
   });
 
-  const { auditLogs, adminUser, logAudit } = useAppStore();
+  const { auditLogs, adminUser, logAudit, activeRole } = useAppStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedModule, setSelectedModule] = useState<string>('all');
@@ -292,11 +293,11 @@ export const AdminAuditPage: React.FC = () => {
                     <td className="p-3.5 hidden md:table-cell text-xs space-y-1 max-w-md">
                       <div className="text-[#9E3624] font-mono text-[11px] flex items-center gap-1.5 line-clamp-1">
                         <span className="font-bold bg-[#FDF0EE] px-1 rounded">-</span>
-                        <span className="line-clamp-1">{row.before}</span>
+                        <span className="line-clamp-1">{maskTextPII(row.before, activeRole)}</span>
                       </div>
                       <div className="text-[#2D5A27] font-mono text-[11px] flex items-center gap-1.5 line-clamp-1">
                         <span className="font-bold bg-[#DCE8D5] px-1 rounded">+</span>
-                        <span className="line-clamp-1">{row.after}</span>
+                        <span className="line-clamp-1">{maskTextPII(row.after, activeRole)}</span>
                       </div>
                     </td>
 
@@ -372,7 +373,7 @@ export const AdminAuditPage: React.FC = () => {
                   <span className="font-mono">prior_commit</span>
                 </div>
                 <div className="font-mono text-xs text-[#9E3624] whitespace-pre-wrap leading-relaxed">
-                  {inspectRow.before}
+                  {maskTextPII(inspectRow.before, activeRole)}
                 </div>
               </div>
 
@@ -383,7 +384,7 @@ export const AdminAuditPage: React.FC = () => {
                   <span className="font-mono">committed_state</span>
                 </div>
                 <div className="font-mono text-xs text-[#2D5A27] whitespace-pre-wrap leading-relaxed">
-                  {inspectRow.after}
+                  {maskTextPII(inspectRow.after, activeRole)}
                 </div>
               </div>
             </div>

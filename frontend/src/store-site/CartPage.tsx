@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store';
 import { useSEO } from '../lib/useSEO';
@@ -7,6 +7,7 @@ import { Card } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Button } from '../components/Button';
 import { EmptyState } from '../components/EmptyState';
+import { Modal } from '../components/Modal';
 import {
   ShoppingBag,
   Trash2,
@@ -14,23 +15,34 @@ import {
   Minus,
   ChevronRight,
   ShieldCheck,
-  Truck,
   AlertTriangle,
   ArrowRight,
   Check,
+  Bookmark,
+  Tag,
+  X,
+  Lock,
+  Gift,
 } from 'lucide-react';
 
 export const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const {
     cart,
+    savedForLater,
     products,
     rates,
     pricingConfig,
+    activeCoupon,
     updateCartQuantity,
     removeFromCart,
     acceptCartPriceUpdate,
     clearCart,
+    saveForLater,
+    moveSavedToCart,
+    removeSavedForLater,
+    applyCoupon,
+    removeCoupon,
   } = useAppStore();
 
   useSEO({
@@ -39,12 +51,15 @@ export const CartPage: React.FC = () => {
     canonicalPath: '/cart',
   });
 
+  const [couponInput, setCouponInput] = useState('');
+  const [couponMessage, setCouponMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
 
   // Cart Calculations
   let subtotal = 0;
   let totalPackagingAndInsurance = 0;
   let totalGst = 0;
-  let grandTotal = 0;
+  let totalBeforeDiscount = 0;
 
   const cartItemsWithDetails = cart.map((cartItem) => {
     const product = products.find((p) => p.id === cartItem.productId);
@@ -59,7 +74,7 @@ export const CartPage: React.FC = () => {
     subtotal += lineSubtotal;
     totalPackagingAndInsurance += linePkgIns;
     totalGst += lineGst;
-    grandTotal += lineTotal;
+    totalBeforeDiscount += lineTotal;
 
     const availableStock = product.stock - product.reserved + cartItem.quantity;
 
@@ -73,6 +88,18 @@ export const CartPage: React.FC = () => {
     };
   }).filter(Boolean);
 
+  // Evaluate coupon discount if active
+  let discountAmount = 0;
+  if (activeCoupon && totalBeforeDiscount > 0) {
+    if (activeCoupon.type === 'flat') {
+      discountAmount = Math.min(totalBeforeDiscount, activeCoupon.discountValue);
+    } else {
+      discountAmount = Math.round(totalBeforeDiscount * (activeCoupon.discountValue / 100));
+    }
+  }
+
+  const grandTotal = Math.max(0, totalBeforeDiscount - discountAmount);
+
   // Check if any cart item requires price reacceptance
   const hasPriceChanges = cart.some((item) => item.requiresReacceptance);
 
@@ -82,6 +109,19 @@ export const CartPage: React.FC = () => {
         acceptCartPriceUpdate(item.productId);
       }
     });
+  };
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!couponInput.trim()) return;
+    const res = applyCoupon(couponInput.trim());
+    if (res.success) {
+      setCouponMessage({ type: 'success', text: res.message });
+      setCouponInput('');
+    } else {
+      setCouponMessage({ type: 'error', text: res.message });
+    }
+    setTimeout(() => setCouponMessage(null), 5000);
   };
 
   return (
@@ -108,7 +148,7 @@ export const CartPage: React.FC = () => {
         {cart.length > 0 && (
           <button
             onClick={() => clearCart()}
-            className="text-xs text-[#7A6A55] hover:text-[#8C2E24] hover:underline self-start sm:self-auto"
+            className="text-xs text-[#7A6A55] hover:text-[#8C2E24] hover:underline self-start sm:self-auto font-medium"
           >
             Clear Entire Cart
           </button>
@@ -159,7 +199,7 @@ export const CartPage: React.FC = () => {
                 <Card
                   key={product.id}
                   variant="surface"
-                  className={`p-5 border-[#EADFC8] relative ${
+                  className={`p-5 border-[#EADFC8] relative shadow-xs ${
                     cartItem.requiresReacceptance ? 'border-[#E8C26E] bg-[#FFFDF5]' : ''
                   }`}
                 >
@@ -198,6 +238,12 @@ export const CartPage: React.FC = () => {
                           <Badge variant="gold" size="sm">
                             {product.type === 'rateLinked' ? 'Live Rate' : 'Certified'}
                           </Badge>
+                          {product.personalizationEligible && (
+                            <span className="text-[10px] text-[#C9A24B] flex items-center gap-1 font-medium bg-[#F8EFD9] px-1.5 py-0.5 rounded">
+                              <Gift className="w-3 h-3" />
+                              <span>Personalization Eligible</span>
+                            </span>
+                          )}
                         </div>
 
                         <Link to={`/p/${product.slug}`}>
@@ -210,6 +256,8 @@ export const CartPage: React.FC = () => {
                           <span>{product.netWeightG}g</span>
                           <span>•</span>
                           <span>{product.attributes.bullion?.purity || 'Hallmark'}</span>
+                          <span>•</span>
+                          <span className="text-[#2D5A27]">{availableStock} in vault stock</span>
                         </div>
                       </div>
                     </div>
@@ -251,13 +299,22 @@ export const CartPage: React.FC = () => {
                           </button>
                         </div>
 
-                        {/* Remove */}
+                        {/* Save for Later Button */}
+                        <button
+                          type="button"
+                          onClick={() => saveForLater(product.id)}
+                          className="p-1.5 text-[#7A6A55] hover:text-[#C9A24B] rounded-md hover:bg-[#F8EFD9]"
+                          title="Save for Later"
+                        >
+                          <Bookmark className="w-4 h-4" />
+                        </button>
+
+                        {/* Remove Button */}
                         <button
                           type="button"
                           onClick={() => removeFromCart(product.id)}
-                          className="p-2 text-[#7A6A55] hover:text-[#8C2E24] hover:bg-[#F7D4CF]/40 rounded-lg transition-colors"
-                          title="Remove item"
-                          aria-label="Remove item"
+                          className="p-1.5 text-[#7A6A55] hover:text-[#8C2E24] rounded-md hover:bg-[#FFEBEE]"
+                          title="Remove from Cart"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -269,40 +326,118 @@ export const CartPage: React.FC = () => {
             })}
           </div>
 
-          {/* Right Column: Order Summary Card */}
+          {/* Right Summary Card (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <Card variant="surface" className="p-6 border-[#EADFC8] space-y-5 shadow-[0_4px_24px_rgba(90,70,48,0.08)] sticky top-24">
-              <h2 className="font-serif text-xl font-bold text-[#5A4630] pb-3 border-b border-[#EADFC8]">
-                Order Summary
-              </h2>
+            <Card variant="surface" className="p-6 border-[#EADFC8] space-y-5 shadow-[0_4px_24px_rgba(90,70,48,0.06)]">
+              <div className="flex items-center justify-between pb-3 border-b border-[#EADFC8]">
+                <h2 className="font-serif text-lg font-bold text-[#5A4630]">Order Summary</h2>
+                <Badge variant="gold" size="sm">Precious Invoicing</Badge>
+              </div>
 
-              <div className="space-y-3 text-xs">
+              {/* Cost Lines */}
+              <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between text-[#7A6A55]">
-                  <span>Subtotal (Net Metal & Crafting):</span>
+                  <span>Items Subtotal (excl. tax):</span>
                   <span className="tabular-nums font-medium text-[#5A4630]">{formatINR(subtotal)}</span>
                 </div>
 
                 <div className="flex justify-between text-[#7A6A55]">
-                  <span>Armoured Shipping & Transit Insurance:</span>
-                  <span className="tabular-nums font-semibold text-[#2D5A27]">
-                    Complimentary / Insured
+                  <span>Armoured Transit Packaging & Insurance:</span>
+                  <span className="tabular-nums font-medium text-[#2D5A27]">
+                    {totalPackagingAndInsurance > 0 ? (
+                      <span>Complimentary (Insured)</span>
+                    ) : (
+                      'Free'
+                    )}
                   </span>
                 </div>
 
                 <div className="flex justify-between text-[#7A6A55]">
-                  <span>Applicable GST (3% on precious articles):</span>
+                  <span>Statutory GST (3% Bullion / Jewellery):</span>
                   <span className="tabular-nums font-medium text-[#5A4630]">{formatINR(totalGst)}</span>
                 </div>
 
-                <div className="pt-4 border-t border-[#EADFC8] flex items-baseline justify-between">
-                  <div>
-                    <span className="font-serif text-xl font-bold text-[#5A4630]">Grand Total</span>
-                    <span className="text-[11px] text-[#7A6A55] ml-1.5">(INR)</span>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-[#2D5A27] font-semibold pt-1 border-t border-[#EADFC8]/40">
+                    <span className="flex items-center gap-1">
+                      <Tag className="w-3.5 h-3.5" />
+                      <span>Coupon Discount ({activeCoupon?.code}):</span>
+                    </span>
+                    <span className="tabular-nums">- {formatINR(discountAmount)}</span>
                   </div>
-                  <div className="font-serif text-3xl font-bold text-[#5A4630] tabular-nums">
+                )}
+
+                {/* Grand Total */}
+                <div className="pt-3 border-t border-[#EADFC8] flex items-baseline justify-between">
+                  <div>
+                    <span className="font-serif text-lg font-bold text-[#5A4630]">Total Payable</span>
+                    <span className="text-[10px] text-[#7A6A55] ml-1">(All statutory taxes incl.)</span>
+                  </div>
+                  <div className="font-serif text-2xl font-bold text-[#5A4630] tabular-nums">
                     {formatINR(grandTotal)}
                   </div>
                 </div>
+              </div>
+
+              {/* Coupon Form */}
+              <div className="pt-3 border-t border-[#EADFC8] space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#5A4630] flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-[#C9A24B]" />
+                    Promotional Coupon
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setTermsModalOpen(true)}
+                    className="text-[11px] text-[#C9A24B] hover:underline"
+                  >
+                    View Terms
+                  </button>
+                </div>
+
+                {activeCoupon ? (
+                  <div className="p-2.5 bg-[#E8F5E9] border border-[#C8E6C9] rounded-lg text-xs flex items-center justify-between">
+                    <div>
+                      <span className="font-mono font-bold text-[#2D5A27]">{activeCoupon.code}</span>
+                      <p className="text-[10px] text-[#2D5A27]">
+                        {activeCoupon.name} • Saved {formatINR(discountAmount)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeCoupon()}
+                      className="p-1 text-[#C62828] hover:bg-[#FFEBEE] rounded"
+                      title="Remove coupon"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="e.g. DIWALI2026"
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      className="flex-1 text-xs px-3 py-2 bg-white border border-[#EADFC8] rounded-md text-[#5A4630] uppercase font-mono"
+                    />
+                    <Button variant="secondary" size="sm" type="submit">
+                      Apply
+                    </Button>
+                  </form>
+                )}
+
+                {couponMessage && (
+                  <div
+                    className={`text-[11px] p-2 rounded-md ${
+                      couponMessage.type === 'success'
+                        ? 'bg-[#E8F5E9] text-[#2D5A27]'
+                        : 'bg-[#FFEBEE] text-[#C62828]'
+                    }`}
+                  >
+                    {couponMessage.text}
+                  </div>
+                )}
               </div>
 
               {/* Checkout Button */}
@@ -314,27 +449,112 @@ export const CartPage: React.FC = () => {
                 onClick={() => navigate('/checkout')}
                 rightIcon={<ArrowRight className="w-4 h-4" />}
               >
-                {hasPriceChanges ? 'Accept New Prices to Checkout' : 'Proceed to Secure Checkout'}
+                {hasPriceChanges ? 'Please Accept New Prices' : 'Proceed to Secure Checkout'}
               </Button>
 
-              {/* Security & Transit Assurance */}
-              <div className="pt-2 border-t border-[#EADFC8]/60 space-y-2 text-[11px] text-[#7A6A55]">
+              {/* Trust Badges */}
+              <div className="pt-2 text-[11px] text-[#7A6A55] space-y-1.5 border-t border-[#EADFC8]/60">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#C9A24B] shrink-0" />
-                  <span>100% Insured Armoured Transit (Sequel & BVC)</span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#C9A24B] shrink-0" />
+                  <span>100% Insured Armoured Transit via Sequel & BVC</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-[#C9A24B] shrink-0" />
-                  <span>Tamper-evident packaging with OTP delivery</span>
-                </div>
-                <div className="text-[#5A4630] font-medium pt-1">
-                  Note: COD is not applicable for bullion & jewellery.
+                  <Lock className="w-3.5 h-3.5 text-[#C9A24B] shrink-0" />
+                  <span>Statutory GST Invoice & BIS Hallmark Verification Included</span>
                 </div>
               </div>
             </Card>
           </div>
         </div>
       )}
+
+      {/* Saved for Later Section */}
+      {savedForLater && savedForLater.length > 0 && (
+        <section className="pt-8 border-t border-[#EADFC8] space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-serif text-xl font-bold text-[#5A4630] flex items-center gap-2">
+              <Bookmark className="w-5 h-5 text-[#C9A24B]" />
+              <span>Saved for Later ({savedForLater.length})</span>
+            </h2>
+            <span className="text-xs text-[#7A6A55]">Reserved pieces moved to your private list</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {savedForLater.map((savedItem) => {
+              const prod = products.find((p) => p.id === savedItem.productId);
+              if (!prod) return null;
+              const calc = calculatePrice(prod, rates, pricingConfig);
+
+              return (
+                <div
+                  key={prod.id}
+                  className="p-4 bg-white border border-[#EADFC8] rounded-xl flex items-center justify-between gap-4 shadow-xs"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 rounded-lg overflow-hidden border border-[#EADFC8] bg-[#FAF6EE] shrink-0">
+                      <img
+                        src={prod.imageUrl || `/products/${prod.id}.jpg`}
+                        alt={prod.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-xs font-bold text-[#5A4630] line-clamp-1">
+                        {prod.name}
+                      </h4>
+                      <div className="text-[11px] text-[#7A6A55] font-mono mt-0.5">
+                        {prod.netWeightG}g • {formatINR(calc.total)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => moveSavedToCart(prod.id)}
+                    >
+                      Move to Cart
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => removeSavedForLater(prod.id)}
+                      className="p-1.5 text-[#7A6A55] hover:text-[#8C2E24] rounded"
+                      title="Remove"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Coupon Terms Modal */}
+      <Modal
+        isOpen={termsModalOpen}
+        onClose={() => setTermsModalOpen(false)}
+        title="Promotional Coupon Terms & Statutory Guardrails"
+        maxWidth="md"
+      >
+        <div className="p-6 space-y-4 text-xs text-[#5A4630] bg-[#FFFBF3]">
+          <p className="leading-relaxed">
+            All coupons and promotional discounts are governed by legal bullion margin safeguard policies. In accordance with Precious Commerce Regulations:
+          </p>
+          <ul className="list-disc pl-5 space-y-2 text-[#7A6A55]">
+            <li>Coupons may not reduce bullion selling prices below statutory refinery acquisition cost basis.</li>
+            <li>Discounts apply only to eligible categories and orders meeting minimum cart values.</li>
+            <li>Coupons are non-transferable and single-use per verified investor profile.</li>
+          </ul>
+          <div className="pt-2 flex justify-end">
+            <Button variant="primary" size="sm" onClick={() => setTermsModalOpen(false)}>
+              Understood
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

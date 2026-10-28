@@ -598,8 +598,8 @@ export const MOCK_CUSTOMERS: Customer[] = [
 export const MOCK_ORDERS: Order[] = [
   // Order 1: Delivered
   {
-    id: 'ORD-2026-901',
-    orderNumber: 'AUR-ORD-901',
+    id: 'ORD-2026-001',
+    orderNumber: 'ORD-2026-001',
     customerId: 'cust-01',
     customerName: 'Vikramaditya Singhania',
     customerEmail: 'vikram.singhania@heritage.in',
@@ -654,8 +654,8 @@ export const MOCK_ORDERS: Order[] = [
 
   // Order 2: Dispatched
   {
-    id: 'ORD-2026-902',
-    orderNumber: 'AUR-ORD-902',
+    id: 'ORD-2026-002',
+    orderNumber: 'ORD-2026-002',
     customerId: 'cust-03',
     customerName: 'Rohit Khandelwal',
     customerEmail: 'rohit.khandelwal@jaipurjewels.com',
@@ -709,8 +709,8 @@ export const MOCK_ORDERS: Order[] = [
 
   // Order 3: Invoice issued (Ready for Dispatch)
   {
-    id: 'ORD-2026-903',
-    orderNumber: 'AUR-ORD-903',
+    id: 'ORD-2026-003',
+    orderNumber: 'ORD-2026-003',
     customerId: 'cust-04',
     customerName: 'Dr. Meenakshi Sundaram',
     customerEmail: 'dr.meenakshi@apollo-health.org',
@@ -759,8 +759,8 @@ export const MOCK_ORDERS: Order[] = [
 
   // Order 4: Quality checked (Awaiting ERP Invoice)
   {
-    id: 'ORD-2026-904',
-    orderNumber: 'AUR-ORD-904',
+    id: 'ORD-2026-004',
+    orderNumber: 'ORD-2026-004',
     customerId: 'cust-02',
     customerName: 'Ananya Deshmukh',
     customerEmail: 'ananya.deshmukh@gmail.com',
@@ -806,8 +806,8 @@ export const MOCK_ORDERS: Order[] = [
 
   // Order 5: Payment confirmed (Awaiting Pick)
   {
-    id: 'ORD-2026-905',
-    orderNumber: 'AUR-ORD-905',
+    id: 'ORD-2026-005',
+    orderNumber: 'ORD-2026-005',
     customerId: 'cust-01',
     customerName: 'Vikramaditya Singhania',
     customerEmail: 'vikram.singhania@heritage.in',
@@ -852,8 +852,8 @@ export const MOCK_ORDERS: Order[] = [
 
   // Order 6: Placed (Return Requested on previously completed item)
   {
-    id: 'ORD-2026-906',
-    orderNumber: 'AUR-ORD-906',
+    id: 'ORD-2026-006',
+    orderNumber: 'ORD-2026-006',
     customerId: 'cust-03',
     customerName: 'Rohit Khandelwal',
     customerEmail: 'rohit.khandelwal@jaipurjewels.com',

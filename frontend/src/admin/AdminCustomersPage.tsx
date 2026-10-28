@@ -26,7 +26,10 @@ import {
   Sparkles,
   MessageSquare,
   TrendingUp,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
+import { maskPan, maskPhone, maskTextPII, canRevealPII, formatRevealAuditEntry } from '../lib/masking';
 
 export const AdminCustomersPage: React.FC = () => {
   useSEO({
@@ -43,6 +46,7 @@ export const AdminCustomersPage: React.FC = () => {
     orders,
     adminUser,
     activeRole,
+    logAudit,
     addCustomerNote,
     toggleCustomerFraudFlag,
     updateCustomerConsents,
@@ -123,6 +127,27 @@ export const AdminCustomersPage: React.FC = () => {
   // Modal: Fraud Flag Confirmation
   const [fraudModalOpen, setFraudModalOpen] = useState(false);
   const [fraudReason, setFraudReason] = useState('Manual risk officer discretion: Suspicious high-value velocity pattern');
+
+  // PII Reveal State (Super Admin & Finance only)
+  const [revealedFields, setRevealedFields] = useState<Record<string, boolean>>({});
+
+  const handleReveal = (customerId: string, customerName: string, field: 'PAN' | 'Phone') => {
+    if (!canRevealPII(activeRole)) return;
+    const key = `${customerId}-${field.toLowerCase()}`;
+    const isCurrentlyRevealed = !!revealedFields[key];
+
+    if (!isCurrentlyRevealed) {
+      const audit = formatRevealAuditEntry(currentActor, customerName, field);
+      logAudit(audit.actor, audit.action, audit.module, audit.before, audit.after);
+      setActionNotice(`[AUDIT LOGGED] PII revealed for ${customerName} (${field}). Recorded in Immutable Audit Trail.`);
+      setTimeout(() => setActionNotice(null), 4000);
+    }
+
+    setRevealedFields((prev) => ({
+      ...prev,
+      [key]: !isCurrentlyRevealed,
+    }));
+  };
 
   // Handlers
   const handleSaveNote = () => {
@@ -317,7 +342,7 @@ export const AdminCustomersPage: React.FC = () => {
                           </div>
                           <div className="text-[11px] text-[#7A6A55] truncate mt-0.5">{c.email}</div>
                           <div className="text-[10px] text-[#7A6A55] mt-1 flex items-center gap-2">
-                            <span>{c.phone}</span>
+                            <span className="font-mono">{maskPhone(c.phone, activeRole, revealedFields[`${c.id}-phone`])}</span>
                             <span>•</span>
                             <span>{primaryCity}</span>
                           </div>
@@ -450,7 +475,63 @@ export const AdminCustomersPage: React.FC = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-[#7A6A55]">Mobile Phone:</span>
-                        <span className="font-medium">{selectedCustomer.phone}</span>
+                        <div className="flex items-center gap-1.5 font-mono">
+                          <span className="font-medium">
+                            {maskPhone(
+                              selectedCustomer.phone,
+                              activeRole,
+                              revealedFields[`${selectedCustomer.id}-phone`]
+                            )}
+                          </span>
+                          {canRevealPII(activeRole) && (
+                            <button
+                              type="button"
+                              onClick={() => handleReveal(selectedCustomer.id, selectedCustomer.name, 'Phone')}
+                              className="inline-flex items-center gap-1 text-[10px] text-[#C9A24B] hover:text-[#5A4630] font-sans font-medium px-1.5 py-0.5 rounded border border-[#EADFC8] hover:bg-[#F8EFD9] transition-colors"
+                              title="Super Admin / Finance: Click to toggle and log audit row"
+                            >
+                              {revealedFields[`${selectedCustomer.id}-phone`] ? (
+                                <>
+                                  <EyeOff className="w-2.5 h-2.5" /> Hide
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="w-2.5 h-2.5" /> Reveal
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[#7A6A55]">Customer PAN:</span>
+                        <div className="flex items-center gap-1.5 font-mono">
+                          <span className="font-medium">
+                            {maskPan(
+                              selectedCustomer.pan || selectedCustomer.panNumber || 'ABCDE1234F',
+                              activeRole,
+                              revealedFields[`${selectedCustomer.id}-pan`]
+                            )}
+                          </span>
+                          {canRevealPII(activeRole) && (
+                            <button
+                              type="button"
+                              onClick={() => handleReveal(selectedCustomer.id, selectedCustomer.name, 'PAN')}
+                              className="inline-flex items-center gap-1 text-[10px] text-[#C9A24B] hover:text-[#5A4630] font-sans font-medium px-1.5 py-0.5 rounded border border-[#EADFC8] hover:bg-[#F8EFD9] transition-colors"
+                              title="Super Admin / Finance: Click to toggle and log audit row"
+                            >
+                              {revealedFields[`${selectedCustomer.id}-pan`] ? (
+                                <>
+                                  <EyeOff className="w-2.5 h-2.5" /> Hide
+                                </>
+                              ) : (
+                                <>
+                                  <Eye className="w-2.5 h-2.5" /> Reveal
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-[#7A6A55]">KYC Verification:</span>
@@ -666,7 +747,7 @@ export const AdminCustomersPage: React.FC = () => {
                           <span className="font-semibold text-[#5A4630]">{on.author}</span>
                           <span>{new Date(on.createdAt).toLocaleString('en-IN')}</span>
                         </div>
-                        <p className="text-[#5A4630]">{on.note}</p>
+                        <p className="text-[#5A4630]">{maskTextPII(on.note, activeRole)}</p>
                         {on.orderNumber && (
                           <div className="pt-1 text-[10px] text-[#C9A24B]">
                             Linked to Order #{on.orderNumber}
@@ -687,7 +768,7 @@ export const AdminCustomersPage: React.FC = () => {
                           key={idx}
                           className="p-2.5 bg-[#FFFFFF] border border-[#EADFC8] rounded text-xs text-[#5A4630]"
                         >
-                          • {note}
+                          • {maskTextPII(note, activeRole)}
                         </div>
                       ))}
                     </div>
@@ -726,7 +807,7 @@ export const AdminCustomersPage: React.FC = () => {
                             <Badge variant="gold" className="text-[10px]">
                               {sh.channel}
                             </Badge>
-                            <span className="font-semibold text-[#5A4630]">{sh.subject}</span>
+                            <span className="font-semibold text-[#5A4630]">{maskTextPII(sh.subject, activeRole)}</span>
                           </div>
                           <Badge
                             variant={sh.status === 'Resolved' ? 'sage' : 'amber'}
@@ -735,7 +816,7 @@ export const AdminCustomersPage: React.FC = () => {
                             {sh.status}
                           </Badge>
                         </div>
-                        <p className="text-[#5A4630] text-[11px]">{sh.summary}</p>
+                        <p className="text-[#5A4630] text-[11px]">{maskTextPII(sh.summary, activeRole)}</p>
                         <div className="flex items-center justify-between text-[10px] text-[#7A6A55] pt-1 border-t border-[#EADFC8]/60">
                           <span>Officer: <strong>{sh.officer}</strong></span>
                           <span>Logged: {new Date(sh.createdAt).toLocaleString('en-IN')}</span>

@@ -20,6 +20,7 @@ import {
   Sparkles,
   FileSpreadsheet,
 } from 'lucide-react';
+import { maskPan, maskPhone, maskTextPII } from '../lib/masking';
 
 type ReportTab =
   | 'sales'
@@ -52,6 +53,7 @@ export const AdminReportsPage: React.FC = () => {
     priceHistory,
     rates,
     pricingConfig,
+    activeRole,
   } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<ReportTab>('sales');
@@ -278,12 +280,13 @@ export const AdminReportsPage: React.FC = () => {
 
   // --- TAB 6: CUSTOMER REPORT DATA ---
   const handleExportCustomerCSV = () => {
-    const headers = ['Customer ID', 'Full Name', 'Email', 'Phone', 'KYC Verified', 'Orders Placed', 'Total Spent (INR)', 'Fraud Risk Flag', 'Registered Date'];
+    const headers = ['Customer ID', 'Full Name', 'Email', 'Phone', 'PAN', 'KYC Verified', 'Orders Placed', 'Total Spent (INR)', 'Fraud Risk Flag', 'Registered Date'];
     const rows = customers.map((c) => [
       c.id,
       c.name,
       c.email,
-      c.phone,
+      maskPhone(c.phone, activeRole),
+      maskPan(c.pan || c.panNumber, activeRole),
       c.isVerified ? 'Verified' : 'Pending',
       c.totalOrders,
       c.totalSpent,
@@ -310,7 +313,7 @@ export const AdminReportsPage: React.FC = () => {
       si.id,
       si.customerName,
       si.channel,
-      si.subject,
+      maskTextPII(si.subject, activeRole),
       si.status,
       si.officer,
       si.createdAt,
@@ -873,6 +876,8 @@ export const AdminReportsPage: React.FC = () => {
                   <th className="py-2.5 px-3 font-semibold">Customer ID</th>
                   <th className="py-2.5 px-3 font-semibold">Investor Name</th>
                   <th className="py-2.5 px-3 font-semibold">Contact Email</th>
+                  <th className="py-2.5 px-3 font-semibold">Phone</th>
+                  <th className="py-2.5 px-3 font-semibold">PAN</th>
                   <th className="py-2.5 px-3 font-semibold">Orders</th>
                   <th className="py-2.5 px-3 font-semibold">Cumulative Spend</th>
                   <th className="py-2.5 px-3 font-semibold">KYC Standing</th>
@@ -885,6 +890,8 @@ export const AdminReportsPage: React.FC = () => {
                     <td className="py-2.5 px-3 font-mono">{c.id}</td>
                     <td className="py-2.5 px-3 font-medium">{c.name}</td>
                     <td className="py-2.5 px-3 text-[#7A6A55]">{c.email}</td>
+                    <td className="py-2.5 px-3 font-mono text-[11px]">{maskPhone(c.phone, activeRole)}</td>
+                    <td className="py-2.5 px-3 font-mono text-[11px]">{maskPan(c.pan || c.panNumber, activeRole)}</td>
                     <td className="py-2.5 px-3">{c.totalOrders}</td>
                     <td className="py-2.5 px-3 font-serif font-bold text-[#5A4630]">{formatINR(c.totalSpent)}</td>
                     <td className="py-2.5 px-3">
@@ -948,7 +955,7 @@ export const AdminReportsPage: React.FC = () => {
                       <Badge variant="gold" className="text-[10px]">{si.channel}</Badge>
                     </td>
                     <td className="py-2.5 px-3 font-medium">{si.customerName}</td>
-                    <td className="py-2.5 px-3">{si.subject}</td>
+                    <td className="py-2.5 px-3">{maskTextPII(si.subject, activeRole)}</td>
                     <td className="py-2.5 px-3 font-medium text-[#7A6A55]">{si.officer}</td>
                     <td className="py-2.5 px-3 text-[#7A6A55]">{new Date(si.createdAt).toLocaleDateString('en-IN')}</td>
                     <td className="py-2.5 px-3 text-right">
