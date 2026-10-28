@@ -30,8 +30,18 @@ export function authenticateJwt(req: Request, res: Response, next: NextFunction)
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, config.jwtSecret) as AuthenticatedUser;
-    req.user = decoded;
+    const decoded = jwt.verify(token, config.jwtSecret) as any;
+
+    // Hardening rule: A pre-MFA token must NEVER be accepted by authenticateJwt
+    if (decoded && decoded.stage) {
+      res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Pre-MFA token cannot be used for authenticated endpoints. Complete MFA verification.',
+      });
+      return;
+    }
+
+    req.user = decoded as AuthenticatedUser;
     next();
   } catch (err) {
     res.status(401).json({
@@ -46,8 +56,10 @@ export function optionalAuthenticateJwt(req: Request, _res: Response, next: Next
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split(' ')[1];
     try {
-      const decoded = jwt.verify(token, config.jwtSecret) as AuthenticatedUser;
-      req.user = decoded;
+      const decoded = jwt.verify(token, config.jwtSecret) as any;
+      if (decoded && !decoded.stage) {
+        req.user = decoded as AuthenticatedUser;
+      }
     } catch {
       // Ignore optional auth failure
     }

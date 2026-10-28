@@ -32,7 +32,27 @@ export async function createPaymentSession(req: Request, res: Response): Promise
 }
 
 export async function handlePaymentWebhook(req: Request, res: Response): Promise<void> {
-  const signature = req.headers['x-razorpay-signature'] || req.headers['x-webhook-signature'];
+  const signature = (req.headers['x-razorpay-signature'] || req.headers['x-webhook-signature']) as string | undefined;
+
+  // Hardening: Webhook signature is mandatory. Reject unsigned requests.
+  if (!signature) {
+    res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Webhook signature is mandatory. Missing x-razorpay-signature or x-webhook-signature header.',
+    });
+    return;
+  }
+
+  const expectedSignature = crypto
+    .createHmac('sha256', config.paymentWebhookSecret)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
+
+  if (signature !== expectedSignature) {
+    res.status(401).json({ error: 'InvalidSignature', message: 'HMAC webhook signature mismatch' });
+    return;
+  }
+
   const idempotencyKey = (req.headers['x-idempotency-key'] as string) || req.body.idempotencyKey || req.body.event_id || `IDEMP-${req.body.transactionId || Date.now()}`;
 
   const { event, payload, transactionId } = req.body;
@@ -40,19 +60,6 @@ export async function handlePaymentWebhook(req: Request, res: Response): Promise
   if (!event) {
     res.status(400).json({ error: 'ValidationError', message: 'Webhook event is required' });
     return;
-  }
-
-  // HMAC verification if signature provided
-  if (signature && config.paymentWebhookSecret !== 'whsec_test_hmac_secret_placeholder') {
-    const expectedSignature = crypto
-      .createHmac('sha256', config.paymentWebhookSecret)
-      .update(JSON.stringify(req.body))
-      .digest('hex');
-
-    if (signature !== expectedSignature) {
-      res.status(401).json({ error: 'InvalidSignature', message: 'HMAC webhook signature mismatch' });
-      return;
-    }
   }
 
   const txnId = transactionId || payload?.payment?.id || `BANK-${Date.now()}`;

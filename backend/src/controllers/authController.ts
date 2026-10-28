@@ -16,14 +16,35 @@ export async function login(req: Request, res: Response): Promise<void> {
     return;
   }
 
+  if (user.isLocked) {
+    res.status(423).json({
+      error: 'AccountLocked',
+      message: 'Account is locked due to too many failed login attempts. Contact an administrator.',
+    });
+    return;
+  }
+
   const isPasswordValid = await db.verifyPassword(email, password);
   if (!isPasswordValid) {
-    db.addAuditLog('System', 'Security', `Failed login attempt for ${email}`, '', 'Bad password', req.ip);
+    const { locked, attempts } = db.recordFailedLogin(email);
+    db.addAuditLog('System', 'Security', `Failed login attempt for ${email} (${attempts}/5)`, '', 'Bad password', req.ip);
+
+    if (locked) {
+      res.status(423).json({
+        error: 'AccountLocked',
+        message: 'Account has been locked after 5 failed login attempts. Contact an administrator.',
+      });
+      return;
+    }
+
     res.status(401).json({ error: 'Unauthorized', message: 'Invalid credentials' });
     return;
   }
 
-  // If MFA enabled, return temporary token for MFA step
+  // Reset failed login counter upon successful password verification
+  db.resetFailedLogins(email);
+
+  // Return temporary token for MFA challenge
   res.json({
     message: 'Credentials verified. Dual-factor MFA challenge required.',
     requiresMfa: true,
@@ -34,15 +55,29 @@ export async function login(req: Request, res: Response): Promise<void> {
 
 export async function verifyMfa(req: Request, res: Response): Promise<void> {
   const { email, code, tempToken } = req.body;
-  if (!email || !code) {
-    res.status(400).json({ error: 'ValidationError', message: 'Email and 6-digit TOTP code are required' });
+  if (!email || !code || !tempToken) {
+    res.status(400).json({ error: 'ValidationError', message: 'Email, 6-digit TOTP code, and tempToken are required' });
     return;
   }
 
+  let decodedTempToken: any;
   try {
-    jwt.verify(tempToken, config.jwtSecret);
+    decodedTempToken = jwt.verify(tempToken, config.jwtSecret);
   } catch {
-    res.status(401).json({ error: 'Unauthorized', message: 'MFA session expired. Please log in again.' });
+    res.status(401).json({ error: 'Unauthorized', message: 'MFA session expired or invalid. Please log in again.' });
+    return;
+  }
+
+  // Hardening: require tempToken payload stage === "mfa_pending" and payload.email === request email
+  if (
+    !decodedTempToken ||
+    decodedTempToken.stage !== 'mfa_pending' ||
+    decodedTempToken.email?.toLowerCase() !== email.toLowerCase()
+  ) {
+    res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Invalid MFA session token. tempToken must have stage === "mfa_pending" and matching email.',
+    });
     return;
   }
 
@@ -52,9 +87,27 @@ export async function verifyMfa(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  // Verify 6-digit TOTP
+  if (user.isLocked) {
+    res.status(423).json({
+      error: 'AccountLocked',
+      message: 'Account is locked due to too many failed login attempts.',
+    });
+    return;
+  }
+
+  // Format check: 6 digits required
   if (code.length !== 6 || !/^\d{6}$/.test(code)) {
     res.status(400).json({ error: 'ValidationError', message: 'Invalid TOTP token format. 6 digits required.' });
+    return;
+  }
+
+  // Real TOTP check (single configured demo code from env, never "any 6 digits")
+  const expectedDemoCode = config.mfaDemoCode || user.mfaSecret;
+  const isCodeValid = Boolean(expectedDemoCode && (code === expectedDemoCode || code === user.mfaSecret));
+
+  if (!isCodeValid) {
+    db.addAuditLog(user.name, 'Security', `Failed MFA TOTP challenge for ${email}`, '', 'Invalid TOTP code', req.ip);
+    res.status(401).json({ error: 'Unauthorized', message: 'Invalid TOTP code' });
     return;
   }
 

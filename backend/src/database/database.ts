@@ -30,6 +30,7 @@ import type {
   AdminRole,
 } from '../types';
 import bcrypt from 'bcryptjs';
+import { config } from '../config';
 
 export interface AdminUserRecord {
   id: string;
@@ -38,6 +39,8 @@ export interface AdminUserRecord {
   passwordHash: string;
   role: AdminRole;
   isActive: boolean;
+  isLocked?: boolean;
+  failedLoginAttempts?: number;
   mfaEnabled: boolean;
   mfaSecret: string;
   lastActive: string;
@@ -134,8 +137,9 @@ export class DatabaseService {
     this.suppliers = [...MOCK_SUPPLIERS];
     this.couriers = [...MOCK_COURIERS];
 
-    // 6. Seed Admin Users
-    const defaultPasswordHash = bcrypt.hashSync('VaultPass@2026', 10);
+    // 6. Seed Admin Users (password comes from env)
+    const seedPassword = process.env.SEED_USER_PASSWORD || process.env.SEED_ADMIN_PASSWORD || config.seedUserPassword || 'VaultPass@2026';
+    const defaultPasswordHash = bcrypt.hashSync(seedPassword, 10);
     const seedStaff: AdminUserRecord[] = [
       {
         id: 'usr-1',
@@ -144,6 +148,8 @@ export class DatabaseService {
         passwordHash: defaultPasswordHash,
         role: 'Super Admin',
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
         mfaEnabled: true,
         mfaSecret: '748291',
         lastActive: new Date().toISOString(),
@@ -155,6 +161,8 @@ export class DatabaseService {
         passwordHash: defaultPasswordHash,
         role: 'Pricing',
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
         mfaEnabled: true,
         mfaSecret: '748291',
         lastActive: new Date().toISOString(),
@@ -166,6 +174,8 @@ export class DatabaseService {
         passwordHash: defaultPasswordHash,
         role: 'Warehouse',
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
         mfaEnabled: true,
         mfaSecret: '748291',
         lastActive: new Date().toISOString(),
@@ -177,6 +187,8 @@ export class DatabaseService {
         passwordHash: defaultPasswordHash,
         role: 'Auditor',
         isActive: true,
+        isLocked: false,
+        failedLoginAttempts: 0,
         mfaEnabled: true,
         mfaSecret: '748291',
         lastActive: new Date().toISOString(),
@@ -751,6 +763,34 @@ export class DatabaseService {
     const user = await this.getUserByEmail(email);
     if (!user) return false;
     return bcrypt.compareSync(plainText, user.passwordHash);
+  }
+
+  recordFailedLogin(email: string): { locked: boolean; attempts: number } {
+    const user = this.users.get(email.toLowerCase());
+    if (!user) return { locked: false, attempts: 0 };
+    user.failedLoginAttempts = (user.failedLoginAttempts || 0) + 1;
+    if (user.failedLoginAttempts >= 5) {
+      user.isLocked = true;
+      this.addAuditLog('System', 'Security', `Account locked after 5 failed login attempts: ${user.email}`, '', 'Account Locked');
+      return { locked: true, attempts: user.failedLoginAttempts };
+    }
+    return { locked: false, attempts: user.failedLoginAttempts };
+  }
+
+  resetFailedLogins(email: string): void {
+    const user = this.users.get(email.toLowerCase());
+    if (user) {
+      user.failedLoginAttempts = 0;
+    }
+  }
+
+  unlockUser(email: string): boolean {
+    const user = this.users.get(email.toLowerCase());
+    if (!user) return false;
+    user.isLocked = false;
+    user.failedLoginAttempts = 0;
+    this.addAuditLog('System', 'Security', `Account unlocked: ${user.email}`, 'Locked', 'Active');
+    return true;
   }
 
   // --- CERTIFICATES ---
